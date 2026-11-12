@@ -1,0 +1,6 @@
+{
+  "id": "marriott.points",
+  "kind": "currency",
+  "name": "Marriott Bonvoy points",
+  "program": "marriott"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "cs-20261201-t3-widen-aeroplan-match",
+  "op": "revise_rule",
+  "author": "Bradley",
+  "date": "2026-12-01",
+  "reason": "Platinum members should qualify too",
+  "target": "aeroplan-25k-via-marriott-top-tier",
+  "data": {
+    "set": {
+      "when": {
+        "any": [
+          {
+            "holds": "marriott.platinum"
+          },
+          {
+            "holds": "marriott.titanium"
+          },
+          {
+            "holds": "marriott.ambassador"
+          }
+        ]
+      }
+    }
+  }
+}

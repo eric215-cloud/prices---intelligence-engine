@@ -1,0 +1,73 @@
+{
+  "author": "claude-fable-5.2 (commissioning build)",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-12",
+      "evidence": [
+        {
+          "id": "ev-jal-crystal-oneworld-ruby",
+          "notes": "Read from the search-engine excerpt of the official page.",
+          "publisher": "Japan Airlines",
+          "retrieved_on": "2026-11-12",
+          "source_type": "official",
+          "summary": "Official JMB Crystal page: Crystal members receive oneworld Ruby services on oneworld alliance airlines.",
+          "title": "JMB CRYSTAL",
+          "url": "https://www.jal.co.jp/en/jalmile/flyon/crystal_miles.html"
+        },
+        {
+          "id": "ev-jal-oneworld-tier-chart",
+          "notes": "Read from the search-engine excerpt of the official page.",
+          "publisher": "Japan Airlines",
+          "retrieved_on": "2026-11-12",
+          "source_type": "official",
+          "summary": "Official oneworld tier chart: FLY ON Crystal maps to oneworld Ruby, Sapphire to Sapphire, Diamond and JGC Premier to Emerald. JAL Global Club members with Crystal receive Sapphire instead.",
+          "title": "Frequent Flyer Benefits",
+          "url": "https://www.jal.co.jp/jp/en/oneworld/jmb_benefit.html"
+        }
+      ],
+      "id": "c-oneworld-ruby-via-jal-crystal",
+      "mentions": [
+        "JAL Global Club"
+      ],
+      "open_questions": [],
+      "proposed_entities": [
+        {
+          "id": "oneworld",
+          "kind": "program",
+          "name": "oneworld alliance"
+        },
+        {
+          "id": "oneworld.ruby",
+          "kind": "status",
+          "name": "oneworld Ruby",
+          "program": "oneworld",
+          "tags": [
+            "type:status"
+          ]
+        }
+      ],
+      "proposed_rule": {
+        "id": "oneworld-ruby-via-jal-crystal",
+        "kind": "grants",
+        "output": "oneworld.ruby",
+        "restrictions": [
+          "JAL Global Club members with Crystal are treated as oneworld Sapphire instead (not modelled)"
+        ],
+        "summary": "JAL Mileage Bank Crystal members hold oneworld Ruby and receive Ruby services on oneworld airlines.",
+        "value_note": "Ruby is the lowest oneworld tier: priority check-in and standby, preferred seating on some carriers. No lounge access.",
+        "when": {
+          "holds": "jal.crystal"
+        }
+      },
+      "run": "run-20261112-forward-02",
+      "search_path": [
+        "JAL Mileage Bank FLY ON status Crystal oneworld Ruby benefits official"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-12",
+  "id": "cs-20261112-005-add-candidate",
+  "op": "add_candidate",
+  "reason": "Forward discovery, cell jal.crystal|status_match_out"
+}

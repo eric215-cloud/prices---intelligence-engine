@@ -1,0 +1,6 @@
+{
+  "id": "amex.mr",
+  "kind": "currency",
+  "name": "American Express Membership Rewards points",
+  "program": "amex"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "aeroplan.25k",
+  "kind": "status",
+  "name": "Aeroplan 25K Elite Status",
+  "program": "aeroplan",
+  "tags": [
+    "type:status"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "evidence": [
+    "ev-omaat-marriott-jal",
+    "ev-frequentmiler-marriott-jal"
+  ],
+  "id": "jal-miles-from-marriott-points",
+  "kind": "transfer",
+  "output": "jal.miles",
+  "summary": "Marriott Bonvoy points convert to JAL Mileage Bank miles at 3 points per mile.",
+  "transfer": {
+    "from": "marriott.points",
+    "note": "5,000 bonus miles per 60,000 points transferred is reported by one source.",
+    "ratio": "3:1"
+  },
+  "value_note": "A poor ratio next to 1:1 card transfers. Sensible mainly to top up for a specific award.",
+  "verification": {
+    "last_verified": "2026-11-12",
+    "review_by": "2027-02-12",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "marriott.points"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "attestation": {
+    "by": "synthetic",
+    "on": "2026-11-12",
+    "statement": "Invented holding for demonstration."
+  },
+  "author": "claude-fable-5.2 (commissioning build)",
+  "data": {
+    "holding": {
+      "entity": "hyatt.link_aeroplan",
+      "id": "h-hyatt-link",
+      "notes": "Registered 2026-10-01; 90-day window.",
+      "state": "confirmed",
+      "valid_from": "2026-10-01",
+      "valid_to": "2026-12-30"
+    }
+  },
+  "date": "2026-11-12",
+  "id": "cs-20261112-025-set-holding",
+  "op": "set_holding",
+  "profile": "synthetic-acquired",
+  "reason": "Synthetic demo holding"
+}

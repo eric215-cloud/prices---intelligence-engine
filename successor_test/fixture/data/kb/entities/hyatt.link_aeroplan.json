@@ -1,0 +1,7 @@
+{
+  "how": "On Hyatt's Aeroplan partnership page: link the two accounts (names must match), then register for the challenge. Registration starts the 90-day window, so register only when the stays are planned.",
+  "id": "hyatt.link_aeroplan",
+  "kind": "action",
+  "name": "Link World of Hyatt and Aeroplan accounts and register for the status challenge",
+  "program": "hyatt"
+}

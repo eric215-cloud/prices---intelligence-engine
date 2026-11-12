@@ -1,0 +1,88 @@
+{
+  "author": "claude-fable-5.2 (commissioning build)",
+  "data": {
+    "run": {
+      "cells": [
+        {
+          "candidates": [
+            "c-jal-miles-from-marriott-points",
+            "c-jal-business-award-via-jal-miles"
+          ],
+          "cell": "cap.japan-business.jal-via-jal-miles|inbound_paths",
+          "note": "Card-programme routes to JAL miles (Citi, Bilt, Capital One) were named by sources but not researched.",
+          "outcome": "found"
+        },
+        {
+          "candidates": [
+            "c-aeroplan-points-from-amex-mr",
+            "c-ana-business-award-via-aeroplan"
+          ],
+          "cell": "cap.japan-business.ana-via-aeroplan|inbound_paths",
+          "outcome": "found"
+        },
+        {
+          "candidates": [
+            "c-ana-miles-from-amex-mr",
+            "c-ana-business-award-via-ana-miles"
+          ],
+          "cell": "cap.japan-business.ana-via-ana-miles|inbound_paths",
+          "note": "Transfer is supported; the award rule is not yet.",
+          "outcome": "inconclusive"
+        }
+      ],
+      "date": "2026-11-12",
+      "executor": "claude-fable-5.2 (commissioning build)",
+      "extraction": "Six candidates. Temporary items found along the way (JAL award sale, Citi transfer bonus) had already ended and were not stored.",
+      "goal": "Find promising ways for me to fly business class to Japan",
+      "id": "run-20261112-backward-03",
+      "mentions": [
+        "Citi ThankYou",
+        "Bilt Rewards",
+        "Capital One Miles",
+        "Virgin Atlantic Flying Club"
+      ],
+      "mode": "backward",
+      "profile": "synthetic-demo",
+      "steps": [
+        {
+          "finding": "Aeroplan and ANA Mileage Club are 1:1 partners. No official Amex page read.",
+          "query": "American Express Membership Rewards airline transfer partners list ANA Aeroplan ratio 2026",
+          "sources_seen": [
+            "nerdwallet.com",
+            "point.me",
+            "princeoftravel.com"
+          ]
+        },
+        {
+          "finding": "ANA is bookable as an Aeroplan partner. Sources disagree on current prices because of chart changes in 2025 and 2026, so no price was recorded.",
+          "query": "Aeroplan flight reward chart North America Pacific business class partner points ANA",
+          "sources_seen": [
+            "upgradedpoints.com",
+            "10xtravel.com",
+            "thepointsguy.com",
+            "aircanada.com"
+          ]
+        },
+        {
+          "finding": "The sale ended October 31, 2026 and excluded business class on North America routes. Not recorded as a promotion. Enduring JAL award rules (60-day account age, no changes) were kept.",
+          "query": "Japan Airlines Mileage Bank award sale 30% off awards to/from Japan",
+          "sources_seen": [
+            "frequentmiler.com",
+            "awardwallet.com",
+            "travelingformiles.com",
+            "thepointsparty.com"
+          ]
+        }
+      ],
+      "tasks": [],
+      "verification": [
+        "Prices were left out wherever sources conflicted or were dated.",
+        "Five candidates meet the evidence policy with two independent secondary sources; one (ANA miles on ANA) does not and stays a candidate."
+      ]
+    }
+  },
+  "date": "2026-11-12",
+  "id": "cs-20261112-014-record-discovery-run",
+  "op": "record_discovery_run",
+  "reason": "Record goal research run 3"
+}

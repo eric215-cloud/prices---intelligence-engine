@@ -1,0 +1,9 @@
+{
+  "id": "marriott.ambassador",
+  "kind": "status",
+  "name": "Marriott Bonvoy Ambassador Elite",
+  "program": "marriott",
+  "tags": [
+    "type:status"
+  ]
+}

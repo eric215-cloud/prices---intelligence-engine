@@ -1,0 +1,16 @@
+{
+  "economics": {
+    "cash": "Taxes and carrier surcharges apply; amount not recorded.",
+    "points_price": "Not recorded. Varies by date; saver space is cheap, non-saver business awards are repriced far higher. Look up live.",
+    "risk": "Awards cannot be changed, only cancelled for a fee. JAL miles expire on a strict schedule: transfer only for a booking you have found.",
+    "time": "A new JAL account must be 60 days old before redeeming. Book at least 96 hours ahead online."
+  },
+  "id": "cap.japan-business.jal-via-jal-miles",
+  "kind": "capability",
+  "name": "JAL business class award to Japan, booked with JAL Mileage Bank miles",
+  "tags": [
+    "region:japan",
+    "cabin:business",
+    "type:flight"
+  ]
+}

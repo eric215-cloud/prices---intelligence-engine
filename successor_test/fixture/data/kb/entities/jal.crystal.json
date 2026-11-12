@@ -1,0 +1,11 @@
+{
+  "id": "jal.crystal",
+  "kind": "status",
+  "name": "JAL Mileage Bank FLY ON Crystal",
+  "program": "jal",
+  "tags": [
+    "region:japan",
+    "type:flight",
+    "type:status"
+  ]
+}

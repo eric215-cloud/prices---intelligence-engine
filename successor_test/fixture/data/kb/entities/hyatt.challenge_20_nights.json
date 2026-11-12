@@ -1,0 +1,7 @@
+{
+  "how": "Stay 20 qualifying nights at Hyatt properties within 90 days of registering for the challenge. This is a real cost in money and time; weigh it before starting.",
+  "id": "hyatt.challenge_20_nights",
+  "kind": "action",
+  "name": "Complete 20 qualifying Hyatt nights within the 90-day challenge window",
+  "program": "hyatt"
+}

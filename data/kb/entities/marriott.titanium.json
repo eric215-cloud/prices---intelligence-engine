@@ -1,0 +1,9 @@
+{
+  "id": "marriott.titanium",
+  "kind": "status",
+  "name": "Marriott Bonvoy Titanium Elite",
+  "program": "marriott",
+  "tags": [
+    "type:status"
+  ]
+}

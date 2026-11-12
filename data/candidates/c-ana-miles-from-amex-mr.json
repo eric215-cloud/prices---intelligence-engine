@@ -1,0 +1,77 @@
+{
+  "created_on": "2026-11-12",
+  "evidence": [
+    {
+      "id": "ev-nerdwallet-amex-transfer-partners",
+      "publisher": "NerdWallet",
+      "retrieved_on": "2026-11-12",
+      "source_type": "reputable_secondary",
+      "summary": "Lists Membership Rewards transfer partners: Air Canada Aeroplan at 1:1 and ANA Mileage Club at 1:1, among about two dozen.",
+      "title": "The Guide to American Express Transfer Partners",
+      "url": "https://www.nerdwallet.com/article/travel/american-express-transfer-partners"
+    },
+    {
+      "id": "ev-pointme-amex-transfer-partners",
+      "publisher": "point.me",
+      "retrieved_on": "2026-11-12",
+      "source_type": "reputable_secondary",
+      "summary": "Lists Aeroplan (1:1, instant) and ANA Mileage Club (1:1, up to about 72 hours); minimum transfer 1,000 points. Says American Express is the only major US card programme that transfers to ANA.",
+      "title": "Amex Transfer Partners: Complete List and Best Uses 2026",
+      "url": "https://www.point.me/insights/amex-points-transfer-partners.md"
+    }
+  ],
+  "id": "c-ana-miles-from-amex-mr",
+  "mentions": [],
+  "open_questions": [
+    "No official American Express page was read"
+  ],
+  "proposed_entities": [
+    {
+      "id": "amex",
+      "kind": "program",
+      "name": "American Express Membership Rewards"
+    },
+    {
+      "id": "amex.mr",
+      "kind": "currency",
+      "name": "American Express Membership Rewards points",
+      "program": "amex"
+    },
+    {
+      "id": "ana",
+      "kind": "program",
+      "name": "ANA Mileage Club"
+    },
+    {
+      "id": "ana.miles",
+      "kind": "currency",
+      "name": "ANA Mileage Club miles",
+      "program": "ana"
+    }
+  ],
+  "proposed_rule": {
+    "id": "ana-miles-from-amex-mr",
+    "kind": "transfer",
+    "output": "ana.miles",
+    "summary": "American Express Membership Rewards points transfer to ANA Mileage Club at 1:1.",
+    "transfer": {
+      "from": "amex.mr",
+      "note": "Reported to take up to about 72 hours.",
+      "ratio": "1:1"
+    },
+    "when": {
+      "holds": "amex.mr"
+    }
+  },
+  "review": {
+    "decided_by": "Commissioning build",
+    "decided_on": "2026-11-12",
+    "reason": "Two independent reputable secondary sources agree; open question kept on the rule",
+    "rule": "ana-miles-from-amex-mr"
+  },
+  "run": "run-20261112-backward-03",
+  "search_path": [
+    "American Express Membership Rewards airline transfer partners list ANA Aeroplan ratio 2026"
+  ],
+  "status": "promoted"
+}

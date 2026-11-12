@@ -1,0 +1,71 @@
+{
+  "author": "claude-fable-5.2 (commissioning build)",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-12",
+      "evidence": [
+        {
+          "id": "ev-nerdwallet-amex-transfer-partners",
+          "publisher": "NerdWallet",
+          "retrieved_on": "2026-11-12",
+          "source_type": "reputable_secondary",
+          "summary": "Lists Membership Rewards transfer partners: Air Canada Aeroplan at 1:1 and ANA Mileage Club at 1:1, among about two dozen.",
+          "title": "The Guide to American Express Transfer Partners",
+          "url": "https://www.nerdwallet.com/article/travel/american-express-transfer-partners"
+        }
+      ],
+      "id": "c-ana-business-award-via-ana-miles",
+      "mentions": [],
+      "open_questions": [
+        "Only one secondary source, and it speaks of ANA awards generally",
+        "Current ANA award rules (round trip only? who may be booked? fuel surcharges?) were not researched"
+      ],
+      "proposed_entities": [
+        {
+          "id": "ana",
+          "kind": "program",
+          "name": "ANA Mileage Club"
+        },
+        {
+          "id": "ana.miles",
+          "kind": "currency",
+          "name": "ANA Mileage Club miles",
+          "program": "ana"
+        },
+        {
+          "economics": {
+            "points_price": "Not recorded.",
+            "risk": "Award rules (round-trip requirement, who can be booked) not verified.",
+            "time": "Transfers from Membership Rewards to ANA are reported to take up to about 72 hours."
+          },
+          "id": "cap.japan-business.ana-via-ana-miles",
+          "kind": "capability",
+          "name": "ANA business class award to Japan, booked with ANA Mileage Club miles",
+          "tags": [
+            "region:japan",
+            "cabin:business",
+            "type:flight"
+          ]
+        }
+      ],
+      "proposed_rule": {
+        "id": "ana-business-award-via-ana-miles",
+        "kind": "grants",
+        "output": "cap.japan-business.ana-via-ana-miles",
+        "summary": "ANA Mileage Club miles can book ANA's own business class awards to Japan.",
+        "when": {
+          "holds": "ana.miles"
+        }
+      },
+      "run": "run-20261112-backward-03",
+      "search_path": [
+        "American Express Membership Rewards airline transfer partners list ANA Aeroplan ratio 2026"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-12",
+  "id": "cs-20261112-013-add-candidate",
+  "op": "add_candidate",
+  "reason": "Enduring finding from research for the goal 'business class to Japan'"
+}

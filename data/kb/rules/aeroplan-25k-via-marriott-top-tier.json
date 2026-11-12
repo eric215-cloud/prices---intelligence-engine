@@ -1,0 +1,37 @@
+{
+  "evidence": [
+    "ev-aircanada-marriott-partner-page"
+  ],
+  "id": "aeroplan-25k-via-marriott-top-tier",
+  "kind": "acquire",
+  "open_questions": [
+    "If Titanium/Ambassador lapses during the Aeroplan status year, is the matched 25K kept until its own expiry?",
+    "Does matched 25K carry every benefit of earned 25K (for example Select Benefits)?"
+  ],
+  "output": "aeroplan.25k",
+  "restrictions": [
+    "Trial or temporary Marriott status does not qualify",
+    "Registration is reviewed; status is not guaranteed",
+    "Either program may end or change the offering without notice"
+  ],
+  "retention": {
+    "mode": "unknown",
+    "note": "Official terms give a minimum 12-month validity and then program expiry rules, but do not say whether the status is withdrawn if the Marriott tier is lost first."
+  },
+  "summary": "Marriott Titanium or Ambassador Elite members can obtain Aeroplan 25K by registering through the Marriott Bonvoy / Aeroplan partnership site (account names must match; allow 7-10 business days).",
+  "verification": {
+    "last_verified": "2026-11-12",
+    "review_by": "2027-05-12",
+    "status": "verified"
+  },
+  "when": {
+    "any": [
+      {
+        "holds": "marriott.titanium"
+      },
+      {
+        "holds": "marriott.ambassador"
+      }
+    ]
+  }
+}

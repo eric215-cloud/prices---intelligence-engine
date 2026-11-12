@@ -1,0 +1,53 @@
+{
+  "cells": {
+    "cap.japan-business.ana-via-aeroplan|inbound_paths": {
+      "candidates": [
+        "c-aeroplan-points-from-amex-mr",
+        "c-ana-business-award-via-aeroplan"
+      ],
+      "last_run": "2026-11-12",
+      "note": "",
+      "outcome": "found",
+      "run": "run-20261112-backward-03"
+    },
+    "cap.japan-business.ana-via-ana-miles|inbound_paths": {
+      "candidates": [
+        "c-ana-miles-from-amex-mr",
+        "c-ana-business-award-via-ana-miles"
+      ],
+      "last_run": "2026-11-12",
+      "note": "Transfer is supported; the award rule is not yet.",
+      "outcome": "inconclusive",
+      "run": "run-20261112-backward-03"
+    },
+    "cap.japan-business.jal-via-jal-miles|inbound_paths": {
+      "candidates": [
+        "c-jal-miles-from-marriott-points",
+        "c-jal-business-award-via-jal-miles"
+      ],
+      "last_run": "2026-11-12",
+      "note": "Card-programme routes to JAL miles (Citi, Bilt, Capital One) were named by sources but not researched.",
+      "outcome": "found",
+      "run": "run-20261112-backward-03"
+    },
+    "jal.crystal|status_match_out": {
+      "candidates": [
+        "c-oneworld-ruby-via-jal-crystal"
+      ],
+      "last_run": "2026-11-12",
+      "note": "Only the alliance tier mapping was researched.",
+      "outcome": "found",
+      "run": "run-20261112-forward-02"
+    },
+    "marriott.titanium|status_match_out": {
+      "candidates": [
+        "c-jal-crystal-via-marriott-top-tier",
+        "c-united-silver-via-marriott-top-tier"
+      ],
+      "last_run": "2026-11-12",
+      "note": "Also re-confirmed the seeded Aeroplan 25K match. Hotel-to-hotel matches out of Titanium were not searched.",
+      "outcome": "found",
+      "run": "run-20261112-forward-01"
+    }
+  }
+}

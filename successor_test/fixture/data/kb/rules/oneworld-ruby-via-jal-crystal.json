@@ -1,0 +1,22 @@
+{
+  "evidence": [
+    "ev-jal-crystal-oneworld-ruby",
+    "ev-jal-oneworld-tier-chart"
+  ],
+  "id": "oneworld-ruby-via-jal-crystal",
+  "kind": "grants",
+  "output": "oneworld.ruby",
+  "restrictions": [
+    "JAL Global Club members with Crystal are treated as oneworld Sapphire instead (not modelled)"
+  ],
+  "summary": "JAL Mileage Bank Crystal members hold oneworld Ruby and receive Ruby services on oneworld airlines.",
+  "value_note": "Ruby is the lowest oneworld tier: priority check-in and standby, preferred seating on some carriers. No lounge access.",
+  "verification": {
+    "last_verified": "2026-11-12",
+    "review_by": "2027-11-12",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "jal.crystal"
+  }
+}

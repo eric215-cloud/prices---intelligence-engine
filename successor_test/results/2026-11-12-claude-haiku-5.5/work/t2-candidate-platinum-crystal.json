@@ -1,0 +1,58 @@
+{
+  "id": "cs-20261201-002-add-candidate",
+  "op": "add_candidate",
+  "author": "Claude Haiku 5.5",
+  "date": "2026-12-01",
+  "reason": "A forum user reports Marriott Platinum linked to JAL showing Crystal; not a rule, not confirmed by the official page. Recorded as a candidate only.",
+  "data": {"candidate": {
+    "id": "c-jal-crystal-via-marriott-platinum",
+    "status": "proposed",
+    "created_on": "2026-12-01",
+    "proposed_entities": [
+      {"id": "marriott.platinum", "kind": "status", "name": "Marriott Bonvoy Platinum Elite", "program": "marriott", "tags": ["type:status"]}
+    ],
+    "proposed_rule": {
+      "id": "jal-crystal-via-marriott-platinum",
+      "kind": "acquire",
+      "output": "jal.crystal",
+      "when": {"holds": "marriott.platinum"},
+      "summary": "Reported by one forum user (unverified): Marriott Bonvoy Platinum Elite members who link their accounts may reach JAL Mileage Bank FLY ON Crystal.",
+      "retention": {"mode": "unknown", "note": "Terms not stated in the sources read."},
+      "restrictions": [
+        "Not confirmed: the official JAL page lists Crystal only for Titanium and Ambassador Elite",
+        "Account link is one-to-one and cannot be changed afterwards"
+      ]
+    },
+    "evidence": [
+      {
+        "id": "ev-jal-marriott-status-match-20261201",
+        "url": "https://www.jal.co.jp/jp/en/jmb/marriott-status/index.html",
+        "title": "JAL Mileage Bank & Marriott Bonvoy, Status Match",
+        "publisher": "Japan Airlines",
+        "source_type": "official",
+        "retrieved_on": "2026-12-01",
+        "summary": "Lists FLY ON Points per year by Marriott tier: Member 2,000, Silver Elite 5,000, Gold Elite 10,000, Platinum Elite 20,000, Titanium Elite 30,000 and Ambassador Elite 40,000. Only Titanium and Ambassador are described as reaching Crystal or higher, based on accumulated FLY ON Points. Platinum Elite is not described as reaching Crystal. One JAL account links to one Marriott account, and the link cannot be changed."
+      },
+      {
+        "id": "ev-travel-forum-marriott-platinum-20261201",
+        "url": "https://forum.example.invalid/thread/123456#post-88",
+        "title": "Marriott x JAL data points (forum thread, post by user bonvoy_joe)",
+        "publisher": "Travel forum, user post",
+        "source_type": "community",
+        "retrieved_on": "2026-12-01",
+        "notes": "Post dated 2026-11-28. Retrieval date is the date the tip was received. No other report of this was found.",
+        "summary": "A forum user says a Marriott Platinum account linked to JAL made the JAL app show Crystal, and suggests Platinum now qualifies as well as Titanium."
+      }
+    ],
+    "search_path": [
+      "fetch https://www.jal.co.jp/jp/en/jmb/marriott-status/index.html",
+      "forwarded reader tip: forum thread 'Marriott x JAL data points', post 88"
+    ],
+    "open_questions": [
+      "Does a Marriott Platinum Elite account lead to JMB Crystal at all? Only one unverified forum post says so; the official page lists Crystal only for Titanium and Ambassador.",
+      "If it does, is the Crystal from the 20,000 Platinum FLY ON Points or from another route?",
+      "Is the forum user's JAL result reproducible, and was it a real status or a display error?"
+    ],
+    "mentions": []
+  }}
+}

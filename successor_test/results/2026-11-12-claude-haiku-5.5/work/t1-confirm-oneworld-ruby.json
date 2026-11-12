@@ -1,0 +1,20 @@
+{
+  "id": "cs-20261201-001-confirm-rule",
+  "op": "confirm_rule",
+  "author": "Claude Haiku 5.5",
+  "date": "2026-12-01",
+  "reason": "Re-checked the official JAL JMB Crystal page; the Ruby and Sapphire statements still match the rule.",
+  "target": "oneworld-ruby-via-jal-crystal",
+  "data": {"review_by": "2027-06-01"},
+  "evidence": [
+    {
+      "id": "ev-jal-crystal-oneworld-ruby-20261201",
+      "url": "https://www.jal.co.jp/en/jalmile/flyon/crystal_miles.html",
+      "title": "JMB CRYSTAL",
+      "publisher": "Japan Airlines",
+      "source_type": "official",
+      "retrieved_on": "2026-12-01",
+      "summary": "JMB Crystal members can use oneworld Ruby services on oneworld alliance airlines. JAL Global Club members who attain Crystal are treated as oneworld Sapphire. The page says services are subject to change without notice. No publication date is shown."
+    }
+  ]
+}

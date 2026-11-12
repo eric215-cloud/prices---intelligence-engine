@@ -1,0 +1,79 @@
+{
+  "author": "claude-fable-5.2 (commissioning build)",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-12",
+      "evidence": [
+        {
+          "id": "ev-nerdwallet-marriott-titanium-guide",
+          "publisher": "NerdWallet",
+          "retrieved_on": "2026-11-12",
+          "source_type": "reputable_secondary",
+          "summary": "States that under the Marriott-United partnership Titanium members can match to United Premier Silver, while United elites receive Bonvoy Gold.",
+          "title": "The Guide to Marriott Titanium Elite Status",
+          "url": "https://www.nerdwallet.com/article/travel/marriott-titanium-elite-guide"
+        },
+        {
+          "id": "ev-tpg-marriott-titanium-reasons",
+          "publisher": "The Points Guy",
+          "retrieved_on": "2026-11-12",
+          "source_type": "reputable_secondary",
+          "summary": "States that Titanium and Ambassador Elite members can register for complimentary United MileagePlus Premier Silver status (RewardsPlus).",
+          "title": "5 reasons to strive for Marriott Bonvoy Titanium Elite status",
+          "url": "https://thepointsguy.com/news/why-you-should-get-marriott-bonvoy-titanium-elite-status/"
+        }
+      ],
+      "id": "c-united-silver-via-marriott-top-tier",
+      "mentions": [],
+      "open_questions": [
+        "No official United or Marriott page has been read; registration steps, validity and renewal are unconfirmed",
+        "What Premier Silver unlocks onward (Star Alliance Silver?) has not been researched"
+      ],
+      "proposed_entities": [
+        {
+          "id": "united",
+          "kind": "program",
+          "name": "United MileagePlus"
+        },
+        {
+          "id": "united.premier_silver",
+          "kind": "status",
+          "name": "United MileagePlus Premier Silver",
+          "program": "united",
+          "tags": [
+            "type:status"
+          ]
+        }
+      ],
+      "proposed_rule": {
+        "id": "united-silver-via-marriott-top-tier",
+        "kind": "acquire",
+        "output": "united.premier_silver",
+        "retention": {
+          "mode": "unknown",
+          "note": "Terms not read from an official source."
+        },
+        "summary": "Marriott Titanium or Ambassador Elite members can register for complimentary United MileagePlus Premier Silver through RewardsPlus.",
+        "when": {
+          "any": [
+            {
+              "holds": "marriott.titanium"
+            },
+            {
+              "holds": "marriott.ambassador"
+            }
+          ]
+        }
+      },
+      "run": "run-20261112-forward-01",
+      "search_path": [
+        "Marriott Bonvoy Titanium Elite status match"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-12",
+  "id": "cs-20261112-002-add-candidate",
+  "op": "add_candidate",
+  "reason": "Forward discovery, cell marriott.titanium|status_match_out"
+}

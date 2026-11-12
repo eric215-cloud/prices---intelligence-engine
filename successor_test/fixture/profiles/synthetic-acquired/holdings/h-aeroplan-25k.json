@@ -1,0 +1,11 @@
+{
+  "acquired_on": "2026-09-15",
+  "acquired_via": "aeroplan-25k-via-marriott-top-tier",
+  "confirmed_by": "synthetic",
+  "confirmed_on": "2026-11-12",
+  "entity": "aeroplan.25k",
+  "id": "h-aeroplan-25k",
+  "state": "confirmed",
+  "valid_from": "2026-09-15",
+  "valid_to": "2027-12-31"
+}

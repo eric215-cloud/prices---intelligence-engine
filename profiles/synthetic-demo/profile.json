@@ -1,0 +1,7 @@
+{
+  "id": "synthetic-demo",
+  "label": "SYNTHETIC demonstration traveller - not a real person",
+  "notes": "Invented holdings used to exercise the software. Nothing here describes Eric.",
+  "owner": "synthetic",
+  "synthetic": true
+}

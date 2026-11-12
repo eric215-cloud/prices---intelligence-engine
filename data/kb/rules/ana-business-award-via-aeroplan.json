@@ -1,0 +1,25 @@
+{
+  "evidence": [
+    "ev-tpg-star-alliance-award-charts",
+    "ev-upgradedpoints-aeroplan-chart-june-2026"
+  ],
+  "id": "ana-business-award-via-aeroplan",
+  "kind": "grants",
+  "open_questions": [
+    "Current price for the relevant distance band has not been read from the official chart"
+  ],
+  "output": "cap.japan-business.ana-via-aeroplan",
+  "restrictions": [
+    "Depends on partner award space",
+    "Current point prices not recorded; a 2026 price increase is reported"
+  ],
+  "summary": "Aeroplan points can book ANA business class to Japan as a Star Alliance partner award, when ANA releases space to partners.",
+  "verification": {
+    "last_verified": "2026-11-12",
+    "review_by": "2027-02-12",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "aeroplan.points"
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "evidence_policy": {
+    "primary_types": [
+      "official"
+    ],
+    "secondary_min": 2,
+    "secondary_types": [
+      "reputable_secondary"
+    ]
+  },
+  "goal_research": [
+    {
+      "applies_dims": [
+        "type"
+      ],
+      "ask": "For each pathway above, search the booking program's own site for the intended dates. Record only options actually seen. Never estimate availability.",
+      "id": "check-live-availability",
+      "record_as": "add_observation (type availability, owner attestation, valid_to = 2 days after the check)"
+    },
+    {
+      "applies_dims": [
+        "type"
+      ],
+      "ask": "Check for current transfer bonuses or award sales that affect the pathways above. Record each with its source URL and end date.",
+      "id": "check-current-promotions",
+      "record_as": "add_observation (type promotion, with the promotion's end date)"
+    },
+    {
+      "applies_dims": [
+        "type"
+      ],
+      "ask": "Find the cash price of the same itinerary so value per point and foregone alternatives can be judged.",
+      "id": "cash-benchmark",
+      "record_as": "note in the goal report only"
+    }
+  ],
+  "promotion_reviewers": [
+    "Eric",
+    "Bradley",
+    "Commissioning build"
+  ],
+  "questions": {
+    "card_statuses": {
+      "applies_to": [
+        "card"
+      ],
+      "ask": "Which elite statuses or memberships does {name} confer, or allow enrollment in? Record enrollment steps and whether the status ends with the card.",
+      "modes": [
+        "forward"
+      ],
+      "queries": [
+        "{name} complimentary elite status",
+        "{name} enrollment required benefits"
+      ]
+    },
+    "combined_with": {
+      "applies_to": [
+        "pair"
+      ],
+      "ask": "Is there any benefit, offer or stacking opportunity that requires or rewards holding both {a} and {b}?",
+      "modes": [
+        "bridge"
+      ],
+      "queries": [
+        "{a} {b} partnership",
+        "{a} and {b} linked benefits"
+      ]
+    },
+    "identify": {
+      "applies_to": [],
+      "ask": "What is {name}? Which program does it belong to, and does it connect to any program already in the knowledge base?",
+      "modes": [
+        "exploratory"
+      ],
+      "queries": [
+        "{name} loyalty program",
+        "{name} status benefits partners"
+      ]
+    },
+    "inbound_paths": {
+      "applies_to": [
+        "status",
+        "benefit",
+        "capability",
+        "currency"
+      ],
+      "ask": "Apart from earning it directly, what routes lead to {name} (matches, challenges, cards, partner tiers, transfers)?",
+      "modes": [
+        "backward",
+        "exploratory"
+      ],
+      "queries": [
+        "how to get {name}",
+        "{name} status match challenge",
+        "{name} shortcut credit card"
+      ]
+    },
+    "partner_benefits": {
+      "applies_to": [
+        "status",
+        "card"
+      ],
+      "ask": "What does {name} unlock outside its own program (lounges, car rental, cruise, casino, rail, retail, partner earning or redemption)?",
+      "modes": [
+        "forward"
+      ],
+      "queries": [
+        "{name} partner benefits",
+        "{name} benefits outside program"
+      ]
+    },
+    "status_match_out": {
+      "applies_to": [
+        "status"
+      ],
+      "ask": "Which other loyalty programs give a status, a status match or a status challenge to holders of {name}? Record eligibility, required linking or registration, how long the result lasts, and what happens if {name} is later lost.",
+      "modes": [
+        "forward"
+      ],
+      "queries": [
+        "{name} status match",
+        "{name} partner airline hotel status",
+        "{name} reciprocal benefits"
+      ]
+    },
+    "transfer_out": {
+      "applies_to": [
+        "currency"
+      ],
+      "ask": "Which programs can {name} be transferred or converted to, at what ratio, with what minimums, limits and transfer time?",
+      "modes": [
+        "forward"
+      ],
+      "queries": [
+        "{name} transfer partners",
+        "{name} convert points ratio"
+      ]
+    }
+  },
+  "seeded_signatures": [
+    "acquire:marriott.titanium->aeroplan.25k",
+    "grants:aeroplan.25k->hyatt.aeroplan_challenge",
+    "acquire:hyatt.aeroplan_challenge+hyatt.challenge_20_nights->hyatt.globalist"
+  ],
+  "tags": {
+    "cabin:business": {
+      "keywords": [
+        "business class",
+        "business-class",
+        "lie-flat"
+      ]
+    },
+    "cabin:economy": {
+      "keywords": [
+        "economy",
+        "coach"
+      ]
+    },
+    "cabin:first": {
+      "keywords": [
+        "first class"
+      ]
+    },
+    "region:japan": {
+      "keywords": [
+        "japan",
+        "tokyo",
+        "osaka",
+        "haneda",
+        "narita"
+      ]
+    },
+    "type:flight": {
+      "keywords": [
+        " fly ",
+        " flying ",
+        " flight"
+      ]
+    },
+    "type:hotel": {
+      "keywords": [
+        "hotel",
+        " stay "
+      ]
+    },
+    "type:status": {
+      "keywords": [
+        "elite status",
+        "status match"
+      ]
+    }
+  },
+  "watchlist": []
+}

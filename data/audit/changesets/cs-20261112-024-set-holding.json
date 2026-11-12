@@ -1,0 +1,24 @@
+{
+  "attestation": {
+    "by": "synthetic",
+    "on": "2026-11-12",
+    "statement": "Invented holding for demonstration."
+  },
+  "author": "claude-fable-5.2 (commissioning build)",
+  "data": {
+    "holding": {
+      "acquired_on": "2026-09-15",
+      "acquired_via": "aeroplan-25k-via-marriott-top-tier",
+      "entity": "aeroplan.25k",
+      "id": "h-aeroplan-25k",
+      "state": "confirmed",
+      "valid_from": "2026-09-15",
+      "valid_to": "2027-12-31"
+    }
+  },
+  "date": "2026-11-12",
+  "id": "cs-20261112-024-set-holding",
+  "op": "set_holding",
+  "profile": "synthetic-acquired",
+  "reason": "Synthetic demo holding"
+}

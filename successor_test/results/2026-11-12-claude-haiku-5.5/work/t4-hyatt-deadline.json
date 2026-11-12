@@ -1,0 +1,28 @@
+{
+  "id": "cs-20261201-004-revise-rule",
+  "op": "revise_rule",
+  "author": "Claude Haiku 5.5",
+  "date": "2026-12-01",
+  "reason": "Hyatt's official offer page now gives a registration deadline of November 30, 2026 and says registration is closed; the rule still had December 31, 2026.",
+  "target": "hyatt-challenge-via-aeroplan-elite",
+  "data": {"set": {
+    "valid_to": "2026-11-30",
+    "restrictions": [
+      "Register by November 30, 2026; the offer page says registration is now closed",
+      "One challenge per calendar year for Aeroplan elites",
+      "Hyatt may withdraw the offer without notice"
+    ],
+    "review_by": "2026-12-31"
+  }},
+  "evidence": [
+    {
+      "id": "ev-hyatt-aeroplan-challenge-offer-20261201",
+      "url": "https://world.hyatt.com/content/gp/en/offers/air-canada-status-challenge.html",
+      "title": "Register to fast-track your status",
+      "publisher": "Hyatt",
+      "source_type": "official",
+      "retrieved_on": "2026-12-01",
+      "summary": "Eligible members are Aeroplan 25K, 35K, 50K, 75K and Super Elite members, and Aeroplan Premium Credit Cardholders, with accounts linked to World of Hyatt. Members must register by November 30, 2026, and the page says registration is now closed. Aeroplan Elite members may use one such offer per calendar year. Hyatt may alter or withdraw the offer at any time without notice."
+    }
+  ]
+}

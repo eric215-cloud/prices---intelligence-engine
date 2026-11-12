@@ -1,0 +1,240 @@
+{
+  "title": "PRICES record schemas (JSON-Schema subset; validated by prices/schema.py)",
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_.-]*$"},
+    "date": {"type": "string", "format": "date"},
+    "date_or_null": {"type": ["string", "null"], "format": "date"},
+    "text": {"type": "string", "minLength": 1},
+
+    "condition": {
+      "x-hint": "a condition must be exactly one of: {\"holds\": id} | {\"metric\": id, \"gte\": number} | {\"all\": [..]} | {\"any\": [..]} | {\"not\": {\"holds\": id}}",
+      "oneOf": [
+        {"type": "object", "required": ["holds"], "additionalProperties": false,
+         "properties": {"holds": {"$ref": "#/$defs/id"}}},
+        {"type": "object", "required": ["metric", "gte"], "additionalProperties": false,
+         "properties": {"metric": {"$ref": "#/$defs/id"}, "gte": {"type": "number"}}},
+        {"type": "object", "required": ["all"], "additionalProperties": false,
+         "properties": {"all": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/condition"}}}},
+        {"type": "object", "required": ["any"], "additionalProperties": false,
+         "properties": {"any": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/condition"}}}},
+        {"type": "object", "required": ["not"], "additionalProperties": false,
+         "properties": {"not": {"type": "object", "required": ["holds"], "additionalProperties": false,
+                                "properties": {"holds": {"$ref": "#/$defs/id"}}}}}
+      ]
+    },
+
+    "entity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "name"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "kind": {"enum": ["program", "card", "currency", "status", "benefit", "action", "capability"]},
+        "name": {"$ref": "#/$defs/text"},
+        "program": {"$ref": "#/$defs/id"},
+        "tags": {"type": "array", "items": {"type": "string"}},
+        "how": {"type": "string"},
+        "economics": {"type": "object"},
+        "notes": {"type": "string"}
+      }
+    },
+
+    "retention": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": {"enum": ["fixed_term", "while_qualified", "unknown"]},
+        "retain_when": {"$ref": "#/$defs/condition"},
+        "note": {"type": "string"}
+      }
+    },
+
+    "verification": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["verified", "unverified", "retired"]},
+        "last_verified": {"$ref": "#/$defs/date"},
+        "review_by": {"$ref": "#/$defs/date"}
+      }
+    },
+
+    "rule": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "output", "when", "summary", "evidence", "verification"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "kind": {"enum": ["grants", "acquire", "transfer"]},
+        "output": {"$ref": "#/$defs/id"},
+        "when": {"$ref": "#/$defs/condition"},
+        "summary": {"$ref": "#/$defs/text"},
+        "retention": {"$ref": "#/$defs/retention"},
+        "transfer": {"type": "object", "additionalProperties": false, "required": ["from"],
+                     "properties": {"from": {"$ref": "#/$defs/id"}, "ratio": {"type": "string"}, "note": {"type": "string"}}},
+        "valid_from": {"$ref": "#/$defs/date"},
+        "valid_to": {"$ref": "#/$defs/date_or_null"},
+        "restrictions": {"type": "array", "items": {"type": "string"}},
+        "open_questions": {"type": "array", "items": {"type": "string"}},
+        "value_note": {"type": "string"},
+        "evidence": {"type": "array", "items": {"$ref": "#/$defs/id"}},
+        "verification": {"$ref": "#/$defs/verification"}
+      }
+    },
+
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "url", "title", "publisher", "source_type", "retrieved_on", "summary"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "url": {"$ref": "#/$defs/text"},
+        "title": {"$ref": "#/$defs/text"},
+        "publisher": {"$ref": "#/$defs/text"},
+        "source_type": {"enum": ["official", "reputable_secondary", "community", "owner_document", "synthetic"]},
+        "retrieved_on": {"$ref": "#/$defs/date"},
+        "summary": {"$ref": "#/$defs/text"},
+        "notes": {"type": "string"}
+      }
+    },
+
+    "holding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "entity", "state"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "entity": {"$ref": "#/$defs/id"},
+        "state": {"enum": ["confirmed", "unconfirmed", "ended"]},
+        "valid_from": {"$ref": "#/$defs/date"},
+        "valid_to": {"$ref": "#/$defs/date_or_null"},
+        "acquired_via": {"$ref": "#/$defs/id"},
+        "acquired_on": {"$ref": "#/$defs/date"},
+        "confirmed_on": {"$ref": "#/$defs/date"},
+        "confirmed_by": {"type": "string"},
+        "quantity": {"type": "number"},
+        "notes": {"type": "string"}
+      }
+    },
+
+    "metric": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "value", "as_of", "state"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "value": {"type": "number"},
+        "as_of": {"$ref": "#/$defs/date"},
+        "state": {"enum": ["confirmed", "unconfirmed"]},
+        "confirmed_by": {"type": "string"},
+        "notes": {"type": "string"}
+      }
+    },
+
+    "profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "label", "synthetic", "owner"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "label": {"$ref": "#/$defs/text"},
+        "synthetic": {"type": "boolean"},
+        "owner": {"$ref": "#/$defs/text"},
+        "valuations": {"type": "object"},
+        "notes": {"type": "string"}
+      }
+    },
+
+    "candidate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "status", "created_on", "proposed_rule", "evidence", "search_path", "open_questions"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "status": {"enum": ["proposed", "promoted", "rejected"]},
+        "created_on": {"$ref": "#/$defs/date"},
+        "run": {"$ref": "#/$defs/id"},
+        "proposed_entities": {"type": "array", "items": {"$ref": "#/$defs/entity"}},
+        "proposed_rule": {
+          "type": "object", "additionalProperties": false,
+          "required": ["id", "kind", "output", "when", "summary"],
+          "properties": {
+            "id": {"$ref": "#/$defs/id"},
+            "kind": {"enum": ["grants", "acquire", "transfer"]},
+            "output": {"$ref": "#/$defs/id"},
+            "when": {"$ref": "#/$defs/condition"},
+            "summary": {"$ref": "#/$defs/text"},
+            "retention": {"$ref": "#/$defs/retention"},
+            "transfer": {"type": "object"},
+            "valid_from": {"$ref": "#/$defs/date"},
+            "valid_to": {"$ref": "#/$defs/date_or_null"},
+            "restrictions": {"type": "array", "items": {"type": "string"}},
+            "value_note": {"type": "string"}
+          }
+        },
+        "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "search_path": {"type": "array", "items": {"type": "string"}},
+        "open_questions": {"type": "array", "items": {"type": "string"}},
+        "mentions": {"type": "array", "items": {"type": "string"}},
+        "review": {"type": "object"}
+      }
+    },
+
+    "observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "type", "summary", "tags", "checked_on", "valid_to", "url", "publisher"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "type": {"enum": ["promotion", "availability"]},
+        "summary": {"$ref": "#/$defs/text"},
+        "tags": {"type": "array", "items": {"type": "string"}},
+        "checked_on": {"$ref": "#/$defs/date"},
+        "valid_from": {"$ref": "#/$defs/date"},
+        "valid_to": {"$ref": "#/$defs/date"},
+        "url": {"$ref": "#/$defs/text"},
+        "publisher": {"$ref": "#/$defs/text"},
+        "confirmed_by": {"type": "string"},
+        "notes": {"type": "string"}
+      }
+    },
+
+    "discovery_run": {
+      "type": "object",
+      "required": ["id", "date", "mode", "profile", "executor", "tasks", "steps", "cells"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "date": {"$ref": "#/$defs/date"},
+        "mode": {"enum": ["forward", "backward", "bridge", "exploratory"]},
+        "profile": {"$ref": "#/$defs/id"},
+        "executor": {"$ref": "#/$defs/text"},
+        "tasks": {"type": "array"},
+        "steps": {"type": "array", "items": {"type": "object", "required": ["query", "finding"]}},
+        "cells": {"type": "array", "items": {
+          "type": "object", "additionalProperties": false, "required": ["cell", "outcome"],
+          "properties": {"cell": {"type": "string"},
+                         "outcome": {"enum": ["found", "nothing_found", "inconclusive"]},
+                         "candidates": {"type": "array", "items": {"$ref": "#/$defs/id"}},
+                         "note": {"type": "string"}}}}
+      }
+    },
+
+    "attestation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["by", "on", "statement"],
+      "properties": {"by": {"$ref": "#/$defs/text"}, "on": {"$ref": "#/$defs/date"}, "statement": {"$ref": "#/$defs/text"}}
+    },
+
+    "changeset": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "op", "author", "date", "reason"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "op": {"enum": ["confirm_rule", "revise_rule", "flag_rule", "retire_rule", "add_evidence",
+                        "add_entity", "add_candidate", "promote_candidate", "reject_candidate",
+                        "set_holding", "end_holding", "set_metric",
+                        "record_discovery_run", "add_observation", "prune_observations"]},
+        "author": {"$ref": "#/$defs/text"},
+        "date": {"$ref": "#/$defs/date"},
+        "reason": {"$ref": "#/$defs/text"},
+        "target": {"$ref": "#/$defs/id"},
+        "profile": {"$ref": "#/$defs/id"},
+        "data": {"type": "object"},
+        "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "attestation": {"$ref": "#/$defs/attestation"}
+      }
+    }
+  }
+}

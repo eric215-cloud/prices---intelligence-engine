@@ -1,0 +1,66 @@
+{
+  "created_on": "2026-11-12",
+  "evidence": [
+    {
+      "id": "ev-omaat-marriott-jal",
+      "publisher": "One Mile at a Time",
+      "retrieved_on": "2026-11-12",
+      "source_type": "reputable_secondary",
+      "summary": "States that Marriott Bonvoy points transfer to JAL Mileage Bank at 3 points per mile, the standard Bonvoy airline ratio.",
+      "title": "Marriott Bonvoy & Japan Airlines Launch Partnership",
+      "url": "https://onemileatatime.com/news/marriott-bonvoy-japan-airlines-partnership/"
+    },
+    {
+      "id": "ev-frequentmiler-marriott-jal",
+      "publisher": "Frequent Miler",
+      "retrieved_on": "2026-11-12",
+      "source_type": "reputable_secondary",
+      "summary": "Reports that the 30,000 or 40,000 FLY ON Points given to Titanium or Ambassador members are enough for Crystal, which equates to oneworld Ruby. Also states the long-standing Marriott to JAL transfer ratio of 3 points per mile, with 5,000 bonus miles per 60,000 points transferred.",
+      "title": "Marriott & Japan Airlines launch deeper partnership",
+      "url": "https://frequentmiler.com/marriott-japan-airlines-launch-deeper-partnership-earn-bonus-points-get-status-match-earn-status-points-more/"
+    }
+  ],
+  "id": "c-jal-miles-from-marriott-points",
+  "mentions": [],
+  "open_questions": [],
+  "proposed_entities": [
+    {
+      "id": "marriott.points",
+      "kind": "currency",
+      "name": "Marriott Bonvoy points",
+      "program": "marriott"
+    },
+    {
+      "id": "jal.miles",
+      "kind": "currency",
+      "name": "JAL Mileage Bank miles",
+      "program": "jal"
+    }
+  ],
+  "proposed_rule": {
+    "id": "jal-miles-from-marriott-points",
+    "kind": "transfer",
+    "output": "jal.miles",
+    "summary": "Marriott Bonvoy points convert to JAL Mileage Bank miles at 3 points per mile.",
+    "transfer": {
+      "from": "marriott.points",
+      "note": "5,000 bonus miles per 60,000 points transferred is reported by one source.",
+      "ratio": "3:1"
+    },
+    "value_note": "A poor ratio next to 1:1 card transfers. Sensible mainly to top up for a specific award.",
+    "when": {
+      "holds": "marriott.points"
+    }
+  },
+  "review": {
+    "decided_by": "Commissioning build",
+    "decided_on": "2026-11-12",
+    "reason": "Two independent reputable secondary sources agree",
+    "rule": "jal-miles-from-marriott-points"
+  },
+  "run": "run-20261112-backward-03",
+  "search_path": [
+    "Marriott Bonvoy Japan Airlines JAL Mileage Bank partnership Crystal status Titanium"
+  ],
+  "status": "promoted"
+}

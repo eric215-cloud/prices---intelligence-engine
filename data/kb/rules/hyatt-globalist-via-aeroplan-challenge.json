@@ -1,0 +1,33 @@
+{
+  "evidence": [
+    "ev-nerdwallet-hyatt-aeroplan-partnership",
+    "ev-vftw-hyatt-globalist-20-nights"
+  ],
+  "id": "hyatt-globalist-via-aeroplan-challenge",
+  "kind": "acquire",
+  "open_questions": [
+    "Validity period of status earned through the challenge",
+    "Which nights count as qualifying (award nights, Guest of Honor, etc.)"
+  ],
+  "output": "hyatt.globalist",
+  "retention": {
+    "mode": "unknown",
+    "note": "How long challenge-earned status lasts was not established from the sources read."
+  },
+  "summary": "Completing 20 qualifying Hyatt nights within the 90-day challenge window earns Globalist (10 nights earns Explorist, 4 earns Discoverist).",
+  "verification": {
+    "last_verified": "2026-11-12",
+    "review_by": "2026-12-20",
+    "status": "verified"
+  },
+  "when": {
+    "all": [
+      {
+        "holds": "hyatt.aeroplan_challenge"
+      },
+      {
+        "holds": "hyatt.challenge_20_nights"
+      }
+    ]
+  }
+}

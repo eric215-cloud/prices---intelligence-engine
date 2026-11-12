@@ -1,0 +1,10 @@
+{
+  "confirmed_by": "synthetic",
+  "confirmed_on": "2026-11-12",
+  "entity": "hyatt.link_aeroplan",
+  "id": "h-hyatt-link",
+  "notes": "Registered 2026-10-01; 90-day window.",
+  "state": "confirmed",
+  "valid_from": "2026-10-01",
+  "valid_to": "2026-12-30"
+}

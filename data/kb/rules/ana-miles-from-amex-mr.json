@@ -1,0 +1,26 @@
+{
+  "evidence": [
+    "ev-nerdwallet-amex-transfer-partners",
+    "ev-pointme-amex-transfer-partners"
+  ],
+  "id": "ana-miles-from-amex-mr",
+  "kind": "transfer",
+  "open_questions": [
+    "No official American Express page was read"
+  ],
+  "output": "ana.miles",
+  "summary": "American Express Membership Rewards points transfer to ANA Mileage Club at 1:1.",
+  "transfer": {
+    "from": "amex.mr",
+    "note": "Reported to take up to about 72 hours.",
+    "ratio": "1:1"
+  },
+  "verification": {
+    "last_verified": "2026-11-12",
+    "review_by": "2027-02-12",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "amex.mr"
+  }
+}

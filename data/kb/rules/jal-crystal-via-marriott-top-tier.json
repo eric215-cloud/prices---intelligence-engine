@@ -1,0 +1,42 @@
+{
+  "evidence": [
+    "ev-jal-marriott-status-match-page",
+    "ev-princeoftravel-marriott-jal",
+    "ev-frequentmiler-marriott-jal"
+  ],
+  "id": "jal-crystal-via-marriott-top-tier",
+  "kind": "acquire",
+  "open_questions": [
+    "Exact FLY ON Points threshold for Crystal and whether partner-credited points fully count (two secondary sources say 30,000 is enough)",
+    "Validity period of Crystal reached through the partnership",
+    "Whether a new JAL account can be created at the time of linking"
+  ],
+  "output": "jal.crystal",
+  "restrictions": [
+    "Account link is one-to-one and cannot be changed afterwards",
+    "Points take up to about 6 weeks after linking",
+    "Crystal depends on accumulated FLY ON Points, not on the link alone"
+  ],
+  "retention": {
+    "mode": "unknown",
+    "note": "Annual points follow the Marriott tier held each year. How long Crystal reached this way lasts, and whether it survives loss of the Marriott tier mid-year, is not stated officially."
+  },
+  "summary": "Marriott Titanium or Ambassador Elite members who link their Marriott Bonvoy and JAL Mileage Bank accounts receive 30,000 or 40,000 FLY ON Points a year and reach JAL Crystal (or higher) on accumulated points.",
+  "valid_from": "2026-07-14",
+  "value_note": "Crystal carries oneworld Ruby. Useful on JAL and oneworld flights in economy; largely redundant when already flying business class.",
+  "verification": {
+    "last_verified": "2026-11-12",
+    "review_by": "2027-05-12",
+    "status": "verified"
+  },
+  "when": {
+    "any": [
+      {
+        "holds": "marriott.titanium"
+      },
+      {
+        "holds": "marriott.ambassador"
+      }
+    ]
+  }
+}

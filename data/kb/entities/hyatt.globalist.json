@@ -1,0 +1,10 @@
+{
+  "id": "hyatt.globalist",
+  "kind": "status",
+  "name": "World of Hyatt Globalist",
+  "program": "hyatt",
+  "tags": [
+    "type:hotel",
+    "type:status"
+  ]
+}

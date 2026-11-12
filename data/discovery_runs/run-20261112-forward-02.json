@@ -1,0 +1,61 @@
+{
+  "cells": [
+    {
+      "candidates": [
+        "c-oneworld-ruby-via-jal-crystal"
+      ],
+      "cell": "jal.crystal|status_match_out",
+      "note": "Only the alliance tier mapping was researched.",
+      "outcome": "found"
+    }
+  ],
+  "date": "2026-11-12",
+  "executor": "claude-fable-5.2 (commissioning build)",
+  "extraction": "One candidate: c-oneworld-ruby-via-jal-crystal, supported by two official JAL pages.",
+  "id": "run-20261112-forward-02",
+  "mentions": [
+    "JAL Global Club"
+  ],
+  "mode": "forward",
+  "profile": "synthetic-demo",
+  "steps": [
+    {
+      "finding": "Two official JAL pages state that FLY ON Crystal corresponds to oneworld Ruby. JAL Global Club members are a special case (Sapphire).",
+      "query": "JAL Mileage Bank FLY ON status Crystal oneworld Ruby benefits official",
+      "sources_seen": [
+        "jal.co.jp (several pages)",
+        "frequentmiler.com",
+        "milestalk.com"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "ask": "Which other loyalty programs give a status, a status match or a status challenge to holders of JAL Mileage Bank FLY ON Crystal? Record eligibility, required linking or registration, how long the result lasts, and what happens if JAL Mileage Bank FLY ON Crystal is later lost.",
+      "cell": "jal.crystal|status_match_out",
+      "mode": "forward",
+      "output": "For each relationship found: one add_candidate changeset. Then exactly one record_discovery_run changeset listing every cell investigated, including cells where nothing was found. See docs/DISCOVERY.md.",
+      "priority": 25,
+      "question": "status_match_out",
+      "suggested_queries": [
+        "JAL Mileage Bank FLY ON Crystal status match",
+        "JAL Mileage Bank FLY ON Crystal partner airline hotel status",
+        "JAL Mileage Bank FLY ON Crystal reciprocal benefits"
+      ],
+      "task_id": "forward:jal.crystal|status_match_out",
+      "why": "jal.crystal is CONDITIONAL; cell never investigated"
+    }
+  ],
+  "tasks_not_executed": [
+    "marriott.titanium|partner_benefits",
+    "aeroplan.25k|partner_benefits",
+    "aeroplan.25k|status_match_out",
+    "hyatt.globalist|partner_benefits",
+    "hyatt.globalist|status_match_out",
+    "jal.crystal|partner_benefits"
+  ],
+  "verification": [
+    "Novelty check: {\"signature\": \"grants:jal.crystal->oneworld.ruby\", \"novel\": true, \"reasons\": []}",
+    "This cell only existed because run 1's promoted rule made jal.crystal reachable: the planner extended the frontier by itself."
+  ]
+}

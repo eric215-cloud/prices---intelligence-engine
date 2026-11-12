@@ -1,0 +1,35 @@
+{
+  "evidence": [
+    "ev-hyatt-aeroplan-challenge-offer-page"
+  ],
+  "id": "hyatt-challenge-via-aeroplan-elite",
+  "kind": "grants",
+  "open_questions": [
+    "Is Aeroplan status obtained through the Marriott match accepted? Official terms list tiers only; one secondary source believes it is.",
+    "Will the offer be renewed for 2027?"
+  ],
+  "output": "hyatt.aeroplan_challenge",
+  "restrictions": [
+    "Register by December 31, 2026",
+    "One challenge per calendar year for Aeroplan elites",
+    "Hyatt may withdraw the offer without notice"
+  ],
+  "summary": "Aeroplan elite members (25K and above) with linked accounts can register for a 90-day World of Hyatt status challenge with reduced night requirements.",
+  "valid_to": "2026-12-31",
+  "value_note": "Only modelled for Aeroplan 25K; higher Aeroplan tiers and premium cardholders also qualify but are not yet entities.",
+  "verification": {
+    "last_verified": "2026-11-12",
+    "review_by": "2026-12-20",
+    "status": "verified"
+  },
+  "when": {
+    "all": [
+      {
+        "holds": "aeroplan.25k"
+      },
+      {
+        "holds": "hyatt.link_aeroplan"
+      }
+    ]
+  }
+}

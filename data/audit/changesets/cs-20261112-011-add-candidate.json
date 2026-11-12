@@ -1,0 +1,80 @@
+{
+  "author": "claude-fable-5.2 (commissioning build)",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-12",
+      "evidence": [
+        {
+          "id": "ev-tpg-star-alliance-award-charts",
+          "notes": "Article predates 2026; the prices it quotes are out of date and are deliberately not recorded.",
+          "publisher": "The Points Guy",
+          "retrieved_on": "2026-11-12",
+          "source_type": "reputable_secondary",
+          "summary": "Describes ANA business class as bookable with Aeroplan points as a Star Alliance partner award.",
+          "title": "Comparing Star Alliance award charts",
+          "url": "https://thepointsguy.com/guide/comparing-star-alliance-award-charts"
+        },
+        {
+          "id": "ev-upgradedpoints-aeroplan-chart-june-2026",
+          "publisher": "Upgraded Points",
+          "retrieved_on": "2026-11-12",
+          "source_type": "reputable_secondary",
+          "summary": "Reports a 2026 increase in Aeroplan partner business-class prices between North America and the Pacific zone, naming ANA among the partners on those routings.",
+          "title": "Air Canada Aeroplan award chart changes (June 2026)",
+          "url": "https://upgradedpoints.com/news/air-canada-aeroplan-award-charts-june-2026"
+        }
+      ],
+      "id": "c-ana-business-award-via-aeroplan",
+      "mentions": [],
+      "open_questions": [
+        "Current price for the relevant distance band has not been read from the official chart"
+      ],
+      "proposed_entities": [
+        {
+          "id": "aeroplan.points",
+          "kind": "currency",
+          "name": "Aeroplan points",
+          "program": "aeroplan"
+        },
+        {
+          "economics": {
+            "cash": "Aeroplan charges taxes and a partner booking fee; amount not recorded.",
+            "points_price": "Not recorded. A 2026 increase to partner business-class pricing on Pacific routes is reported; read the current Aeroplan Flight Reward Chart.",
+            "risk": "Partner award space on ANA is limited and unpredictable.",
+            "time": "Aeroplan transfers from Membership Rewards are reported as near-instant."
+          },
+          "id": "cap.japan-business.ana-via-aeroplan",
+          "kind": "capability",
+          "name": "ANA business class award to Japan, booked with Aeroplan points",
+          "tags": [
+            "region:japan",
+            "cabin:business",
+            "type:flight"
+          ]
+        }
+      ],
+      "proposed_rule": {
+        "id": "ana-business-award-via-aeroplan",
+        "kind": "grants",
+        "output": "cap.japan-business.ana-via-aeroplan",
+        "restrictions": [
+          "Depends on partner award space",
+          "Current point prices not recorded; a 2026 price increase is reported"
+        ],
+        "summary": "Aeroplan points can book ANA business class to Japan as a Star Alliance partner award, when ANA releases space to partners.",
+        "when": {
+          "holds": "aeroplan.points"
+        }
+      },
+      "run": "run-20261112-backward-03",
+      "search_path": [
+        "Aeroplan flight reward chart North America Pacific business class partner points ANA"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-12",
+  "id": "cs-20261112-011-add-candidate",
+  "op": "add_candidate",
+  "reason": "Enduring finding from research for the goal 'business class to Japan'"
+}

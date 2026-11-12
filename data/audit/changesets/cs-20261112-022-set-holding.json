@@ -1,0 +1,21 @@
+{
+  "attestation": {
+    "by": "synthetic",
+    "on": "2026-11-12",
+    "statement": "Invented holding for demonstration."
+  },
+  "author": "claude-fable-5.2 (commissioning build)",
+  "data": {
+    "holding": {
+      "entity": "amex.mr",
+      "id": "h-amex-mr",
+      "quantity": 150000,
+      "state": "confirmed"
+    }
+  },
+  "date": "2026-11-12",
+  "id": "cs-20261112-022-set-holding",
+  "op": "set_holding",
+  "profile": "synthetic-demo",
+  "reason": "Synthetic demo holding"
+}

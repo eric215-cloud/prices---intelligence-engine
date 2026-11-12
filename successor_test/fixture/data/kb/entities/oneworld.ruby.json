@@ -1,0 +1,9 @@
+{
+  "id": "oneworld.ruby",
+  "kind": "status",
+  "name": "oneworld Ruby",
+  "program": "oneworld",
+  "tags": [
+    "type:status"
+  ]
+}

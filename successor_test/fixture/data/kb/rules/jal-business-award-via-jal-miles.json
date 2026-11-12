@@ -1,0 +1,23 @@
+{
+  "evidence": [
+    "ev-awardwallet-jal-award-sale-oct-2026",
+    "ev-travelingformiles-jal-mileage-bank-rules"
+  ],
+  "id": "jal-business-award-via-jal-miles",
+  "kind": "grants",
+  "output": "cap.japan-business.jal-via-jal-miles",
+  "restrictions": [
+    "JAL account must be open 60 days before the first redemption",
+    "Awards cannot be changed after booking",
+    "Restrictions apply to whom an award can be booked for"
+  ],
+  "summary": "JAL Mileage Bank miles can be redeemed for JAL-operated flights to Japan, including business class, when award space exists.",
+  "verification": {
+    "last_verified": "2026-11-12",
+    "review_by": "2027-02-12",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "jal.miles"
+  }
+}

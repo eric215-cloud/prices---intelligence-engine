@@ -1,0 +1,7 @@
+{
+  "id": "synthetic-acquired",
+  "label": "SYNTHETIC traveller who has already taken the Aeroplan match - not a real person",
+  "notes": "Used to show what happens to an already-acquired status when its source lapses. Nothing here describes Eric.",
+  "owner": "synthetic",
+  "synthetic": true
+}

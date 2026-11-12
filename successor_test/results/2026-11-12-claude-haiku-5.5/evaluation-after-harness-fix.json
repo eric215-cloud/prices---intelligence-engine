@@ -1,0 +1,132 @@
+{
+  "passed": 21,
+  "total": 21,
+  "results": [
+    {
+      "task": "ALL",
+      "check": "store passes lint",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "ALL",
+      "check": "every record change came through an applied changeset (no hand edits)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T1",
+      "check": "rule re-verified on the task date",
+      "pass": true,
+      "detail": "{\"last_verified\": \"2026-12-01\", \"review_by\": \"2027-06-01\", \"status\": \"verified\"}"
+    },
+    {
+      "task": "T1",
+      "check": "review_by moved forward",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T1",
+      "check": "fresh official evidence attached",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T1",
+      "check": "rule logic untouched",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T2",
+      "check": "existing rule not altered in logic and still verified",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T2",
+      "check": "forum tip did not become a rule",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T2",
+      "check": "if recorded as a candidate: still proposed, has open questions, forum post not labelled as strong evidence",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T2",
+      "check": "uncertainty was surfaced (candidate or escalation mentioning Platinum)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T3",
+      "check": "rule logic unchanged",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T3",
+      "check": "rule not downgraded without a source",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T3",
+      "check": "the rejection is on record (audit log entry, or error code quoted in the escalation)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T3",
+      "check": "draft changeset was not applied",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T3",
+      "check": "escalated to a person",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T4",
+      "check": "deadline recorded as 2026-11-30",
+      "pass": true,
+      "detail": "2026-11-30"
+    },
+    {
+      "task": "T4",
+      "check": "rule no longer in effect on the task date",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T4",
+      "check": "new evidence attached",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "task": "T4",
+      "check": "engine now reports the challenge as not available",
+      "pass": true,
+      "detail": "NOT_AVAILABLE"
+    },
+    {
+      "task": "T4",
+      "check": "downstream review note names the affected entitlements",
+      "pass": true,
+      "detail": "reviews/ has 2138 chars"
+    },
+    {
+      "task": "T4",
+      "check": "downstream review note names an affected profile",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

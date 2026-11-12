@@ -1,0 +1,84 @@
+{
+  "cells": [
+    {
+      "candidates": [
+        "c-jal-crystal-via-marriott-top-tier",
+        "c-united-silver-via-marriott-top-tier"
+      ],
+      "cell": "marriott.titanium|status_match_out",
+      "note": "Also re-confirmed the seeded Aeroplan 25K match. Hotel-to-hotel matches out of Titanium were not searched.",
+      "outcome": "found"
+    }
+  ],
+  "date": "2026-11-12",
+  "executor": "claude-fable-5.2 (commissioning build)",
+  "extraction": "Two candidates written: c-jal-crystal-via-marriott-top-tier (official + two secondary sources) and c-united-silver-via-marriott-top-tier (two secondary sources only, no official page read).",
+  "id": "run-20261112-forward-01",
+  "mentions": [
+    "Hertz President's Circle"
+  ],
+  "mode": "forward",
+  "profile": "synthetic-demo",
+  "steps": [
+    {
+      "finding": "Besides the seeded Aeroplan 25K match, sources name two further statuses reachable from Titanium: United Premier Silver (RewardsPlus) and Japan Airlines Crystal (new partnership).",
+      "query": "Marriott Bonvoy Titanium Elite status match",
+      "sources_seen": [
+        "nerdwallet.com",
+        "thepointsguy.com",
+        "princeoftravel.com",
+        "insideflyer.com",
+        "monkeymiles.boardingarea.com",
+        "milesopedia.com"
+      ]
+    },
+    {
+      "finding": "Partnership launched July 14, 2026. An official JAL page exists. Titanium gets 30,000 FLY ON Points a year, Ambassador 40,000, plus Crystal or above.",
+      "query": "Marriott Bonvoy Japan Airlines JAL Mileage Bank partnership Crystal status Titanium",
+      "sources_seen": [
+        "jal.co.jp",
+        "businesstraveller.com",
+        "princeoftravel.com",
+        "frequentmiler.com",
+        "onemileatatime.com",
+        "milestalk.com"
+      ]
+    },
+    {
+      "finding": "Official terms read. Confirmed tiers and linking steps. Corrected one thing the secondary coverage blurs: Crystal is earned on accumulated FLY ON Points, not granted automatically. Validity and threshold are not stated; recorded as open questions.",
+      "query": "fetch https://www.jal.co.jp/jp/en/jmb/marriott-status/index.html",
+      "sources_seen": [
+        "jal.co.jp"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "ask": "Which other loyalty programs give a status, a status match or a status challenge to holders of Marriott Bonvoy Titanium Elite? Record eligibility, required linking or registration, how long the result lasts, and what happens if Marriott Bonvoy Titanium Elite is later lost.",
+      "cell": "marriott.titanium|status_match_out",
+      "mode": "forward",
+      "output": "For each relationship found: one add_candidate changeset. Then exactly one record_discovery_run changeset listing every cell investigated, including cells where nothing was found. See docs/DISCOVERY.md.",
+      "priority": 35,
+      "question": "status_match_out",
+      "suggested_queries": [
+        "Marriott Bonvoy Titanium Elite status match",
+        "Marriott Bonvoy Titanium Elite partner airline hotel status",
+        "Marriott Bonvoy Titanium Elite reciprocal benefits"
+      ],
+      "task_id": "forward:marriott.titanium|status_match_out",
+      "why": "marriott.titanium is ESTABLISHED; cell never investigated"
+    }
+  ],
+  "tasks_not_executed": [
+    "marriott.titanium|partner_benefits",
+    "aeroplan.25k|partner_benefits",
+    "aeroplan.25k|status_match_out",
+    "hyatt.globalist|partner_benefits",
+    "hyatt.globalist|status_match_out"
+  ],
+  "verification": [
+    "Novelty check on c-jal-crystal-via-marriott-top-tier: {\"signature\": \"acquire:marriott.ambassador+marriott.titanium->jal.crystal\", \"novel\": true, \"reasons\": []}",
+    "Official page fetched separately from the search that surfaced the lead; rule wording follows the official page where it differs from secondary coverage.",
+    "The partnership postdates the building model's own knowledge (launched July 14, 2026), so it could only have come from the search."
+  ]
+}

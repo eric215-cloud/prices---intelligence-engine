@@ -1,0 +1,16 @@
+{
+  "attestation": {
+    "by": "Commissioning build",
+    "on": "2026-11-12",
+    "statement": "Read the cited sources in this session; the rule states only what they support. Open questions are carried on the rule. Not yet spot-checked by a person."
+  },
+  "author": "claude-fable-5.2 (commissioning build)",
+  "data": {
+    "review_by": "2027-11-12"
+  },
+  "date": "2026-11-12",
+  "id": "cs-20261112-007-promote-candidate",
+  "op": "promote_candidate",
+  "reason": "Two official JAL pages agree",
+  "target": "c-oneworld-ruby-via-jal-crystal"
+}

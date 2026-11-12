@@ -1,0 +1,16 @@
+{
+  "economics": {
+    "cash": "Aeroplan charges taxes and a partner booking fee; amount not recorded.",
+    "points_price": "Not recorded. A 2026 increase to partner business-class pricing on Pacific routes is reported; read the current Aeroplan Flight Reward Chart.",
+    "risk": "Partner award space on ANA is limited and unpredictable.",
+    "time": "Aeroplan transfers from Membership Rewards are reported as near-instant."
+  },
+  "id": "cap.japan-business.ana-via-aeroplan",
+  "kind": "capability",
+  "name": "ANA business class award to Japan, booked with Aeroplan points",
+  "tags": [
+    "region:japan",
+    "cabin:business",
+    "type:flight"
+  ]
+}

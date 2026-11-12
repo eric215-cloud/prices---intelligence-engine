@@ -1,0 +1,10 @@
+{
+  "id": "hyatt.aeroplan_challenge",
+  "kind": "benefit",
+  "name": "World of Hyatt 90-day status challenge for Aeroplan elites (reduced nights)",
+  "program": "hyatt",
+  "tags": [
+    "type:hotel",
+    "type:status"
+  ]
+}
