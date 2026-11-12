@@ -1,0 +1,23 @@
+{
+  "attestation": {
+    "by": "Eric",
+    "on": "2026-11-11",
+    "statement": "I logged into my Air Canada app, which instantly recognized my Marriott titanium and gave me the 25K status. Now I'm registered for the 1.5 on Hyatt and those accounts are linked also."
+  },
+  "author": "Bradley (Chief PRICES Specialist)",
+  "data": {
+    "holding": {
+      "acquired_on": "2026-11-11",
+      "acquired_via": "aeroplan-25k-via-marriott-top-tier",
+      "entity": "aeroplan.25k",
+      "id": "h-eric-aeroplan-25k",
+      "notes": "Expiry not independently confirmed. Must confirm in Aeroplan account; do not assume retention after Marriott expiry.",
+      "state": "confirmed"
+    }
+  },
+  "date": "2026-11-12",
+  "id": "cs-20261112-102-set-holding",
+  "op": "set_holding",
+  "profile": "eric",
+  "reason": "Record Eric's first-person confirmation that Aeroplan 25K was activated via Marriott Titanium on November 11, 2026."
+}

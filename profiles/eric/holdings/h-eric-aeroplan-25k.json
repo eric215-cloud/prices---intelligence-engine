@@ -1,0 +1,10 @@
+{
+  "acquired_on": "2026-11-11",
+  "acquired_via": "aeroplan-25k-via-marriott-top-tier",
+  "confirmed_by": "Eric",
+  "confirmed_on": "2026-11-11",
+  "entity": "aeroplan.25k",
+  "id": "h-eric-aeroplan-25k",
+  "notes": "Expiry not independently confirmed. Must confirm in Aeroplan account; do not assume retention after Marriott expiry.",
+  "state": "confirmed"
+}

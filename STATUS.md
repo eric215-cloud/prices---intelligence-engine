@@ -38,8 +38,8 @@ Built in one session by Claude Fable 5.2 (commissioning build). This report sepa
 - **Reviewer and owner controls are procedural.** The program checks the name on an attestation; it cannot check who typed it.
 
 ### Blocked
-- **Eric's holdings.** `profiles/eric/` is empty. Nothing in any output describes Eric. Blocked on him supplying and confirming holdings.
-- **Persistence between sessions.** This build environment does not keep files after the session. The exported zip is the durable copy. A private git repository would be better; none was created because that needs authorization.
+- **Remaining Eric holdings.** Two owner-confirmed real statuses (Marriott Titanium, Aeroplan 25K) were imported November 12. The rest of Eric's ecosystem remains to be reconciled and loaded; a two-record profile is not complete.
+- **Persistence between sessions.** The complete project and subsequent audited changes are preserved in Eric's private GitHub repository; the original exported ZIP remains a separate baseline.
 - **Live award availability and targeted offers.** Not obtainable without logged-in sessions, which the system must not hold.
 
 ### Untested
@@ -61,6 +61,6 @@ None are built in. No subscription, hosting or API is required to run, test, que
 
 ## Open items a person should decide
 1. Spot-check the 10 rules, then remove "Commissioning build" from `promotion_reviewers` in `data/kb/vocab.json`.
-2. Supply and attest holdings for `profiles/eric/` (OP-07).
+2. Reconcile and record the remaining holdings in `profiles/eric/` through owner attestations (OP-07).
 3. Choose where the repository lives.
 4. Decide on candidate `c-united-silver-via-marriott-top-tier` (secondary sources only) and `c-ana-business-award-via-ana-miles` (one source).

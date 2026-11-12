@@ -1,0 +1,22 @@
+{
+  "attestation": {
+    "by": "Eric",
+    "on": "2026-11-11",
+    "statement": "I logged into my Air Canada app, which instantly recognized my Marriott titanium and gave me the 25K status."
+  },
+  "author": "Bradley (Chief PRICES Specialist)",
+  "data": {
+    "holding": {
+      "entity": "marriott.titanium",
+      "id": "h-eric-marriott-titanium",
+      "notes": "Owner directly confirmed Titanium on 2026-11-11; expiration supplied by EEP last updated November 2026, independently recheck at renewal.",
+      "state": "confirmed",
+      "valid_to": "2027-01-31"
+    }
+  },
+  "date": "2026-11-12",
+  "id": "cs-20261112-101-set-holding",
+  "op": "set_holding",
+  "profile": "eric",
+  "reason": "Record Eric's first-person confirmation of holding Marriott Titanium, EEP expiration dated January 31, 2027."
+}

@@ -60,4 +60,4 @@ Add `--json` before the command name for machine-readable output: `python3 -m pr
 
 ## Putting real data in
 
-`profiles/eric/` has no holdings. Nothing the program prints is a statement about Eric until holdings are added through `set_holding` changesets carrying his own attestation (operation card OP-07). The knowledge base holds 10 rules, enough to exercise the software, not a survey of the loyalty world.
+`profiles/eric/` contains two owner-confirmed status holdings as of 2026-11-12: Marriott Titanium and Aeroplan 25K. Other holdings have not yet been loaded. Real records enter through `set_holding` changesets with Eric's own attestation (operation card OP-07). The knowledge base holds 10 rules, enough to exercise the software, not a survey of the loyalty world.
