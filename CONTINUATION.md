@@ -2,6 +2,10 @@
 
 Update this file at the end of every work session. Last updated 2026-11-12 by Bradley after initial confirmed-status import.
 
+## Coordinator continuity
+
+For project leadership, architecture decisions, model responsibilities, office-move resilience, and unresolved coordination decisions, read `docs/coordination/BRADLEY_COORDINATOR_STATE.md` before resuming substantive PRICES work.
+
 ## What exists
 A working, tested foundation: eligibility engine, validation, changeset pipeline, discovery planners, goal reports, maintainer procedures, successor-test harness. 10 researched rules. Two synthetic profiles. An empty profile for Eric. Details: `STATUS.md`. Design: `docs/ARCHITECTURE.md`.
 
