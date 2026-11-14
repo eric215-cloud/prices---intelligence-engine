@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-08-add-entity",
+  "records": {
+    "data/kb/entities/benefit.orbit-summit.lounge-day-pass.json": {
+      "after": "67e5e0c9d71f9465",
+      "before": null
+    }
+  }
+}

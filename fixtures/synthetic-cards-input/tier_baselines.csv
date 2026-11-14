@@ -1,0 +1,4 @@
+id,tier,benefit,=benefit_name,summary,restrictions,valid_from,valid_to,evidence,review_by,=state,=last_verified,_action,ended_on
+baseline.orbit-summit.rental-cover,tier.orbit-summit,benefit.orbit-summit.rental-cover,,"Orbit advertises secondary rental car cover up to 50,000 for Summit cards.",Secondary to other insurance | Rentals up to 15 days,,,ev-syn-orbit-summit-benefits,,,,,
+baseline.orbit-summit.phone-protection,tier.orbit-summit,benefit.orbit-summit.phone-protection,,Orbit advertises phone protection up to 800 per claim for Summit cards.,Two claims per year,,,ev-syn-orbit-summit-benefits,,,,,
+baseline.orbit-summit.lounge-day-pass,tier.orbit-summit,benefit.orbit-summit.lounge-day-pass,,Orbit advertises one airport lounge day pass a year for Summit cards.,,,,ev-syn-orbit-summit-benefits,,,,,

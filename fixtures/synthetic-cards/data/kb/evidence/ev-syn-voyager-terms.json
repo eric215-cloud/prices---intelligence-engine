@@ -1,0 +1,13 @@
+{
+  "applies_to": [
+    "card.northwind-voyager"
+  ],
+  "id": "ev-syn-voyager-terms",
+  "notes": "Invented for testing.",
+  "publisher": "Northwind Bank (synthetic)",
+  "retrieved_on": "2026-11-14",
+  "source_type": "synthetic",
+  "summary": "Names the issuer, network and network tier of the card and its annual fee.",
+  "title": "Northwind Voyager pricing and terms",
+  "url": "https://example.invalid/northwind/voyager-terms"
+}

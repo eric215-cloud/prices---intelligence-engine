@@ -1,0 +1,3 @@
+profile,owner,synthetic,entity,name,kind,state,valid_from,valid_to,acquired_via,quantity
+synthetic-alex,Alex (synthetic),yes,card.northwind-voyager,Northwind Voyager (synthetic),card,confirmed,2026-01-01,,,
+synthetic-blake,Blake (synthetic),yes,card.halcyon-kestrel,Halcyon Kestrel (synthetic),card,confirmed,2026-01-01,,,

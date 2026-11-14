@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-20-add-candidate",
+  "records": {
+    "data/candidates/c-voyager.primary-rental-cover.json": {
+      "after": "e70e6f71eecbf5f0",
+      "before": null
+    }
+  }
+}

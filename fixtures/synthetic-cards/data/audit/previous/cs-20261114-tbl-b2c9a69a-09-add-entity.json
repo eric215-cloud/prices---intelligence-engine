@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-09-add-entity",
+  "records": {
+    "data/kb/entities/benefit.orbit-summit.phone-protection.json": {
+      "after": "e730cda98e73107a",
+      "before": null
+    }
+  }
+}

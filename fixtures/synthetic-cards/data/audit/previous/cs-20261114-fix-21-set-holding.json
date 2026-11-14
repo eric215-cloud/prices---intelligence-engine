@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-fix-21-set-holding",
+  "records": {
+    "profiles/synthetic-alex/holdings/h-card-northwind-voyager.json": {
+      "after": "e4e1725e126b9b67",
+      "before": null
+    }
+  }
+}

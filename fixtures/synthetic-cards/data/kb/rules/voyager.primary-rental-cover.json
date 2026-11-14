@@ -1,0 +1,20 @@
+{
+  "evidence": [
+    "ev-syn-voyager-guide"
+  ],
+  "id": "voyager.primary-rental-cover",
+  "kind": "grants",
+  "output": "benefit.voyager.primary-rental-cover",
+  "restrictions": [
+    "Rentals up to 31 days"
+  ],
+  "summary": "Primary rental car cover up to 75,000.",
+  "verification": {
+    "last_verified": "2026-11-14",
+    "review_by": "2027-05-14",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.northwind-voyager"
+  }
+}

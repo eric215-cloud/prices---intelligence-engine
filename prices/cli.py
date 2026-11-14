@@ -205,7 +205,7 @@ def cmd_cards(args):
             for role in ("issuer", "program_manager", "capital_provider", "cobrand_partner", "network", "network_tier"):
                 print("      %-17s %s" % (role, c[role]))
             fee = c["annual_fee_usd"]
-            print("      %-17s %s" % ("annual_fee_usd", "(not recorded)" if fee is None else fee))
+            print("      %-17s %s" % ("annual_fee_usd", "(not recorded)" if fee is None else ("%g" % fee)))
             print("      %-17s %s" % ("sources", ", ".join(c["sources"]) or "(none)"))
         who = " held by %s" % o["profile"] if o["profile"] else ""
         print("\nBENEFIT APPLICABILITY%s, as of %s" % (who, o["as_of"]))

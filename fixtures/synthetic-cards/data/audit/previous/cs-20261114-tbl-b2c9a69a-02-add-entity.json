@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-02-add-entity",
+  "records": {
+    "data/kb/entities/org.ledgerline.json": {
+      "after": "fcb7e1d996fb3dc5",
+      "before": null
+    }
+  }
+}

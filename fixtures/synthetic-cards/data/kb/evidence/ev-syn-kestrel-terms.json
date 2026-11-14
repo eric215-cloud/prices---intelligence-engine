@@ -1,0 +1,13 @@
+{
+  "applies_to": [
+    "card.halcyon-kestrel"
+  ],
+  "id": "ev-syn-kestrel-terms",
+  "notes": "Invented for testing.",
+  "publisher": "Tidewater Bank (synthetic)",
+  "retrieved_on": "2026-11-14",
+  "source_type": "synthetic",
+  "summary": "Names the issuer, program manager, co-brand partner, network and network tier of the card and its annual fee.",
+  "title": "Halcyon Kestrel pricing and terms",
+  "url": "https://example.invalid/tidewater/kestrel-terms"
+}

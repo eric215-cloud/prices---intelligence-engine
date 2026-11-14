@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-06-add-entity",
+  "records": {
+    "data/kb/entities/org.tidewater-bank.json": {
+      "after": "642ed7a4ac51474c",
+      "before": null
+    }
+  }
+}

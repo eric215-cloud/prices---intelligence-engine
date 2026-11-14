@@ -1,0 +1,14 @@
+{
+  "files": {
+    "benefits.csv": "0548be5f10936f35",
+    "card_benefits.csv": "24db8d626cce9083",
+    "cards.csv": "8d68952a54d2e734",
+    "parties.csv": "a3cf61c391c9a85e",
+    "sources.csv": "85d0705cc725f0cf",
+    "tier_baselines.csv": "3197c9b1abc56b0e",
+    "view_applicability.csv": "a3ad0c1b9cad8d88",
+    "view_holdings.csv": "8d166a14dd1f59f8"
+  },
+  "format": 1,
+  "note": "Written by `python3 -m prices tables export`. Do not edit. The JSON store under data/ is the system of record; these CSV files are a view of it and an input to `tables import`."
+}

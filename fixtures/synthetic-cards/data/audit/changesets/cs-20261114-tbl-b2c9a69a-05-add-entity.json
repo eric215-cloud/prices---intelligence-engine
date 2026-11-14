@@ -1,0 +1,14 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "id": "org.orbit",
+      "kind": "organization",
+      "name": "Orbit Payments (synthetic network)"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-b2c9a69a-05-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: parties row org.orbit"
+}

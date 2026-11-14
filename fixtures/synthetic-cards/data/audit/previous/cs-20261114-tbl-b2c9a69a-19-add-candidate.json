@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-19-add-candidate",
+  "records": {
+    "data/candidates/c-voyager.phone-protection.json": {
+      "after": "519f19feeac46dcb",
+      "before": null
+    }
+  }
+}

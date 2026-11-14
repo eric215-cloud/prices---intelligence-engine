@@ -456,7 +456,7 @@ def plan(store, root, tdir, author, date):
         return fail(errs)
 
     # ---- give ids, then prove the whole batch against the pipeline, in memory
-    digest = hashlib.sha256()
+    digest = hashlib.sha256(store.digest().encode())   # ids depend on the starting state and on the edits
     for t in AUTHORING:
         digest.update(render(t, edited[t]).encode("utf-8"))
     tag, sets, origins, cur = digest.hexdigest()[:8], [], [], store

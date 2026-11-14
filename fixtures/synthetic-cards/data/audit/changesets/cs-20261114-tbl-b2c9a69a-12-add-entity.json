@@ -1,0 +1,14 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "id": "benefit.voyager.travel-credit",
+      "kind": "benefit",
+      "name": "Northwind Voyager annual travel credit"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-b2c9a69a-12-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.voyager.travel-credit"
+}

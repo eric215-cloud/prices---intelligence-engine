@@ -303,6 +303,8 @@ def lint(store):
         if r["verification"]["status"] != "verified":
             continue
         if r["kind"] == "excludes":
+            if subject is None:
+                continue   # malformed; already reported as BAD_EXCLUSION_SHAPE
             about = {subject}
         elif r["kind"] not in NON_DERIVING and r["output"] in baseline_benefits:
             about = {i for k, i, neg in leaves(r["when"]) if k == "holds" and not neg}

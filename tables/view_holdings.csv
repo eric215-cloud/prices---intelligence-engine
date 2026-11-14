@@ -1,0 +1,9 @@
+profile,owner,synthetic,entity,name,kind,state,valid_from,valid_to,acquired_via,quantity
+eric,Eric,no,aeroplan.25k,Aeroplan 25K Elite Status,status,confirmed,,,aeroplan-25k-via-marriott-top-tier,
+eric,Eric,no,marriott.titanium,Marriott Bonvoy Titanium Elite,status,confirmed,,2027-01-31,,
+synthetic-acquired,synthetic,yes,aeroplan.25k,Aeroplan 25K Elite Status,status,confirmed,2026-09-15,2027-12-31,aeroplan-25k-via-marriott-top-tier,
+synthetic-acquired,synthetic,yes,hyatt.link_aeroplan,Link World of Hyatt and Aeroplan accounts and register for the status challenge,action,confirmed,2026-10-01,2026-12-30,,
+synthetic-acquired,synthetic,yes,marriott.titanium,Marriott Bonvoy Titanium Elite,status,confirmed,2026-03-01,2027-02-28,,
+synthetic-demo,synthetic,yes,amex.mr,American Express Membership Rewards points,currency,confirmed,,,,150000
+synthetic-demo,synthetic,yes,marriott.points,Marriott Bonvoy points,currency,confirmed,,,,240000
+synthetic-demo,synthetic,yes,marriott.titanium,Marriott Bonvoy Titanium Elite,status,confirmed,2026-03-01,2027-02-28,,

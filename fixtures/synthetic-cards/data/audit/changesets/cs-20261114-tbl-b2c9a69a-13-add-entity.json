@@ -1,0 +1,41 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "card": {
+        "annual_fee_usd": 95.0,
+        "capital_provider": "org.meridian-capital",
+        "cobrand_partner": "org.halcyon-air",
+        "issuer": "org.tidewater-bank",
+        "network": "org.orbit",
+        "network_tier": "tier.orbit-summit",
+        "program_manager": "org.ledgerline"
+      },
+      "id": "card.halcyon-kestrel",
+      "kind": "card",
+      "name": "Halcyon Kestrel (synthetic)",
+      "sources": [
+        "ev-syn-kestrel-terms"
+      ]
+    }
+  },
+  "date": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.halcyon-kestrel"
+      ],
+      "id": "ev-syn-kestrel-terms",
+      "notes": "Invented for testing.",
+      "publisher": "Tidewater Bank (synthetic)",
+      "retrieved_on": "2026-11-14",
+      "source_type": "synthetic",
+      "summary": "Names the issuer, program manager, co-brand partner, network and network tier of the card and its annual fee.",
+      "title": "Halcyon Kestrel pricing and terms",
+      "url": "https://example.invalid/tidewater/kestrel-terms"
+    }
+  ],
+  "id": "cs-20261114-tbl-b2c9a69a-13-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: cards row card.halcyon-kestrel"
+}

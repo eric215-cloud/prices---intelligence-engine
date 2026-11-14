@@ -1,0 +1,17 @@
+{
+  "evidence": [
+    "ev-syn-kestrel-guide"
+  ],
+  "id": "kestrel.phone-protection-excluded",
+  "kind": "excludes",
+  "output": "benefit.orbit-summit.phone-protection",
+  "summary": "The card's guide states that phone protection is not offered on this card.",
+  "verification": {
+    "last_verified": "2026-11-14",
+    "review_by": "2027-05-14",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.halcyon-kestrel"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "id": "tier.orbit-summit",
+  "kind": "network_tier",
+  "name": "Orbit Summit (synthetic network tier)",
+  "network": "org.orbit"
+}

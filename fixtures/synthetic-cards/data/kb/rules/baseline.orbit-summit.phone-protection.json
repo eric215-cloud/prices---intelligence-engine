@@ -1,0 +1,20 @@
+{
+  "evidence": [
+    "ev-syn-orbit-summit-benefits"
+  ],
+  "id": "baseline.orbit-summit.phone-protection",
+  "kind": "baseline",
+  "output": "benefit.orbit-summit.phone-protection",
+  "restrictions": [
+    "Two claims per year"
+  ],
+  "summary": "Orbit advertises phone protection up to 800 per claim for Summit cards.",
+  "verification": {
+    "last_verified": "2026-11-14",
+    "review_by": "2027-05-14",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "tier.orbit-summit"
+  }
+}

@@ -68,7 +68,8 @@ def evaluate(dst):
             replay_ok = False
             break
         with open(path, encoding="utf-8") as f:
-            out = changes.stage(replay, json.load(f), applied)
+            loader = getattr(changes, "previous_loader", lambda _d: None)(dst)   # needed to replay revert_changeset
+            out = changes.stage(replay, json.load(f), applied, loader) if loader else changes.stage(replay, json.load(f), applied)
         if not out["ok"]:
             replay_ok = False
             break

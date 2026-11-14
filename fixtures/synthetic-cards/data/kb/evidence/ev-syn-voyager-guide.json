@@ -1,0 +1,13 @@
+{
+  "applies_to": [
+    "card.northwind-voyager"
+  ],
+  "id": "ev-syn-voyager-guide",
+  "notes": "Invented for testing.",
+  "publisher": "Northwind Bank (synthetic)",
+  "retrieved_on": "2026-11-14",
+  "source_type": "synthetic",
+  "summary": "The card's own guide. Annual travel credit. Phone protection included. Rental cover is primary with a higher cap and replaces the network's secondary cover. No mention of a lounge pass.",
+  "title": "Northwind Voyager Guide to Benefits",
+  "url": "https://example.invalid/northwind/voyager-guide-to-benefits"
+}
