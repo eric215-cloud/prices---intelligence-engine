@@ -233,9 +233,10 @@ def plan(store, root, tdir, author, date):
     st = status(root, tdir, store)
     if not st["exists"]:
         return fail(["NO_EXPORT: %s/%s not found. Run `python3 -m prices tables export` first." % (tdir, MANIFEST)])
-    if st["stale"]:
+    stale = [n for n in st["stale"] if n[:-4] in AUTHORING]   # an out-of-date view cannot corrupt an import; it is regenerated after
+    if stale:
         return fail(["TABLES_STALE: the store changed after these tables were exported (%s). Nothing was imported. "
-                     "Save your edits elsewhere, run `python3 -m prices tables export`, then redo them." % ", ".join(st["stale"])])
+                     "Save your edits elsewhere, run `python3 -m prices tables export`, then redo them." % ", ".join(stale)])
     for v in VIEWS:
         if v + ".csv" in st["edited"]:
             errs.append("READ_ONLY_VIEW: %s.csv is a generated view and cannot be edited" % v)

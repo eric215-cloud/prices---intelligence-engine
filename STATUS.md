@@ -1,6 +1,6 @@
-# PRICES status report — 2026-11-12
+# PRICES status report — 2026-11-14
 
-Built in one session by Claude Fable 5.2 (commissioning build). This report separates what was observed from what is claimed.
+Foundation built 2026-11-12 by Claude Fable 5.2 (commissioning build). Relational foundation added 2026-11-14 on branch `dev/fable-integration` (not yet merged to `main`). This report separates what was observed from what is claimed.
 
 ## Acceptance demonstrations
 
@@ -16,17 +16,32 @@ Built in one session by Claude Fable 5.2 (commissioning build). This report sepa
 | H Practical query | **Pass on synthetic data** | Japan business-class report: 2 established capabilities, 1 conditional pathway, 1 unresolved lead, 3 external research tasks, 0 promotions, 0 availability. No prices or availability invented |
 | I Circular dependency integrity | **Pass** | `tests/test_c_i_evidence_cycles.py`, 11 tests: cycles, self-loops, acquire loops, mutual retention, contradictory conditions, conflicting records, exclusion cycles |
 
-94 automated tests pass. Run: `python3 -m unittest discover -s tests`.
+### Relational foundation (2026-11-14) — all demonstrated on invented cards only
+
+| Test | Result | Evidence observed |
+|---|---|---|
+| J Card applicability | **Pass** | `tests/test_j_relational.py`, 18 tests: a network tier gives its cardholder nothing; a tier cannot be held or routed through; an absent opt-out proves nothing; a network page cannot confirm a card benefit; exclusion; upgrade; two people kept apart |
+| K Tables | **Pass** | `tests/test_k_tables.py`, 32 tests: deterministic export; all-or-nothing import; 20 kinds of unsupported edit refused with nothing changed; stale tables refused; new rows quarantined; change, expire, retire and revert a benefit with history kept |
+| Backward compatibility | **Pass** | The 94 original tests are unmodified and pass. Engine output for all three earlier profiles at three dates is byte-identical before and after |
+| Clean checkout, offline | **Pass** | `scripts/verify_clean_checkout.py` |
+| Maintenance procedure OP-10 | **Run by the building model and by tests only** | `scripts/demo_card_maintenance.py`. Lower-model execution: **untested** |
+
+Full record: `docs/commissions/results/2026-11-14-fable-relational-foundation-RESULTS.md`.
+
+144 automated tests pass. Run: `python3 -m unittest discover -s tests`.
 
 ## Capability status
 
 ### Complete
 - Portable project: Python standard library only, JSON files, git history, zip export.
 - Eligibility engine with four statuses, inspectable derivations, acquisition/retention semantics, time, flags.
-- Whole-store validation and the changeset pipeline with 15 bounded operations, impact reports and audit log.
+- Whole-store validation and the changeset pipeline with 17 bounded operations, all-or-nothing batches, impact reports, audit log and before-snapshots of every replaced record.
 - Discovery planners (forward, backward, bridge, exploratory), coverage ledger, candidate quarantine, novelty check.
 - Goal reports in five separated sections.
-- Maintainer guide, nine operation cards, schema, decision record, successor-test harness.
+- Maintainer guide, ten operation cards, schema, decision record, successor-test harness.
+- Card architecture: a card's six parties (co-brand partner, program manager, issuer, capital provider, network, network tier) recorded as descriptive roles the engine never reads.
+- Applicability: network-tier baselines and card exclusions recorded as sourced statements that derive nothing; a tier benefit applies to a card only on verified, card-specific evidence. Report: `python3 -m prices cards`.
+- CSV tables (`tables/`): generated view plus validated, all-or-nothing authoring input. The JSON store remains the system of record.
 
 ### Partial
 - **Knowledge base: 10 rules, 23 entities, 16 evidence records.** Enough to exercise the software. It does not describe the loyalty landscape.
@@ -36,6 +51,10 @@ Built in one session by Claude Fable 5.2 (commissioning build). This report sepa
 - **Goal matching is keyword-to-tag.** Goals outside the small tag vocabulary return "no tag matched" until a reviewer adds tags.
 - **Bridge and exploratory discovery** are implemented and unit-tested but were not exercised with real research.
 - **Reviewer and owner controls are procedural.** The program checks the name on an attestation; it cannot check who typed it.
+- **Card data: none real.** The card machinery holds only invented fixtures (`fixtures/`). The live knowledge base has no card, organization, tier or card benefit.
+- **Card-specific evidence is a label** (`applies_to`) typed by whoever records the source. Reviewer promotion is the control.
+- **Tables cover cards, parties, benefits, sources, tier baselines and card benefits.** Programs, status tiers, bridges, portals and underwriting rules have no table; they are maintained through changesets as before.
+- **Card benefits are not in goal reports** (no goal tags reach them through the tables).
 
 ### Blocked
 - **Remaining Eric holdings.** Two owner-confirmed real statuses (Marriott Titanium, Aeroplan 25K) were imported November 12. The rest of Eric's ecosystem remains to be reconciled and loaded; a two-record profile is not complete.
@@ -44,12 +63,17 @@ Built in one session by Claude Fable 5.2 (commissioning build). This report sepa
 
 ### Untested
 - Maintenance by models weaker than Claude Haiku 5.5, and repeated runs for reliability.
+- **OP-10 (table maintenance) by any model other than the builder.**
+- Google Sheets as the editor for the CSV files. Only plain CSV, including a BOM + CRLF variant, was exercised.
 - Discovery research performed by a weaker model.
 - Behaviour at scale (hundreds of rules). Evaluation is simple iteration; expected fine, not measured.
 - Windows. Paths use forward slashes internally and `os.path` for files; not run there.
 
 ## Known limitations
 - Rule logic is limited to `holds`, `metric >=`, `all`, `any`, `not holds`. No arithmetic, no counting ("any 2 of 3"), no per-person household logic.
+- Household sharing (authorized user, guest, companion) is not modelled. Two people are independent profiles and nothing is shared between them.
+- Benefit terms are text. Caps and limits cannot be compared by the program. No earn rates, no stacking arithmetic.
+- Table edits must be imported in the same sitting as the export; if the store changes in between, the import is refused and the edits must be redone.
 - One currency balance is not checked against a price: "established capability" means the route exists, not that the balance suffices.
 - Evidence is a summary plus URL. Pages are not archived, so a changed page cannot be compared with what was read.
 - `vocab.json` is edited directly by reviewers, outside the changeset pipeline.
@@ -64,3 +88,6 @@ None are built in. No subscription, hosting or API is required to run, test, que
 2. Reconcile and record the remaining holdings in `profiles/eric/` through owner attestations (OP-07).
 3. Choose where the repository lives.
 4. Decide on candidate `c-united-silver-via-marriott-top-tier` (secondary sources only) and `c-ana-business-award-via-ana-miles` (one source).
+5. Review `dev/fable-integration` and decide whether to merge it to `main`.
+6. Confirm the expiry date of Eric's Aeroplan 25K. Without it the holding cannot be tracked, and after Marriott Titanium's recorded expiry (2027-01-31) the engine will report it as unresolved.
+7. Decide how household sharing should be represented before loading benefits whose value depends on it.

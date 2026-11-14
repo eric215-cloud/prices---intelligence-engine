@@ -446,6 +446,16 @@ class TestRejection(Base):
         self.assertEqual((st["stale"], st["edited"]), (["benefits.csv"], ["card_benefits.csv"]))
         self.rejected("TABLES_STALE")
 
+    def test_a_holding_change_elsewhere_does_not_block_a_table_import(self):
+        out = changes.apply(self.root, {"id": "cs-h", "op": "set_holding", "author": "m", "date": D, "reason": "r", "profile": "synthetic-blake",
+                                        "data": {"holding": {"id": "h-extra", "entity": VOYAGER, "state": "unconfirmed"}}})
+        self.assertTrue(out["ok"], out["errors"])
+        self.assertEqual(tables.status(self.root)["stale"], ["view_holdings.csv"])       # only a generated view is behind
+        edit(self.root, "benefits", "benefit.voyager.travel-credit", name="Northwind Voyager annual travel credit (renamed)")
+        got = imp(self.root)
+        self.assertTrue(got["ok"], got["errors"])
+        self.assertEqual(tables.status(self.root), {"exists": True, "stale": [], "edited": []})   # import regenerated every file
+
     def test_export_is_never_silently_stale(self):
         cs = {"id": "cs-cli-1", "op": "add_entity", "author": "m", "date": D, "reason": "r",
               "data": {"entity": {"id": "benefit.via-cli", "kind": "benefit", "name": "Added through the command line"}}}
