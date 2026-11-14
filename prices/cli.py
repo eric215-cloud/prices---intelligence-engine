@@ -6,7 +6,7 @@ import os
 import sys
 import zipfile
 
-from . import changes, discovery, goals, review
+from . import cards, changes, discovery, goals, review, tables
 from .engine import evaluate
 from .lint import lint
 from .store import Store, read_audit
@@ -35,6 +35,13 @@ def _steps(row):
 
 def cmd_lint(args):
     issues = lint(Store.load(_root(args)))
+    st = tables.status(_root(args))
+    if st["exists"] and st["stale"]:
+        issues.append(("WARNING", "TABLES_STALE", "tables/", "out of date with the store (%s); run `python3 -m prices tables export`"
+                       % ", ".join(st["stale"])))
+    if st["exists"] and st["edited"]:
+        issues.append(("WARNING", "TABLES_EDITED", "tables/", "unimported edits in %s; run `python3 -m prices tables import` or re-export"
+                       % ", ".join(st["edited"])))
     for sev, code, path, msg in issues:
         print("%-7s %-26s %s: %s" % (sev, code, path, msg))
     n_err = sum(1 for i in issues if i[0] == "ERROR")
@@ -150,6 +157,10 @@ def cmd_apply(args):
             for f in imp["new_flags"]:
                 print("    [%s] %s %s" % (f["severity"], f["code"], f["subject"]))
         print("  DOWNSTREAM REVIEW NEEDED: %s" % ("yes" if out["review_needed"] else "no"))
+        if not args.dry_run:
+            note = tables.refresh_if_clean(_root(args))
+            if note:
+                print("  " + note)
     else:
         print("REJECTED  (no record was changed)")
         for e in out["errors"]:
@@ -171,12 +182,88 @@ def cmd_discover(args):
         obj = discovery.plan_bridge(store, args.profile, d, args.max_age)
     elif args.mode == "exploratory":
         obj = {"tasks": discovery.plan_exploratory(store, args.profile, d, args.max_age)}
+    elif args.mode == "applicability":
+        obj = {"tasks": discovery.plan_applicability(store, args.profile, d, args.max_age)}
     else:
         obj = discovery.coverage_summary(store, args.profile, d, args.max_age)
     if "tasks" in obj and args.budget:
         obj["tasks_omitted_by_budget"] = max(0, len(obj["tasks"]) - args.budget)
         obj["tasks"] = obj["tasks"][:args.budget]
     print(json.dumps(obj, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_cards(args):
+    store = Store.load(_root(args))
+    obj = {"as_of": _today(args), "profile": args.profile, "architecture": cards.architecture(store),
+           "matrix": cards.matrix(store, _today(args), args.profile)}
+
+    def text(o):
+        print("CARD ARCHITECTURE (descriptive only; no role confers a benefit)")
+        for c in o["architecture"]:
+            print("  %s  [%s]" % (c["name"], c["card"]))
+            for role in ("issuer", "program_manager", "capital_provider", "cobrand_partner", "network", "network_tier"):
+                print("      %-17s %s" % (role, c[role]))
+            fee = c["annual_fee_usd"]
+            print("      %-17s %s" % ("annual_fee_usd", "(not recorded)" if fee is None else fee))
+            print("      %-17s %s" % ("sources", ", ".join(c["sources"]) or "(none)"))
+        who = " held by %s" % o["profile"] if o["profile"] else ""
+        print("\nBENEFIT APPLICABILITY%s, as of %s" % (who, o["as_of"]))
+        last = None
+        for m in o["matrix"]:
+            if m["card"] != last:
+                print("  %s  (network tier: %s)" % (m["card_name"], m["network_tier"] or "not recorded"))
+                last = m["card"]
+            extra = "   -> for %s: %s" % (o["profile"], m["holder_status"]) if "holder_status" in m else ""
+            print("      %-14s %-16s %s%s" % (m["standing"], m["basis"], m["benefit_name"], extra))
+            if m["detail"]:
+                print("      %-14s %s" % ("", m["detail"]))
+        if not o["matrix"]:
+            print("  (no card benefits on record%s)" % who)
+        print("\nCONFIRMED is the only standing that gives the holder the benefit. UNPROVEN means the network tier "
+              "advertises it and nothing shows it applies to this card.")
+    _emit(args, obj, text)
+    return 0
+
+
+def cmd_tables(args):
+    root = _root(args)
+    if args.action == "export":
+        for name in tables.export(root, args.dir):
+            print("wrote %s/%s" % (args.dir, name))
+        return 0
+    if args.action == "status":
+        st = tables.status(root, args.dir)
+        if not st["exists"]:
+            print("no tables exported yet (run: python3 -m prices tables export)")
+            return 1
+        print("out of date with the store: %s" % (", ".join(st["stale"]) or "no"))
+        print("unimported edits:           %s" % (", ".join(st["edited"]) or "no"))
+        return 1 if st["stale"] or st["edited"] else 0
+    if not args.author or not args.date:
+        print("plan and import need --author and --date YYYY-MM-DD")
+        return 2
+    dry = args.action == "plan" or args.dry_run
+    out = tables.import_tables(root, args.dir, args.author, args.date, dry_run=dry)
+    if args.json:
+        print(json.dumps(out, indent=2, sort_keys=True, default=str))
+        return 0 if out["ok"] else 2
+    if not out["ok"]:
+        print("REJECTED  (no record was changed)")
+        for e in out["errors"]:
+            print("  " + e)
+        return 2
+    if not out["changesets"]:
+        print("NOTHING TO DO  (tables match the store)")
+        return 0
+    print("%s  %d changeset(s)" % ("PLAN (nothing written)" if dry else "IMPORTED", len(out["changesets"])))
+    for cs, origin in zip(out["changesets"], out["origins"]):
+        print("  %-18s %-44s %s" % (cs["op"], origin, cs["id"]))
+    if not dry:
+        print("  DOWNSTREAM REVIEW NEEDED: %s" % ("yes" if out.get("review_needed") else "no"))
+        print("  %s/ refreshed" % args.dir)
+        if any(cs["op"] == "add_candidate" for cs in out["changesets"]):
+            print("  New benefit rows are CANDIDATES. They establish nothing until a reviewer promotes them.")
     return 0
 
 
@@ -292,7 +379,7 @@ def main(argv=None):
             p.add_argument("--from", dest="date_from", required=True)
             p.add_argument("--to", dest="date_to", required=True)
         if name == "discover":
-            p.add_argument("mode", choices=["forward", "backward", "bridge", "exploratory", "coverage"])
+            p.add_argument("mode", choices=["forward", "backward", "bridge", "exploratory", "applicability", "coverage"])
             p.add_argument("--target")
             p.add_argument("--budget", type=int, default=0, help="max tasks to emit (0 = all)")
             p.add_argument("--max-age", type=int, default=180, help="days before a coverage cell is stale")
@@ -300,6 +387,15 @@ def main(argv=None):
             p.add_argument("text")
             p.add_argument("--tag", action="append", help="explicit goal tag (repeatable); overrides keyword matching")
             p.add_argument("--limit", type=int, default=5)
+    p = add("cards", cmd_cards, "card roles and which benefits are confirmed, excluded or unproven per card")
+    p.add_argument("--profile", help="only cards this person holds, with the benefit's status for them")
+    p.add_argument("--as-of", dest="as_of", help="evaluation date YYYY-MM-DD (default today)")
+    p = add("tables", cmd_tables, "CSV tables: export from the store, or compile edits into changesets")
+    p.add_argument("action", choices=["export", "status", "plan", "import"])
+    p.add_argument("--dir", default="tables", help="tables directory, relative to --root")
+    p.add_argument("--author")
+    p.add_argument("--date", help="changeset date YYYY-MM-DD")
+    p.add_argument("--dry-run", action="store_true")
     p = add("apply", cmd_apply, "validate and apply a changeset file")
     p.add_argument("changeset")
     p.add_argument("--dry-run", action="store_true")

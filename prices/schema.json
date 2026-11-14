@@ -28,13 +28,33 @@
       "required": ["id", "kind", "name"],
       "properties": {
         "id": {"$ref": "#/$defs/id"},
-        "kind": {"enum": ["program", "card", "currency", "status", "benefit", "action", "capability"]},
+        "kind": {"enum": ["program", "card", "currency", "status", "benefit", "action", "capability",
+                          "organization", "network_tier"]},
         "name": {"$ref": "#/$defs/text"},
         "program": {"$ref": "#/$defs/id"},
+        "network": {"$ref": "#/$defs/id"},
+        "card": {"$ref": "#/$defs/card_roles"},
+        "sources": {"type": "array", "items": {"$ref": "#/$defs/id"}},
         "tags": {"type": "array", "items": {"type": "string"}},
         "how": {"type": "string"},
         "economics": {"type": "object"},
         "notes": {"type": "string"}
+      }
+    },
+
+    "role": {"type": ["string", "null"], "pattern": "^[a-z0-9][a-z0-9_.-]*$"},
+
+    "card_roles": {
+      "x-doc": "Who plays which role for a card product. A missing key means not recorded; null means recorded as none. Descriptive only: the engine never derives anything from these.",
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "cobrand_partner": {"$ref": "#/$defs/role"},
+        "program_manager": {"$ref": "#/$defs/role"},
+        "issuer": {"$ref": "#/$defs/role"},
+        "capital_provider": {"$ref": "#/$defs/role"},
+        "network": {"$ref": "#/$defs/role"},
+        "network_tier": {"$ref": "#/$defs/role"},
+        "annual_fee_usd": {"type": "number"}
       }
     },
 
@@ -63,10 +83,11 @@
       "required": ["id", "kind", "output", "when", "summary", "evidence", "verification"],
       "properties": {
         "id": {"$ref": "#/$defs/id"},
-        "kind": {"enum": ["grants", "acquire", "transfer"]},
+        "kind": {"enum": ["grants", "acquire", "transfer", "baseline", "excludes"]},
         "output": {"$ref": "#/$defs/id"},
         "when": {"$ref": "#/$defs/condition"},
         "summary": {"$ref": "#/$defs/text"},
+        "superseded_by": {"$ref": "#/$defs/id"},
         "retention": {"$ref": "#/$defs/retention"},
         "transfer": {"type": "object", "additionalProperties": false, "required": ["from"],
                      "properties": {"from": {"$ref": "#/$defs/id"}, "ratio": {"type": "string"}, "note": {"type": "string"}}},
@@ -91,6 +112,7 @@
         "source_type": {"enum": ["official", "reputable_secondary", "community", "owner_document", "synthetic"]},
         "retrieved_on": {"$ref": "#/$defs/date"},
         "summary": {"$ref": "#/$defs/text"},
+        "applies_to": {"type": "array", "items": {"$ref": "#/$defs/id"}},
         "notes": {"type": "string"}
       }
     },
@@ -153,10 +175,11 @@
           "required": ["id", "kind", "output", "when", "summary"],
           "properties": {
             "id": {"$ref": "#/$defs/id"},
-            "kind": {"enum": ["grants", "acquire", "transfer"]},
+            "kind": {"enum": ["grants", "acquire", "transfer", "baseline", "excludes"]},
             "output": {"$ref": "#/$defs/id"},
             "when": {"$ref": "#/$defs/condition"},
             "summary": {"$ref": "#/$defs/text"},
+            "superseded_by": {"$ref": "#/$defs/id"},
             "retention": {"$ref": "#/$defs/retention"},
             "transfer": {"type": "object"},
             "valid_from": {"$ref": "#/$defs/date"},
@@ -223,7 +246,8 @@
       "properties": {
         "id": {"$ref": "#/$defs/id"},
         "op": {"enum": ["confirm_rule", "revise_rule", "flag_rule", "retire_rule", "add_evidence",
-                        "add_entity", "add_candidate", "promote_candidate", "reject_candidate",
+                        "add_entity", "revise_entity", "add_candidate", "promote_candidate", "reject_candidate",
+                        "revert_changeset",
                         "set_holding", "end_holding", "set_metric",
                         "record_discovery_run", "add_observation", "prune_observations"]},
         "author": {"$ref": "#/$defs/text"},

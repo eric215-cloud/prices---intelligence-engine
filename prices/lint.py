@@ -3,7 +3,7 @@
 Each issue is (severity, code, path, message). Codes are stable so maintainers and
 tests can match on them.
 """
-from .engine import leaves
+from .engine import NON_DERIVING, leaves
 from .schema import Schema
 from .store import PREFIX, VOCAB_PATH, LEDGER_PATH
 
@@ -31,6 +31,40 @@ def signature(rule):
     """Identity of a relationship, independent of wording: kind:sorted(positive holds)->output."""
     pos = sorted({i for k, i, neg in leaves(rule["when"]) if k == "holds" and not neg})
     return "%s:%s->%s" % (rule["kind"], "+".join(pos), rule["output"])
+
+
+NOT_HOLDABLE = ("organization", "network_tier")
+ROLES = ("cobrand_partner", "program_manager", "issuer", "capital_provider", "network", "network_tier")
+
+
+def single_holds(cond):
+    """The entity id if the condition is exactly {"holds": id}, else None."""
+    return cond.get("holds") if set(cond) == {"holds"} else None
+
+
+def shape_issues(rule, kind_of):
+    """Structural checks shared by rules and candidates. kind_of(id) -> entity kind or None."""
+    out = []
+    subject, target = single_holds(rule["when"]), rule["output"]
+    if rule["kind"] == "baseline":
+        if kind_of(subject) != "network_tier" or kind_of(target) != "benefit":
+            out.append(("BAD_BASELINE_SHAPE", "a baseline rule is exactly: when {\"holds\": <network_tier>} -> output <benefit>"))
+    elif rule["kind"] == "excludes":
+        if kind_of(subject) != "card" or kind_of(target) != "benefit":
+            out.append(("BAD_EXCLUSION_SHAPE", "an excludes rule is exactly: when {\"holds\": <card>} -> output <benefit>"))
+        sb = rule.get("superseded_by")
+        if sb is not None and (kind_of(sb) != "benefit" or sb == target):
+            out.append(("BAD_EXCLUSION_SHAPE", "superseded_by must be a different benefit entity"))
+    else:
+        refs = [i for k, i, _n in leaves(rule["when"]) if k == "holds"] + [target]
+        refs += [i for k, i, _n in leaves(rule.get("retention", {}).get("retain_when", {"all": []})) if k == "holds"]
+        bad = sorted({i for i in refs if kind_of(i) in NOT_HOLDABLE})
+        if bad:
+            out.append(("TIER_INHERITANCE", "%s: an organization or network tier never confers or receives an entitlement. "
+                        "State the benefit for the specific card, with card-specific evidence" % ", ".join(bad)))
+        if "superseded_by" in rule:
+            out.append(("UNEXPECTED_FIELD", "superseded_by belongs only on excludes rules"))
+    return out
 
 
 def evidence_ok(policy, records):
@@ -80,6 +114,26 @@ def lint(store):
         p = store.path("entities", e["id"])
         if "program" in e and e["program"] not in ents:
             err("UNKNOWN_REFERENCE", p, "program %r is not an entity" % e["program"])
+        if "network" in e and (e["kind"] != "network_tier" or ents.get(e["network"], {}).get("kind") != "organization"):
+            err("BAD_ROLE", p, "'network' belongs on a network_tier entity and must name an organization")
+        for sid in e.get("sources", []):
+            if sid not in evid:
+                err("UNKNOWN_REFERENCE", p, "source %r is not an evidence record" % sid)
+        if "card" in e:
+            if e["kind"] != "card":
+                err("BAD_ROLE", p, "a 'card' block is only allowed on entities of kind card")
+            for role in ROLES:
+                ref = e["card"].get(role)
+                if ref is None:
+                    continue   # missing = not recorded, null = recorded as none
+                want = "network_tier" if role == "network_tier" else "organization"
+                if ents.get(ref, {}).get("kind") != want:
+                    err("BAD_ROLE", p, "%s %r must be an existing entity of kind %s" % (role, ref, want))
+            tier, net = ents.get(e["card"].get("network_tier") or "", {}), e["card"].get("network")
+            if tier.get("network") and net and tier["network"] != net:
+                err("BAD_ROLE", p, "network_tier %s belongs to network %s, not %s" % (tier["id"], tier["network"], net))
+            if any(e["card"].get(r) for r in ROLES) and not e.get("sources"):
+                warn("CARD_WITHOUT_SOURCE", p, "card roles are recorded but the card lists no sources")
         for t in e.get("tags", []):
             if t not in vocab["tags"]:
                 err("UNKNOWN_TAG", p, "tag %r is not in data/kb/vocab.json" % t)
@@ -108,12 +162,16 @@ def lint(store):
         if r["output"] not in ents:
             err("UNKNOWN_REFERENCE", p, "output %r is not an entity" % r["output"])
         check_condition(r["when"], p, ents)
+        for code, msg in shape_issues(r, lambda i: ents.get(i, {}).get("kind")):
+            err(code, p, msg)
         if contradictory(r["when"]):
             err("CONTRADICTORY_CONDITION", p, "an 'all' both requires and excludes the same entity; rule can never apply")
         if r["kind"] == "acquire" and "retention" not in r:
             err("MISSING_RETENTION", p, "acquire rules must state retention (use mode 'unknown' if not established)")
         if r["kind"] != "acquire" and "retention" in r:
             err("UNEXPECTED_RETENTION", p, "only acquire rules have retention; grants/transfer last while the condition holds")
+        if r["kind"] != "transfer" and "transfer" in r:
+            err("UNEXPECTED_FIELD", p, "a 'transfer' block belongs only on transfer rules")
         if "retention" in r and "retain_when" in r["retention"]:
             check_condition(r["retention"]["retain_when"], p, ents)
         if r["kind"] == "transfer":
@@ -147,6 +205,8 @@ def lint(store):
     # 4. negation must not sit on a dependency cycle (keeps evaluation well-defined)
     deps = {}
     for r in rules.values():
+        if r["kind"] in NON_DERIVING:
+            continue
         if r["verification"]["status"] == "retired":
             continue
         for kind, ident, is_neg in leaves(r["when"]):
@@ -177,6 +237,8 @@ def lint(store):
             p = store.path("holdings", h["id"], name)
             if h["entity"] not in ents:
                 err("UNKNOWN_REFERENCE", p, "entity %r does not exist" % h["entity"])
+            if ents.get(h["entity"], {}).get("kind") in NOT_HOLDABLE:
+                err("NOT_HOLDABLE", p, "%s is an organization or network tier; a person holds cards, not tiers" % h["entity"])
             if h["state"] == "confirmed" and not (h.get("confirmed_on") and h.get("confirmed_by")):
                 err("UNATTESTED_CONFIRMATION", p, "confirmed holdings need confirmed_on and confirmed_by")
             if h["state"] == "confirmed" and h.get("confirmed_by") == "synthetic" and not prof.meta["synthetic"]:
@@ -204,10 +266,58 @@ def lint(store):
         if pr["output"] not in known:
             err("UNKNOWN_REFERENCE", p, "proposed output %r is neither an entity nor in proposed_entities" % pr["output"])
         check_condition(pr["when"], p, known)
+        if c["status"] == "proposed":
+            kinds = {e["id"]: e["kind"] for e in c.get("proposed_entities", [])}
+            for code, msg in shape_issues(pr, lambda i: ents.get(i, {}).get("kind") or kinds.get(i)):
+                err(code, p, msg)
         if pr["kind"] == "acquire" and "retention" not in pr:
             err("MISSING_RETENTION", p, "acquire rules must state retention (use mode 'unknown' if not established)")
         if c["status"] == "proposed" and not c["evidence"]:
             warn("CANDIDATE_WITHOUT_EVIDENCE", p, "candidate has no evidence yet")
+
+    # 6b. evidence scope labels must point at real entities
+    for e in evid.values():
+        for ref in e.get("applies_to", []):
+            if ref not in ents:
+                err("UNKNOWN_REFERENCE", store.path("evidence", e["id"]), "applies_to %r is not an entity" % ref)
+
+    # 6c. network-tier benefits apply to a card only on positive, card-specific evidence
+    live = [r for r in rules.values() if r["verification"]["status"] != "retired"]
+    baseline_benefits = {r["output"] for r in live if r["kind"] == "baseline"}
+
+    def overlap(a, b):
+        lo = max(a.get("valid_from") or "0000-00-00", b.get("valid_from") or "0000-00-00")
+        hi = min(a.get("valid_to") or "9999-12-31", b.get("valid_to") or "9999-12-31")
+        return lo <= hi
+
+    stance = {}
+    for r in live:
+        p = store.path("rules", r["id"])
+        subject = single_holds(r["when"])
+        if r["kind"] in ("grants", "excludes") and ents.get(subject, {}).get("kind") == "card":
+            for other in stance.get((subject, r["output"]), []):
+                if other["kind"] != r["kind"] and overlap(other, r):
+                    err("CONFLICTING_APPLICABILITY", p, "%s both grants and excludes %s for %s (see rule %s). Retire one"
+                        % (subject, r["output"], subject, other["id"]))
+            stance.setdefault((subject, r["output"]), []).append(r)
+        if r["verification"]["status"] != "verified":
+            continue
+        if r["kind"] == "excludes":
+            about = {subject}
+        elif r["kind"] not in NON_DERIVING and r["output"] in baseline_benefits:
+            about = {i for k, i, neg in leaves(r["when"]) if k == "holds" and not neg}
+        else:
+            continue
+        specific = [evid[e] for e in r["evidence"] if e in evid and about & set(evid[e].get("applies_to", []))]
+        if not evidence_ok(policy, specific):
+            err("CARD_SPECIFIC_EVIDENCE_REQUIRED", p,
+                "%s is a network-tier benefit or an exclusion: this rule needs evidence whose applies_to names %s "
+                "(the card's own guide or terms). A network's general page, or the absence of an opt-out, proves nothing"
+                % (r["output"], " or ".join(sorted(about))))
+        if r["kind"] == "excludes" and r.get("superseded_by"):
+            if not any(o["kind"] == "grants" and single_holds(o["when"]) == subject and o["output"] == r["superseded_by"] for o in live):
+                warn("SUPERSEDING_BENEFIT_NOT_GRANTED", p, "%s is said to be superseded by %s, but no rule grants that to %s"
+                     % (r["output"], r["superseded_by"], subject))
 
     # 7. observations are temporary by construction
     for o in store.observations.values():

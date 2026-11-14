@@ -26,6 +26,10 @@ LEVELS = (E, P, C, U)
 ALLOWED = {E: (), P: ("unknown",), C: ("action", "acquire"), U: ("unknown", "action", "acquire")}
 ESTABLISHED, CONDITIONAL, UNRESOLVED, NOT_AVAILABLE = "ESTABLISHED", "CONDITIONAL", "UNRESOLVED", "NOT_AVAILABLE"
 NONE = frozenset()
+# Rule kinds that record a sourced statement but never derive anything:
+#   baseline  "network tier T advertises benefit B"   (says nothing about any particular card)
+#   excludes  "card C does not carry benefit B"       (optionally superseded_by a better card benefit)
+NON_DERIVING = ("baseline", "excludes")
 
 
 def to_date(s):
@@ -261,6 +265,8 @@ def evaluate(store, profile, as_of, include_candidates=False):
                 r.flag("STALE_RULE", "review", rule["id"], "verified rule is past its review_by date %s; re-verify (OP-01)" % rb)
         else:
             levels, toks = (P, U), frozenset([("unknown", "rule %s is unverified" % rule["id"])])
+        if rule["kind"] in NON_DERIVING:
+            continue   # recorded for the applicability matrix (cards.py); never an entitlement
         rules.append({"id": rule["id"], "kind": rule["kind"], "output": rule["output"], "when": rule["when"],
                       "levels": levels, "tokens": toks, "src": rule})
     if include_candidates:
@@ -268,6 +274,8 @@ def evaluate(store, profile, as_of, include_candidates=False):
             if c["status"] != "proposed":
                 continue
             pr = c["proposed_rule"]
+            if pr["kind"] in NON_DERIVING:
+                continue
             rules.append({"id": "candidate:" + c["id"], "kind": pr["kind"], "output": pr["output"], "when": pr["when"],
                           "levels": (U,), "tokens": frozenset([("unknown", "candidate %s is not promoted" % c["id"])]),
                           "src": pr})

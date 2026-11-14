@@ -8,6 +8,9 @@ fields listed in its handler; anything else is rejected with a stable error code
 Operation cards for maintainers: docs/operations/.
 """
 import datetime
+import hashlib
+import json
+import os
 
 from .engine import evaluate, to_date
 from .lint import errors, evidence_ok, lint, signature
@@ -16,6 +19,7 @@ from .schema import Schema
 from .store import LEDGER_PATH, Store, append_audit, read_audit
 
 RANK = {"ESTABLISHED": 3, "CONDITIONAL": 2, "UNRESOLVED": 1, "NOT_AVAILABLE": 0}
+ENTITY_REVISABLE = ("name", "notes", "tags", "how", "economics", "program", "network", "card", "sources")
 REVISABLE = ("valid_from", "valid_to", "restrictions", "open_questions", "value_note", "summary", "review_by", "retention_note")
 MAX_REVIEW_DAYS = 400
 
@@ -156,7 +160,57 @@ def op_add_entity(store, cs):
     e = _data(cs, "entity", dict)
     _need(isinstance(e.get("id"), str), "BAD_DATA", "entity.id missing")
     _need(e["id"] not in store.entities, "ID_EXISTS", "entity %r already exists" % e["id"])
+    _add_evidence(store, cs)   # sources the entity cites may be registered in the same changeset
     store.files[store.path("entities", e["id"])] = e
+
+
+def op_revise_entity(store, cs):
+    """Change descriptive fields of an entity. Its id and kind are permanent."""
+    _need("target" in cs, "MISSING_TARGET", "target (entity id) is required")
+    e = store.entities.get(cs["target"])
+    _need(e is not None, "UNKNOWN_TARGET", "no entity %r" % cs["target"])
+    changes = _data(cs, "set", dict)
+    _need(changes, "MISSING_DATA", "data.set is empty")
+    for k, v in changes.items():
+        _need(k in ENTITY_REVISABLE, "FIELD_NOT_REVISABLE",
+              "%r cannot be revised (allowed: %s). An entity's id and kind never change: add a new entity instead."
+              % (k, ", ".join(ENTITY_REVISABLE)))
+        if k == "sources":
+            _need(isinstance(v, list) and set(e.get("sources", [])) <= set(v), "EVIDENCE_REMOVED",
+                  "sources may be added to an entity, never removed")
+    _add_evidence(store, cs)
+    for k, v in changes.items():
+        if v is None:
+            e.pop(k, None)
+        else:
+            e[k] = v
+
+
+def _reviewer(store, a):
+    reviewers = store.vocab.get("promotion_reviewers") or []
+    _need(not reviewers or a["by"] in reviewers, "REVIEWER_NOT_AUTHORIZED",
+          "only %s may do this; escalate to one of them" % ", ".join(reviewers))
+
+
+def _sha(obj):
+    return None if obj is None else hashlib.sha256(json.dumps(obj, sort_keys=True).encode()).hexdigest()[:16]
+
+
+def op_revert_changeset(store, cs, previous=None):
+    """Put back exactly what one earlier changeset replaced. Refused if anything it touched has changed since."""
+    target = _data(cs, "changeset", str)
+    _reviewer(store, _attested(cs))
+    _need(previous is not None, "SNAPSHOT_UNAVAILABLE", "revert needs the audit directory; run it through `prices apply`")
+    snap = previous(target)
+    _need(snap is not None, "UNKNOWN_TARGET", "no before-snapshot for changeset %r in data/audit/previous/" % target)
+    for path, rec in sorted(snap["records"].items()):
+        _need(_sha(store.files.get(path)) == rec["after"], "LATER_CHANGES",
+              "%s has changed since %s was applied; revert the later changeset first" % (path, target))
+    for path, rec in snap["records"].items():
+        if rec["before"] is None:
+            store.files.pop(path, None)
+        else:
+            store.files[path] = rec["before"]
 
 
 def op_add_candidate(store, cs):
@@ -181,9 +235,7 @@ def op_promote_candidate(store, cs):
     _need(c is not None, "UNKNOWN_TARGET", "no candidate %r" % cs["target"])
     _need(c["status"] == "proposed", "BAD_STATE", "candidate is %s" % c["status"])
     a = _attested(cs)
-    reviewers = store.vocab.get("promotion_reviewers") or []
-    _need(not reviewers or a["by"] in reviewers, "REVIEWER_NOT_AUTHORIZED",
-          "only %s may promote candidates into rules; escalate to one of them" % ", ".join(reviewers))
+    _reviewer(store, a)
     if c["open_questions"]:
         _need(cs.get("data", {}).get("accept_open_questions") is True, "OPEN_QUESTIONS",
               "candidate has open questions; resolve them or set data.accept_open_questions=true (they stay on the rule)")
@@ -287,8 +339,11 @@ HANDLERS = {name[3:]: fn for name, fn in list(globals().items()) if name.startsw
 
 
 # ---------------------------------------------------------------- pipeline
-def stage(store, cs, applied_ids=()):
-    """Validate and apply to a copy. Returns a dict; never touches disk or the input store."""
+def stage(store, cs, applied_ids=(), previous=None):
+    """Validate and apply to a copy. Returns a dict; never touches disk or the input store.
+
+    previous: optional function(changeset_id) -> before-snapshot, needed only by revert_changeset.
+    """
     def rejected(errs):
         return {"ok": False, "errors": errs, "changed": [], "impact": {}, "review_needed": False}
 
@@ -302,7 +357,10 @@ def stage(store, cs, applied_ids=()):
         return rejected(["DUPLICATE_CHANGESET: %s was already applied" % cs["id"]])
     new = store.copy()
     try:
-        HANDLERS[cs["op"]](new, cs)
+        if cs["op"] == "revert_changeset":
+            op_revert_changeset(new, cs, previous)
+        else:
+            HANDLERS[cs["op"]](new, cs)
     except Reject as e:
         return rejected([str(e)])
     post = [i for i in lint(new) if i[0] == "ERROR"]
@@ -323,23 +381,71 @@ def stage(store, cs, applied_ids=()):
             "impact": impact, "review_needed": review_needed}
 
 
-def apply(root, cs, dry_run=False):
-    store = Store.load(root)
-    applied = {e["changeset"] for e in read_audit(root) if e.get("result") == "applied"}
-    out = stage(store, cs, applied)
+def previous_loader(root):
+    """Function returning the before-snapshot saved when a changeset was applied (or None)."""
+    def load(cs_id):
+        path = os.path.join(root, "data/audit/previous", "%s.json" % cs_id)
+        if not os.path.exists(path):
+            return None
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    return load
+
+
+def _entry(cs, out, before):
     meta = cs if isinstance(cs, dict) else {}
-    entry = {"changeset": meta.get("id"), "op": meta.get("op"), "author": meta.get("author"),
-             "date": meta.get("date"), "result": "applied" if out["ok"] else "rejected",
-             "errors": out["errors"], "changed": out["changed"], "review_needed": out["review_needed"],
-             "digest_before": store.digest()}
+    return {"changeset": meta.get("id"), "op": meta.get("op"), "author": meta.get("author"), "date": meta.get("date"),
+            "result": "applied" if out["ok"] else "rejected", "errors": out["errors"], "changed": out["changed"],
+            "review_needed": out["review_needed"], "digest_before": before.digest()}
+
+
+def apply_many(root, changesets, dry_run=False):
+    """Apply a list of changesets in order, all or nothing.
+
+    Every changeset is staged in memory on top of the previous one. Files are written only
+    after the whole list has passed, so a failure anywhere leaves every record untouched.
+    For each applied changeset three things are kept under data/audit/: the log line, a copy
+    of the changeset, and a before-snapshot of every record it replaced (previous/<id>.json).
+    """
+    start = Store.load(root)
+    applied = {e["changeset"] for e in read_audit(root) if e.get("result") == "applied"}
+    loader, cur, staged = previous_loader(root), start, []
+    for index, cs in enumerate(changesets):
+        out = stage(cur, cs, applied, loader)
+        if not out["ok"]:
+            if not dry_run:
+                append_audit(root, dict(_entry(cs, out, cur), batch_size=len(changesets), batch_index=index))
+            return dict(out, results=[], failed_index=index, failed_id=cs.get("id") if isinstance(cs, dict) else None)
+        staged.append((cs, cur, out))
+        cur = out["store"]
+        applied.add(cs["id"])
+    results = [{"id": cs["id"], "op": cs["op"], "changed": out["changed"], "impact": out["impact"],
+                "review_needed": out["review_needed"]} for cs, _b, out in staged]
+    summary = {"ok": True, "errors": [], "results": results, "changed": start.changed_paths(cur),
+               "review_needed": any(r["review_needed"] for r in results), "store": cur}
+    if dry_run:
+        return dict(summary, dry_run=True)
+    extra = {}
+    for cs, before, out in staged:
+        extra["data/audit/changesets/%s.json" % cs["id"]] = cs
+        extra["data/audit/previous/%s.json" % cs["id"]] = {
+            "changeset": cs["id"],
+            "records": {p: {"before": before.files.get(p), "after": _sha(out["store"].files.get(p))} for p in out["changed"]}}
+    Store(dict(cur.files, **extra)).save(root, summary["changed"] + sorted(extra))
+    for cs, before, out in staged:
+        append_audit(root, dict(_entry(cs, out, before), digest_after=out["store"].digest()))
+    return summary
+
+
+def apply(root, cs, dry_run=False):
+    """Apply one changeset. Same guarantees as apply_many."""
+    many = apply_many(root, [cs], dry_run=dry_run)
+    if not many["ok"]:
+        out = {k: many[k] for k in ("ok", "errors", "changed", "impact", "review_needed")}
+    else:
+        one = many["results"][0]
+        out = {"ok": True, "errors": [], "changed": one["changed"], "impact": one["impact"],
+               "review_needed": one["review_needed"], "store": many["store"]}
     if dry_run:
         out["dry_run"] = True
-        return out
-    if out["ok"]:
-        new = out["store"]
-        new.files["data/audit/changesets/%s.json" % cs["id"]] = cs
-        new.save(root, out["changed"] + ["data/audit/changesets/%s.json" % cs["id"]])
-        del new.files["data/audit/changesets/%s.json" % cs["id"]]
-        entry["digest_after"] = new.digest()
-    append_audit(root, entry)
     return out

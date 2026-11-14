@@ -10,7 +10,7 @@ filling cells, so relationships nobody thought to ask about still get asked abou
 """
 import re
 
-from .engine import CONDITIONAL, ESTABLISHED, NOT_AVAILABLE, evaluate, leaves, to_date
+from .engine import CONDITIONAL, ESTABLISHED, NON_DERIVING, NOT_AVAILABLE, evaluate, leaves, to_date
 from .lint import signature
 
 OUTPUT_CONTRACT = ("For each relationship found: one add_candidate changeset. Then exactly one "
@@ -56,10 +56,11 @@ def plan_forward(store, profile, as_of, max_age=180):
 
 def _producers(store, entity, include_candidates=True):
     out = [(r["id"], r, r["verification"]["status"]) for r in store.rules.values()
-           if r["output"] == entity and r["verification"]["status"] != "retired"]
+           if r["output"] == entity and r["verification"]["status"] != "retired" and r["kind"] not in NON_DERIVING]
     if include_candidates:
         out += [("candidate:" + c["id"], c["proposed_rule"], "candidate") for c in store.candidates.values()
-                if c["status"] == "proposed" and c["proposed_rule"]["output"] == entity]
+                if c["status"] == "proposed" and c["proposed_rule"]["output"] == entity
+                and c["proposed_rule"]["kind"] not in NON_DERIVING]
     return sorted(out, key=lambda x: x[0])
 
 
@@ -119,6 +120,29 @@ def plan_bridge(store, profile, as_of, max_age=180):
                     tasks.append(_task(store, "bridge", cell, q, {"a": a["name"], "b": b["name"]}, 10,
                                        "both held; combination never investigated"))
     return {"near_misses": near, "tasks": tasks}
+
+
+def plan_applicability(store, profile, as_of, max_age=180):
+    """Network-tier benefits that are advertised for a held card's tier but not evidenced for that card.
+
+    Each is a research task, never an entitlement: the answer is recorded as a confirmed or
+    excluded row in tables/card_benefits.csv, with the card's own guide or terms as the source.
+    """
+    from .cards import UNPROVEN, matrix
+    tasks = []
+    for m in matrix(store, as_of, profile):
+        cell = "%s|applies:%s" % (m["card"], m["benefit"])
+        if m["standing"] != UNPROVEN or _fresh(store, cell, as_of, max_age):
+            continue
+        tasks.append({"task_id": "applicability:" + cell, "mode": "applicability", "cell": cell, "question": "applies",
+                      "ask": "Does %s include \"%s\"? It is advertised for the network tier %s, which proves nothing about "
+                             "this card. Read the card's own Guide to Benefits or terms and record either a confirmed or an "
+                             "excluded row for this card." % (m["card_name"], m["benefit_name"], m["network_tier"]),
+                      "suggested_queries": ["%s guide to benefits" % m["card_name"], "%s %s" % (m["card_name"], m["benefit_name"])],
+                      "priority": 28, "why": "%s is %s for %s" % (m["benefit"], UNPROVEN, m["card"]),
+                      "output": "A row in tables/card_benefits.csv plus its source row (docs/operations/OP-10-tables.md), "
+                                "then one record_discovery_run changeset covering every cell investigated."})
+    return sorted(tasks, key=lambda t: t["cell"])
 
 
 def _slug(s):
