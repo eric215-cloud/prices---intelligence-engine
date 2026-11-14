@@ -24,13 +24,15 @@ Records are JSON files. A deterministic engine reads rules and one person's hold
 |---|---|---|
 | `schema.py` + `schema.json` | ~100 + schema | Shape of every record and changeset. Small validator, no dependency |
 | `store.py` | ~150 | Load and save JSON files as `{path: object}`. Interprets nothing |
-| `engine.py` | ~370 | Derive statuses with inspectable derivations |
-| `lint.py` | ~220 | Whole-store checks: references, evidence policy, contradictions, negation cycles |
+| `engine.py` | ~380 | Derive statuses with inspectable derivations |
+| `lint.py` | ~330 | Whole-store checks: references, evidence policy, contradictions, negation cycles, card roles, no tier inheritance |
 | `review.py` | ~60 | Compare two dates; list downstream consequences; timeline |
-| `changes.py` | ~345 | The only write path: operations, staging, impact report, audit log |
-| `discovery.py` | ~190 | Coverage ledger and research-task planners; novelty check |
+| `changes.py` | ~450 | The only write path: operations, staging, all-or-nothing batches, impact report, audit log, before-snapshots |
+| `discovery.py` | ~210 | Coverage ledger and research-task planners; novelty check |
 | `goals.py` | ~155 | Objective -> tagged targets -> five-section report |
-| `cli.py` | ~325 | Commands |
+| `cards.py` | ~120 | Card roles and the applicability report (confirmed / excluded / unproven). Derives nothing |
+| `tables.py` | ~485 | CSV tables: export from the store; compile edits into changesets |
+| `cli.py` | ~425 | Commands |
 
 ## The four kinds of knowledge are stored apart
 
@@ -91,6 +93,15 @@ A status obtained through an `acquire` rule becomes a holding with its own dates
 The engine never deletes or ends a holding. It reports; a person confirms the real account state (OP-07). `retain_when` lets a rule state a retention condition different from the acquisition condition.
 
 The brief's Marriott Titanium → Aeroplan 25K case is in the live data with the real terms. The official page does not say what happens to a matched 25K if Titanium lapses, so the rule's mode is `unknown` and the engine answers `UNRESOLVED` with a flag. See `python3 -m prices timeline --profile synthetic-acquired --until 2028-02-01`.
+
+## Cards, network tiers and tables
+
+Added 2026-11-14; full description in `docs/RELATIONAL_TABLES.md`.
+
+- A card entity may name six parties behind it (`card` block). The engine does not read the block.
+- Two rule kinds never derive: `baseline` (what a network tier advertises) and `excludes` (what a card does not carry). The engine skips them; `cards.py` reads them to report, per card and benefit, `CONFIRMED`, `EXCLUDED`, `SUPERSEDED`, `PENDING_REVIEW` or `UNPROVEN`.
+- A tier benefit reaches a holder only through an ordinary verified `grants` rule for that card, with evidence labelled as being about that card. Lint blocks every route by which a tier could confer something.
+- `tables/` holds CSV views of these records. Edits are compiled into changesets and applied all-or-nothing. The store remains the system of record.
 
 ## Time
 

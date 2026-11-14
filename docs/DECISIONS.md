@@ -74,7 +74,48 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 **Why.** One mechanism covers enrollment, linking, registration, spend and stay requirements, and activation state.
 **Convention.** For `acquire` rules the act of applying is the acquisition step itself; do not add a separate action.
 
+## D-17  The JSON store stays the system of record; tables are a view and a validated input (2026-11-14)
+**Decision.** CSV files in `tables/` are generated from the store and may be edited; edits are compiled into ordinary changesets. No table is authoritative for anything.
+**Why.** Argon's proposal left open which layer is authoritative. Two authoritative copies need a merge policy, and merges are where provenance is lost. A view plus a compiler needs none: there is one truth and one write path, the one already tested. Nothing observed while building this argued for moving authority out of the store.
+**Revisit if** table editing becomes the main way of working and the one-sitting limit (D-18) is a real burden.
+
+## D-18  Export, edit, import in one sitting; a stale table is refused, never merged
+**Decision.** Import compares the tables with a fresh export of the current store. If the store moved since the export, the import stops.
+**Why.** The alternative is a three-way merge per row. It is more code, harder to explain to a weaker maintainer, and its failure mode is a silent stale overwrite, which is the specific risk the commission names. Refusing costs the maintainer a re-export.
+**Alternative rejected.** Per-row revision stamps. They allow partial merges but cannot tell a person's edit of a read-only cell from staleness.
+
+## D-19  Seven card layers are one entity and six references; the engine ignores them
+**Decision.** A card entity carries a `card` block naming its co-brand partner, program manager, issuer, capital provider, network and network tier. Organizations and tiers are entities of new kinds `organization` and `network_tier`. Nothing is derived from the block.
+**Why.** The layers describe who stands behind a product. Treating them as descriptive makes the central safety property structural: the engine cannot infer a benefit from a role because it never reads one. Missing key means not recorded; `null` means recorded as none.
+
+## D-20  Network baselines and exclusions are rule kinds that never derive
+**Decision.** `baseline` (tier → benefit) and `excludes` (card → benefit, optionally `superseded_by`) are stored as rules, skipped by the engine, and read only by the applicability report. Lint forbids holding a tier, and forbids any deriving rule from mentioning a tier or organization.
+**Why.** They are sourced statements and need everything rules already have: evidence, verification dates, review, retirement with history, candidate quarantine. A separate record type would have duplicated that machinery. Making them non-deriving kinds, and blocking the two ways a tier could be wired back in, keeps "a tier confers nothing" true by construction and not by convention.
+**Trade-off.** `data/kb/rules/` now holds statements that can never fire. The kind names and `docs/RELATIONAL_TABLES.md` say so.
+
+## D-21  Card-specific evidence is a label on the source, checked by lint
+**Decision.** Evidence may carry `applies_to` (entity ids it is specifically about). A verified rule that grants a tier-advertised benefit, and every verified exclusion, must have policy-satisfying evidence whose `applies_to` names the card.
+**Why.** "Positive card-specific applicability" has to be checkable by a program. This is the smallest check that makes a network's general page insufficient, and that makes "has the card and has not opted out" fail.
+**Known weakness.** Like `source_type`, the label is written by a person or model. Named-reviewer promotion is the control (D-10).
+**Scope.** Not required for a card's own benefits that no tier advertises; the ordinary evidence policy applies there. Requiring it everywhere would have invalidated an original acceptance test.
+
+## D-22  New rows from tables are candidates; holdings never come from tables
+**Decision.** A new `tier_baselines` or `card_benefits` row becomes a candidate and waits for a reviewer. Tables have no holder column, and the importer emits no holding operation.
+**Why.** Bradley's guardrails: bulk-imported rules stay quarantined; roster examples must not become personal holdings. Who holds a card is a fact about a person and keeps its own path (OP-07, owner attestation).
+
+## D-23  Every applied changeset keeps the previous version of what it replaced
+**Decision.** `data/audit/previous/<id>.json` stores each replaced record. `revert_changeset` (reviewers only) restores them and is refused if the records changed again. `apply_many` applies a list all-or-nothing.
+**Why.** The audit log held new values only, so "before" depended on git. Tables make multi-record edits routine; they need to be atomic and undoable inside the system.
+
 ## Departures from the brief, stated plainly
 
 - The brief lists "matching" and "spending requirements" as things to represent. Spending and night thresholds are supported two ways: as `metric >=` conditions (tracked numbers) or as actions (things to do). There is no dedicated "spend" construct.
 - "Actually available booking options" can only ever come from a person's live check. The system has no access to award search and should not pretend to.
+
+## Departures from Argon's proposal (2026-11-14), stated plainly
+
+- No workbook and no Google Sheets. Plain CSV files, because they diff in git, need no account, and open in any spreadsheet program. A workbook can be generated from them later if wanted.
+- Six authoring tables and two generated views, not seven tabs plus a change log. The change log is the existing audit trail plus before-snapshots.
+- The proposal's `not holds optout.X` inheritance pattern is rejected outright (D-20, D-21), as the proposal's own caveats and Bradley's guardrails asked.
+- Tabs for underwriting rules, loyalty programs, portals and cross-program bridges were not built. Programs and bridges already work in the engine through changesets; their conditions (`all`, `any`, `not`, retention terms) do not flatten into one row without losing meaning.
+- A round-trip importer/exporter exists, but only in the safe form: the export is always regenerated from the store, and an import is refused when stale.

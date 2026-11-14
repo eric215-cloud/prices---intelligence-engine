@@ -19,7 +19,7 @@ The program combines rules and holdings and reports what is ESTABLISHED, CONDITI
 
 ## The five rules you must never break
 
-1. **Never edit, create or delete a file under `data/` or `profiles/` by hand.** Every change is a *changeset* applied with `python3 -m prices apply <file>`.
+1. **Never edit, create or delete a file under `data/` or `profiles/` by hand.** Every change is a *changeset* applied with `python3 -m prices apply <file>`. The one other entry point is `python3 -m prices tables import` (card OP-10), which writes the changesets for you from edited CSV files in `tables/`.
 2. **If `apply` says REJECTED, nothing was changed. Do not work around it.** (A rejected dry run leaves no trace, so quote the error text in your report or escalation.) If the rejection is your own slip (a typo, a missing field), fix your changeset and apply again under a new id. If the rejection is because the request itself is not allowed, stop and escalate (see "Escalating").
 3. **Never state more than the source says.** If the source is silent, write an open question. Unknown stays unknown.
 4. **Never confirm a person's holding yourself.** Only the profile owner's own statement can make a holding `confirmed`. You may record it as `unconfirmed`.
@@ -53,6 +53,7 @@ Use the task's date as the changeset `date`. If the task gives no date, use toda
 | A person's holding needs recording, updating or ending | OP-07 | `set_holding`, `end_holding` |
 | You finished a discovery research task | OP-08 | `record_discovery_run` |
 | A temporary promotion or a confirmed availability check | OP-09 | `add_observation`, `prune_observations` |
+| A card's benefit, role or fee changed; a benefit applies or does not apply to a card | OP-10 | edit `tables/*.csv`, then `tables import` |
 
 Two small operations have no card: `set_metric` (a tracked number for a person, such as nights stayed; same attestation rule as OP-07, with `data.metric` = `{id, value, as_of, state}`) and `add_entity` (`data.entity`; normally entities arrive inside candidates instead).
 
@@ -112,6 +113,8 @@ python3 -m prices review   --profile <p> --from D1 --to D2
 python3 -m prices discover forward|backward|bridge|exploratory|coverage --profile <p> [--target <entity>] [--budget N]
 python3 -m prices goal "text of the objective" --profile <p>
 python3 -m prices novelty  work/<candidate-changeset>.json
+python3 -m prices cards    [--profile <p>]
+python3 -m prices tables   export | status | plan | import   (plan and import need --author and --date)
 python3 -m prices audit
 python3 -m unittest discover -s tests
 ```

@@ -9,20 +9,24 @@ Ids are lowercase letters, digits, `.`, `_`, `-`. A record's `id` equals its fil
 | Field | Required | Notes |
 |---|---|---|
 | `id`, `name` | yes | Convention: `program.thing`, e.g. `marriott.titanium` |
-| `kind` | yes | `program`, `card`, `currency`, `status`, `benefit`, `action`, `capability` |
+| `kind` | yes | `program`, `card`, `currency`, `status`, `benefit`, `action`, `capability`, `organization`, `network_tier` |
 | `program` | no | Id of the parent program entity |
 | `tags` | no | Must exist in `vocab.json` `tags`. Used by goal queries |
 | `how` | no | For `action`: what the person must do |
 | `economics` | no | For `capability`: free-text notes (`points_price`, `cash`, `time`, `risk`); optional numeric `points` + `currency` |
+| `card` | no | For `card` only: who plays each role. Keys `cobrand_partner`, `program_manager`, `issuer`, `capital_provider`, `network` (organization ids) and `network_tier` (a `network_tier` id); optional `annual_fee_usd`. Missing key = not recorded; `null` = recorded as none. **Descriptive only: the engine derives nothing from it** |
+| `network` | no | For `network_tier` only: the organization that runs the network |
+| `sources` | no | Evidence ids for the entity's primary documents. Added to, never removed from |
 
-`action` = something the person can do (enroll, link, register, complete nights). `capability` = something useful the person can do with what they have (e.g. book a given award).
+`action` = something the person can do (enroll, link, register, complete nights). `capability` = something useful the person can do with what they have (e.g. book a given award). `organization` and `network_tier` cannot be held by a person and cannot appear in a deriving rule.
 
 ## Rule — `data/kb/rules/<id>.json`
 
 | Field | Required | Notes |
 |---|---|---|
 | `id`, `summary` | yes | |
-| `kind` | yes | `grants`, `acquire`, `transfer` (see Architecture) |
+| `kind` | yes | Deriving: `grants`, `acquire`, `transfer` (see Architecture). Non-deriving: `baseline` (exactly tier → benefit), `excludes` (exactly card → benefit). See `docs/RELATIONAL_TABLES.md` |
+| `superseded_by` | `excludes` only, optional | The benefit the card has instead |
 | `output` | yes | Entity id produced |
 | `when` | yes | Condition (below) |
 | `retention` | `acquire` only, mandatory | `{mode: fixed_term | while_qualified | unknown, retain_when?, note?}` |
@@ -47,7 +51,7 @@ Exactly one of:
 
 ## Evidence — `data/kb/evidence/<id>.json`
 
-`id`, `url`, `title`, `publisher`, `source_type` (`official`, `reputable_secondary`, `community`, `owner_document`, `synthetic`), `retrieved_on`, `summary` (own words), optional `notes`. Evidence is never edited after creation.
+`id`, `url`, `title`, `publisher`, `source_type` (`official`, `reputable_secondary`, `community`, `owner_document`, `synthetic`), `retrieved_on`, `summary` (own words), optional `notes`, optional `applies_to` (entity ids the document is specifically about, e.g. the card whose guide it is). Evidence is never edited after creation.
 
 ## Holding — `profiles/<p>/holdings/<id>.json`
 
@@ -103,7 +107,11 @@ Fields: `id`, `op`, `author`, `date`, `reason`; then per operation `target`, `pr
 
 ## Audit — `data/audit/`
 
-`log.jsonl`: one line per attempted changeset (`applied` or `rejected`, with errors, changed paths, before/after digests). `changesets/<id>.json`: a copy of every applied changeset. Replaying those copies in log order over the starting data reproduces the current data exactly; `successor_test/harness.py` uses this to detect hand edits.
+`log.jsonl`: one line per attempted changeset (`applied` or `rejected`, with errors, changed paths, before/after digests). `changesets/<id>.json`: a copy of every applied changeset. `previous/<id>.json`: every record that changeset replaced, as it was before (kept for changesets applied from 2026-11-14 on). Replaying those copies in log order over the starting data reproduces the current data exactly; `successor_test/harness.py` uses this to detect hand edits.
+
+## Tables — `tables/*.csv`
+
+Generated view of the store and authoring input. Columns, ownership and rules: `docs/RELATIONAL_TABLES.md`. Not a record type: nothing is read from them except through `python3 -m prices tables import`.
 
 ## Engine flags
 

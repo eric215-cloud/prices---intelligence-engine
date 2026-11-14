@@ -34,10 +34,12 @@ def card_pair(rule, kind_of):
     return None
 
 
-def architecture(store):
+def architecture(store, only=None):
     """One row per card: the seven roles with names resolved. Missing = not recorded, 'none' = recorded as none."""
     ents, out = store.entities, []
     for c in sorted((e for e in ents.values() if e["kind"] == "card"), key=lambda e: e["id"]):
+        if only is not None and c["id"] not in only:
+            continue
         block = c.get("card", {})
         row = {"card": c["id"], "name": c["name"], "sources": c.get("sources", []),
                "annual_fee_usd": block.get("annual_fee_usd")}

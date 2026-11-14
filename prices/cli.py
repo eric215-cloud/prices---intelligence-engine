@@ -195,7 +195,11 @@ def cmd_discover(args):
 
 def cmd_cards(args):
     store = Store.load(_root(args))
-    obj = {"as_of": _today(args), "profile": args.profile, "architecture": cards.architecture(store),
+    held = None
+    if args.profile:
+        res = evaluate(store, args.profile, _today(args))
+        held = {e["id"] for e in store.entities.values() if e["kind"] == "card" and res.have(e["id"]) != "NOT_AVAILABLE"}
+    obj = {"as_of": _today(args), "profile": args.profile, "architecture": cards.architecture(store, held),
            "matrix": cards.matrix(store, _today(args), args.profile)}
 
     def text(o):
