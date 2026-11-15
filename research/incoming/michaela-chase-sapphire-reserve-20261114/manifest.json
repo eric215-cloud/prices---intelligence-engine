@@ -1,0 +1,29 @@
+{
+  "project": "Michaela — Foundational PRICES Card Research",
+  "commissioned_by": "Bradley",
+  "card_id": "CARD-CHASE-SAPPHIRE-RESERVE-PERSONAL",
+  "as_of": "2026-11-14",
+  "status": "STRUCTURALLY_VALIDATED_BRADLEY_REVIEW_PENDING",
+  "cards": [
+    "CARD-CHASE-SAPPHIRE-RESERVE-PERSONAL"
+  ],
+  "source_count": 7,
+  "architecture_records": 7,
+  "benefit_records": 12,
+  "bridge_records": 25,
+  "unresolved_records": 6,
+  "record_files": [
+    "sources.jsonl",
+    "card_architecture.jsonl",
+    "benefits.jsonl",
+    "program_bridges.jsonl",
+    "unresolved_questions.jsonl"
+  ],
+  "interpretive_rule": "Public eligibility and qualification mechanics are not proof of personal spend achievement, activation, utilization or expiration.",
+  "limitations": [
+    "Only selected 12 strategic benefit clusters; see review summary for additional published perks",
+    "Individual transfer ratios not verified",
+    "Current Chase account-specific benefits not accessed",
+    "Capital provider unresolved"
+  ]
+}
