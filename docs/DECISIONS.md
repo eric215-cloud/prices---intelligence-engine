@@ -107,6 +107,47 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 **Decision.** `data/audit/previous/<id>.json` stores each replaced record. `revert_changeset` (reviewers only) restores them and is refused if the records changed again. `apply_many` applies a list all-or-nothing.
 **Why.** The audit log held new values only, so "before" depended on git. Tables make multi-record edits routine; they need to be atomic and undoable inside the system.
 
+## D-24  Earned benefits get their own personal record types (2026-11-14)
+**Decision.** Two new record types under each profile: `qualifications/` (dated readings of progress, per account, measure and year) and `entitlements/` (the benefit as it sits on the account, with its own dates, allowance and uses). `holdings` and `metrics` are not extended.
+**Why.** A holding has one validity range and no cycle, account, allowance or use; a metric is one number with one date. Stretching either would have changed what existing records mean. Separate types keep every existing code path and output untouched for anyone without such records (verified byte for byte, `scripts/compare_with_baseline.py`).
+
+## D-25  `earns` is a rule kind the general engine never derives from
+**Decision.** A rule of kind `earns` (card, measure, period, threshold, term, activation, optional allowance) is public knowledge only. The rule loop skips it. Its consequences enter the engine as base facts computed in `prices/earned.py` from a person's own records, and only when that person has such records.
+**Why.** The existing rule kinds answer "does the condition hold now". An earned benefit depends on a figure scoped to one account and one year, read on a date, and then on a separate account fact. Evaluating it as an ordinary rule would make every cardholder "eligible" or would need lifetime metrics, which is the conflation the commission forbids.
+
+## D-26  Reaching the threshold is eligibility; only an account record is possession
+**Decision.** Achieved progress gives `can_get` (and `have` only as CONDITIONAL, needing an acquire step and, where the rule says so, the activation action). `have` is ESTABLISHED only from a confirmed entitlement record inside its own dates. Eligibility stays a separate fact after the record exists; it ends with the entitlement.
+**Why.** Benefits post late, need activation, or never post. The owner's account is the only authority on what is there. Keeping eligibility after the record is added also stops the pipeline from reporting a false "something got weaker" when a benefit is recorded.
+
+## D-27  Valid time; a later reading never reaches back; unknown stays unknown
+**Decision.** Queries answer "what was true on that date, as far as the records now show". A reading counts from the date it refers to. For an earlier date: if a later reading is still below the threshold, the earlier date is known below (cumulative progress does not decrease); if the only at/above reading is later, the earlier date is UNRESOLVED. The crossing day is never computed.
+**Alternative considered.** Ignore later readings entirely for earlier dates (answer NOT_AVAILABLE). Rejected: the records then say "not eligible" on a date when the honest answer is "not known", and a maintainer looking back would be told something false. UNRESOLVED never satisfies anything, so nothing is promoted.
+**Not done.** Record-time ("what did the system believe on that date") queries. The audit trail holds that history; queries do not replay it.
+
+## D-28  A metric observed after the query date is unknown, not satisfied
+**Decision.** In a `metric` condition, an observation whose `as_of` is after the query date is treated as not recorded (UNRESOLVED).
+**Why.** Bradley's hazard note: the engine compared `metric.value` with the threshold and ignored `as_of`, so a November figure satisfied a June query. This is a tightening of existing behaviour. No live rule or profile uses metrics and no existing test or output changed; a profile that did rely on a future-dated metric would now see UNRESOLVED on earlier dates, which is the correct answer.
+
+## D-29  Dates may be the word `unknown`; they are never inferred
+**Decision.** `observed_on`, `used_on`, `effective_from` and `expires_on` accept a date or `unknown`. `effective_from` and `expires_on` must always be written, so leaving a date out is a refused input, not a silent default. An undated reading must be `at_least` and is relied on from its confirmation date or the end of the year, whichever is earlier. An unknown start is unresolved before the confirmation date; an unknown expiry is unresolved after it.
+**Why.** "Never infer a precise start from a year-only attestation." Making `unknown` a value the maintainer has to type turns guessing into a visible act and lets the program compute the consequences.
+
+## D-30  The owner's confirmation stands; contradictions are shown, not overridden
+**Decision.** A confirmed entitlement with no established achievement on file is ESTABLISHED and flagged `QUALIFICATION_NOT_RECORDED`. One contradicted by a final below-threshold figure, by conflicting readings, or by a second live record is UNRESOLVED and flagged. An active entitlement on an account no longer held is flagged `ACCOUNT_NOT_HELD` and left as recorded.
+**Why.** The account is the authority on what is on it (banks grant exceptions; statements lag). The program's job is to keep the chain inspectable and say where a link is missing, not to overrule the owner or to hide the gap. Same principle as D-07: the engine never ends something on its own.
+
+## D-31  Readings and uses are append-only; the identity of a record never changes
+**Decision.** A correction marks the old reading or use `superseded` and adds a new entry (`correct_entry`). The rule, account and cycle of an entitlement cannot be revised; a wrong record is withdrawn (`state: superseded`) and a new one entered. The same figure for the same date, the same use, and a second record for the same benefit, account and year are refused.
+**Why.** Idempotency and no double counting: typing a fact twice must not count it twice, and the history of what was believed must survive a correction without depending on git.
+
+## D-32  The personal expiry governs; the rule's term only informs
+**Decision.** The rule's `term` yields an expected end date that is displayed and used for one thing: when unclaimed eligibility lapses. An entitlement record's own `expires_on` decides when the benefit ends, whatever the rule says and whether or not the rule is still on offer, retired or flagged. Differences are flagged as information. Expiry with no later record, and a credit lapsing with something left, raise review flags.
+**Why.** "The rule's public offer validity is not the instance's personal expiration." An acquired fixed-term benefit must neither vanish when the qualifying period or the offer ends nor persist past its own date.
+
+## D-33  Earned benefits are not in the CSV tables
+**Decision.** No table has a column for progress, achievement, entitlement or use, and the importer emits none of the personal operations. Earn rules are authored as candidates and promoted by a reviewer.
+**Why.** D-22 (holdings never come from tables) applies with more force here: these are per-person, per-account, per-year facts needing owner attestation. A row-per-benefit table also cannot carry the `earn` block without inventing columns Argon's content architecture has not asked for.
+
 ## Departures from the brief, stated plainly
 
 - The brief lists "matching" and "spending requirements" as things to represent. Spending and night thresholds are supported two ways: as `metric >=` conditions (tracked numbers) or as actions (things to do). There is no dedicated "spend" construct.
@@ -119,3 +160,12 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 - The proposal's `not holds optout.X` inheritance pattern is rejected outright (D-20, D-21), as the proposal's own caveats and Bradley's guardrails asked.
 - Tabs for underwriting rules, loyalty programs, portals and cross-program bridges were not built. Programs and bridges already work in the engine through changesets; their conditions (`all`, `any`, `not`, retention terms) do not flatten into one row without losing meaning.
 - A round-trip importer/exporter exists, but only in the safe form: the export is always regenerated from the store, and an import is refused when stale.
+
+## Limits of the earned-benefit work (2026-11-14), stated plainly
+
+- Calendar-year periods only. Other cycle types are refused, not approximated.
+- Refunds and clawbacks are not modelled; progress is assumed not to decrease within a year.
+- Sharing (authorized users, guests, companions, household pooling) is not modelled at all. Every record belongs to one person and one of that person's own accounts.
+- Not bitemporal (D-27).
+- No lower-capability model has run the new procedure (OP-11). The procedure has been exercised only by its author and by automated tests.
+- Full list: `docs/EARNED_ENTITLEMENTS.md` section 8.

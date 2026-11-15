@@ -18,7 +18,7 @@ def run(cmd, cwd):
     env = {"PATH": os.environ.get("PATH", ""), "HOME": tempfile.mkdtemp()}   # clean environment
     p = subprocess.run(cmd, cwd=cwd, env=env, capture_output=True, text=True)
     tail = (p.stdout + p.stderr).strip().splitlines()[-1:] or [""]
-    print("%-4s %s   | %s" % ("ok" if p.returncode == 0 else "FAIL", " ".join(cmd[1:]), tail[0]))
+    print("%-4s %s   | %s" % ("ok" if p.returncode == 0 else "FAIL", " ".join(cmd[1:] if cmd[0] == sys.executable else cmd), tail[0]))
     return p.returncode == 0
 
 
@@ -38,6 +38,11 @@ ok &= run([sys.executable, "-m", "prices", "tables", "status"], proj)
 ok &= run([sys.executable, "fixtures/synthetic_cards.py", os.path.join(clean, "fixture-rebuild")], proj)
 ok &= run([sys.executable, "-m", "prices", "--root", "fixtures/synthetic-cards", "cards", "--profile", "synthetic-alex", "--as-of", "2026-11-14"], proj)
 ok &= run([sys.executable, "scripts/demo_card_maintenance.py"], proj)
+ok &= run([sys.executable, "fixtures/synthetic_earned.py", os.path.join(clean, "fixture-earned-rebuild")], proj)
+ok &= run(["diff", "-r", "-q", os.path.join(clean, "fixture-earned-rebuild"), os.path.join(proj, "fixtures", "synthetic-earned")], proj)
+ok &= run([sys.executable, "-m", "prices", "--root", "fixtures/synthetic-earned", "earned", "--profile", "synthetic-alex", "--as-of", "2027-03-10"], proj)
+ok &= run([sys.executable, "scripts/demo_earned.py"], proj)
+ok &= run([sys.executable, "scripts/mutation_check_earned.py"], proj)
 print("zip: %s (%d bytes)" % (out, os.path.getsize(out)))
 print("TEST F:", "PASS" if ok else "FAIL")
 sys.exit(0 if ok else 1)

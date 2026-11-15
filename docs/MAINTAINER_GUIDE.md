@@ -54,6 +54,9 @@ Use the task's date as the changeset `date`. If the task gives no date, use toda
 | You finished a discovery research task | OP-08 | `record_discovery_run` |
 | A temporary promotion or a confirmed availability check | OP-09 | `add_observation`, `prune_observations` |
 | A card's benefit, role or fee changed; a benefit applies or does not apply to a card | OP-10 | edit `tables/*.csv`, then `tables import` |
+| A person's progress toward a spending or activity threshold; an earned benefit landing on their account; use of an earned credit; a correction to any of these | OP-11 | `record_progress`, `record_entitlement`, `record_usage`, `correct_entry`, `revise_entitlement` |
+
+**Offered is not earned, and earned is not held.** A card offering a benefit for reaching a threshold tells you nothing about any person. A person reaching the threshold is *eligible*. Only an entitlement record confirmed by the owner means the benefit is *on the account*. Never record one because of the other, and never fill in a date nobody gave you: write the word `unknown` (OP-11).
 
 Two small operations have no card: `set_metric` (a tracked number for a person, such as nights stayed; same attestation rule as OP-07, with `data.metric` = `{id, value, as_of, state}`) and `add_entity` (`data.entity`; normally entities arrive inside candidates instead).
 
@@ -114,6 +117,7 @@ python3 -m prices discover forward|backward|bridge|exploratory|coverage --profil
 python3 -m prices goal "text of the objective" --profile <p>
 python3 -m prices novelty  work/<candidate-changeset>.json
 python3 -m prices cards    [--profile <p>]
+python3 -m prices earned   --profile <p> [--as-of YYYY-MM-DD] [--cycle YYYY] [--detail]
 python3 -m prices tables   export | status | plan | import   (plan and import need --author and --date)
 python3 -m prices audit
 python3 -m unittest discover -s tests

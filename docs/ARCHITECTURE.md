@@ -24,22 +24,23 @@ Records are JSON files. A deterministic engine reads rules and one person's hold
 |---|---|---|
 | `schema.py` + `schema.json` | ~100 + schema | Shape of every record and changeset. Small validator, no dependency |
 | `store.py` | ~150 | Load and save JSON files as `{path: object}`. Interprets nothing |
-| `engine.py` | ~380 | Derive statuses with inspectable derivations |
-| `lint.py` | ~330 | Whole-store checks: references, evidence policy, contradictions, negation cycles, card roles, no tier inheritance |
+| `engine.py` | ~395 | Derive statuses with inspectable derivations |
+| `lint.py` | ~500 | Whole-store checks: references, evidence policy, contradictions, negation cycles, card roles, no tier inheritance, earned-benefit records |
 | `review.py` | ~60 | Compare two dates; list downstream consequences; timeline |
-| `changes.py` | ~450 | The only write path: operations, staging, all-or-nothing batches, impact report, audit log, before-snapshots |
+| `changes.py` | ~635 | The only write path: operations, staging, all-or-nothing batches, impact report, audit log, before-snapshots |
 | `discovery.py` | ~210 | Coverage ledger and research-task planners; novelty check |
 | `goals.py` | ~155 | Objective -> tagged targets -> five-section report |
 | `cards.py` | ~120 | Card roles and the applicability report (confirmed / excluded / unproven). Derives nothing |
+| `earned.py` | ~445 | Earned benefits: achievement from dated readings, state of each entitlement record, credit arithmetic. Computes the engine's base facts for them and the `earned` report from one function, so the two cannot disagree. Stores nothing |
 | `tables.py` | ~485 | CSV tables: export from the store; compile edits into changesets |
-| `cli.py` | ~425 | Commands |
+| `cli.py` | ~535 | Commands |
 
 ## The four kinds of knowledge are stored apart
 
 | Category | Stored as | Trusted when |
 |---|---|---|
 | Sourced rules | `data/kb/rules/` + `data/kb/evidence/` | `verification.status` is `verified`, which lint allows only with one official source or two independent reputable secondary sources |
-| Personal qualifications | `profiles/<p>/holdings/`, `metrics/` | `state` is `confirmed`, which needs the owner's attestation |
+| Personal qualifications | `profiles/<p>/holdings/`, `metrics/`, `qualifications/`, `entitlements/` | `state` is `confirmed`, which needs the owner's attestation |
 | Derived entitlements | Never stored. Computed on demand | Every leaf of the derivation is a confirmed fact and every rule on it is verified |
 | Unresolved possibilities | `data/candidates/`, unverified rules, unconfirmed holdings | Never. They can only produce `UNRESOLVED` |
 
@@ -102,6 +103,10 @@ Added 2026-11-14; full description in `docs/RELATIONAL_TABLES.md`.
 - Two rule kinds never derive: `baseline` (what a network tier advertises) and `excludes` (what a card does not carry). The engine skips them; `cards.py` reads them to report, per card and benefit, `CONFIRMED`, `EXCLUDED`, `SUPERSEDED`, `PENDING_REVIEW` or `UNPROVEN`.
 - A tier benefit reaches a holder only through an ordinary verified `grants` rule for that card, with evidence labelled as being about that card. Lint blocks every route by which a tier could confer something.
 - `tables/` holds CSV views of these records. Edits are compiled into changesets and applied all-or-nothing. The store remains the system of record.
+
+## Earned benefits
+
+A rule of kind `earns` says that reaching a threshold on a measure, on one card, in one period, earns a benefit. The rule loop never derives from it. For a person who has qualification or entitlement records, `earned.py` supplies base facts before the fixed point runs: achieved progress gives `can_get` (eligibility); a confirmed entitlement record inside its own dates gives `have`. Everything downstream (rules that build on an earned status, flags, `explain`, `timeline`, the pipeline's impact report) then works unchanged. A person with no such records never reaches this code, and their output is byte-identical to before. Full description: `docs/EARNED_ENTITLEMENTS.md`.
 
 ## Time
 

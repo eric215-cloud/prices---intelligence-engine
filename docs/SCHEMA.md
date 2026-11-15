@@ -27,6 +27,7 @@ Ids are lowercase letters, digits, `.`, `_`, `-`. A record's `id` equals its fil
 | `id`, `summary` | yes | |
 | `kind` | yes | Deriving: `grants`, `acquire`, `transfer` (see Architecture). Non-deriving: `baseline` (exactly tier → benefit), `excludes` (exactly card → benefit). See `docs/RELATIONAL_TABLES.md` |
 | `superseded_by` | `excludes` only, optional | The benefit the card has instead |
+| `earn` | `earns` only, mandatory | See "Earn block" below. An `earns` rule is public knowledge only: `when` must be exactly `{"holds": <card>}`, `output` a benefit or status, and the engine never derives from it directly (`docs/EARNED_ENTITLEMENTS.md`) |
 | `output` | yes | Entity id produced |
 | `when` | yes | Condition (below) |
 | `retention` | `acquire` only, mandatory | `{mode: fixed_term | while_qualified | unknown, retain_when?, note?}` |
@@ -36,6 +37,19 @@ Ids are lowercase letters, digits, `.`, `_`, `-`. A record's `id` equals its fil
 | `value_note` | no | Plain-language worth and caveats |
 | `evidence` | yes | List of evidence ids (may be empty only if unverified) |
 | `verification` | yes | `{status: verified | unverified | retired, last_verified, review_by}` |
+
+### Earn block (rules of kind `earns`)
+
+| Field | Required | Notes |
+|---|---|---|
+| `measure` | yes | Name of what is counted, e.g. `voyager.qualifying-spend`. Progress is recorded against this name |
+| `period` | yes | `calendar_year` (the only value supported) |
+| `threshold` | yes | Number greater than zero. `unit` optional (display only) |
+| `activation` | yes | `automatic` or `required`. `activation_action` (an `action` entity) only with `required` |
+| `term` | yes | How long the benefit lasts, as the source states it: `{ends: fixed, year_offset, month, day}` or `{ends: fixed, year_offset, month, month_end: true}` or `{ends: not_stated, note?}`. `year_offset` counts from the qualifying year |
+| `allowance` | no | `{amount, unit}` for a consumable credit |
+
+The rule's own `valid_from` / `valid_to` say which qualifying periods the offer covers. They never end a benefit someone already has.
 
 ## Condition
 
@@ -65,7 +79,34 @@ Exactly one of:
 
 ## Metric — `profiles/<p>/metrics/<id>.json`
 
-`id`, `value`, `as_of`, `state` (`confirmed` / `unconfirmed`). A tracked number such as nights or spend.
+`id`, `value`, `as_of`, `state` (`confirmed` / `unconfirmed`). A tracked number such as nights or spend. A metric whose `as_of` is after the query date is treated as not recorded on that date (D-28). For progress toward an earned benefit use a qualification, not a metric.
+
+## Qualification — `profiles/<p>/qualifications/<id>.json`
+
+One person's progress on one of their own accounts, for one measure, in one qualifying year. Written only by `record_progress` and `correct_entry`.
+
+| Field | Required | Notes |
+|---|---|---|
+| `id` | yes | `q-<account>-<measure>-<cycle>` (generated) |
+| `account` | yes | Id of a holding of the card in the same profile |
+| `measure`, `cycle` | yes | The rule's measure; the four-digit qualifying year |
+| `readings` | yes | Append-only list. Each: `id`, `value`, `observed_on` (date the figure refers to, or `unknown`), `value_kind` (`exact` default, `at_least`; undated readings must be `at_least`), `final` (year-end total, dated the last day of the year), `state` (`confirmed` / `unconfirmed` / `superseded`), `confirmed_by`, `confirmed_on`, `basis`, `superseded_by`, `changeset` |
+
+## Entitlement — `profiles/<p>/entitlements/<id>.json`
+
+One earned benefit as it actually sits on one account. Written only by `record_entitlement`, `revise_entitlement`, `record_usage` and `correct_entry`.
+
+| Field | Required | Notes |
+|---|---|---|
+| `id` | yes | |
+| `rule`, `entity` | yes | The `earns` rule and its output. Cannot be revised |
+| `account`, `cycle` | yes | The person's own card holding; the qualifying year it was earned in. Cannot be revised |
+| `state` | yes | `confirmed` (owner attestation; sets `confirmed_by`, `confirmed_on`), `unconfirmed`, `superseded` (withdrawn, kept) |
+| `effective_from`, `expires_on` | yes | A date or the word `unknown`. What the account shows, never copied from the rule |
+| `ended_on`, `end_reason` | no | Ended early |
+| `allowance` | credits only | `{amount, unit}`. Never reduced; remaining is computed |
+| `usage` | no | Append-only list. Each: `id`, `amount`, `used_on` (date or `unknown`), `state`, `confirmed_by`, `confirmed_on`, `basis`, `superseded_by`, `changeset` |
+| `basis`, `notes` | no | |
 
 ## Profile — `profiles/<p>/profile.json`
 
@@ -126,3 +167,4 @@ Generated view of the store and authoring input. Columns, ownership and rules: `
 | `SOURCE_LAPSED_FIXED_TERM` | Status safe until expiry but cannot be renewed the same way | Plan renewal |
 | `ACQUISITION_RULE_MISSING` | `acquired_via` points nowhere | Escalate |
 | `NEGATIVE_CYCLE` | Rule excluded for circular exclusion | Escalate |
+| `QUALIFICATION_NOT_RECORDED`, `CONFLICTING_QUALIFICATION`, `CONFLICTING_PROGRESS`, `CONFLICTING_ENTITLEMENTS`, `QUALIFICATION_OUTCOME_NOT_RECORDED`, `UNCONFIRMED_ENTITLEMENT`, `ENTITLEMENT_UNRESOLVED`, `CREDIT_USE_UNCONFIRMED`, `EXPIRED_ENTITLEMENT`, `CREDIT_LAPSED_UNUSED`, `ACCOUNT_NOT_HELD`, `TERM_DIFFERS_FROM_RULE`, `ALLOWANCE_DIFFERS_FROM_RULE` | Earned benefits. Meanings: `docs/EARNED_ENTITLEMENTS.md` section 5 | OP-11 with the owner; escalate conflicts |

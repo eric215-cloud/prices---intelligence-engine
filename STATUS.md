@@ -1,6 +1,6 @@
 # PRICES status report — 2026-11-14
 
-Foundation built 2026-11-12 by Claude Fable 5.2 (commissioning build). Relational foundation added 2026-11-14 on branch `dev/fable-integration` (not yet merged to `main`). This report separates what was observed from what is claimed.
+Foundation built 2026-11-12 by Claude Fable 5.2 (commissioning build). Relational foundation and earned benefits added 2026-11-14 on branch `dev/fable-integration` (not yet merged to `main`). This report separates what was observed from what is claimed.
 
 ## Acceptance demonstrations
 
@@ -28,20 +28,35 @@ Foundation built 2026-11-12 by Claude Fable 5.2 (commissioning build). Relationa
 
 Full record: `docs/commissions/results/2026-11-14-fable-relational-foundation-RESULTS.md`.
 
-144 automated tests pass. Run: `python3 -m unittest discover -s tests`.
+### Earned benefits (2026-11-14) — all demonstrated on invented cards, people and figures only
+
+| Test | Result | Evidence observed |
+|---|---|---|
+| L Earned-benefit semantics | **Pass** | `tests/test_l_earned.py`, 44 tests: an offer gives nothing; reaching a threshold gives eligibility, never possession; activation is a separate fact; one event, two expiries; scoping by person, account and year; a later reading never reaches back; unknown dates stay unknown; offer end vs personal expiry; two overlapping years; credit allowance / used / remaining; unconfirmed and conflicting records never established |
+| M Earned-benefit pipeline | **Pass** | `tests/test_m_earned_pipeline.py`, 30 tests on `fixtures/synthetic-earned/`: the commission's scenario read off at a series of dates; owner attestation; 60+ invalid inputs refused with nothing changed; idempotency; corrections with history and revert; tables carry no personal facts; the `earned` report |
+| Guarantees actually guarded | **Pass** | `scripts/mutation_check_earned.py`: 17 guarantees broken one at a time in a scratch copy; the tests notice all 17 |
+| Backward compatibility | **Pass** | The 144 earlier tests are unmodified and pass. `scripts/compare_with_baseline.py`: 50 commands byte-identical against the commit before this work; live records, tables, earlier tests and the card fixture are the same files |
+| Clean checkout, offline; export | **Pass** | `scripts/verify_clean_checkout.py`, `scripts/verify_export.py` |
+| Maintenance procedure OP-11 | **Run by the building model and by tests only** | `scripts/demo_earned.py`. Lower-model execution: **untested** |
+
+Full record: `docs/commissions/results/2026-11-14-fable-earned-entitlements-RESULTS.md`.
+
+218 automated tests pass. Run: `python3 -m unittest discover -s tests`.
 
 ## Capability status
 
 ### Complete
 - Portable project: Python standard library only, JSON files, git history, zip export.
 - Eligibility engine with four statuses, inspectable derivations, acquisition/retention semantics, time, flags.
-- Whole-store validation and the changeset pipeline with 17 bounded operations, all-or-nothing batches, impact reports, audit log and before-snapshots of every replaced record.
+- Whole-store validation and the changeset pipeline with 22 bounded operations, all-or-nothing batches, impact reports, audit log and before-snapshots of every replaced record.
 - Discovery planners (forward, backward, bridge, exploratory), coverage ledger, candidate quarantine, novelty check.
 - Goal reports in five separated sections.
-- Maintainer guide, ten operation cards, schema, decision record, successor-test harness.
+- Maintainer guide, eleven operation cards, schema, decision record, successor-test harness.
 - Card architecture: a card's six parties (co-brand partner, program manager, issuer, capital provider, network, network tier) recorded as descriptive roles the engine never reads.
 - Applicability: network-tier baselines and card exclusions recorded as sourced statements that derive nothing; a tier benefit applies to a card only on verified, card-specific evidence. Report: `python3 -m prices cards`.
 - CSV tables (`tables/`): generated view plus validated, all-or-nothing authoring input. The JSON store remains the system of record.
+- Earned benefits: a public `earns` rule, a person's dated progress per account and year, and the benefit as it actually sits on the account are three separate records. Reaching a threshold gives eligibility only; possession needs an owner-confirmed account record with its own dates. Credits keep allowance, used and remaining apart. Report: `python3 -m prices earned --profile <p>`. Design: `docs/EARNED_ENTITLEMENTS.md`.
+- A `metric` observed after the query date is no longer used for that date (it reads as unknown).
 
 ### Partial
 - **Knowledge base: 10 rules, 23 entities, 16 evidence records.** Enough to exercise the software. It does not describe the loyalty landscape.
@@ -55,6 +70,9 @@ Full record: `docs/commissions/results/2026-11-14-fable-relational-foundation-RE
 - **Card-specific evidence is a label** (`applies_to`) typed by whoever records the source. Reviewer promotion is the control.
 - **Tables cover cards, parties, benefits, sources, tier baselines and card benefits.** Programs, status tiers, bridges, portals and underwriting rules have no table; they are maintained through changesets as before.
 - **Card benefits are not in goal reports** (no goal tags reach them through the tables).
+- **Earned benefits: none real.** No real earn rule, progress figure, achievement, activation, balance or expiry is recorded for anyone. The live knowledge base has no `earns` rule and no profile has a qualification or entitlement record (a test enforces this).
+- **Earned benefits cover calendar-year thresholds on one card account.** Cardmember-year and rolling periods, refunds and clawbacks, tiered thresholds, spend combined across cards or people, and any form of sharing are not modelled. Queries are valid-time, not record-time. Full list: `docs/EARNED_ENTITLEMENTS.md` section 8.
+- **Dates and balances on an earned benefit are what the owner reports.** The program checks they are possible and flags disagreement with the rule's stated term; it cannot check them against an account.
 
 ### Blocked
 - **Remaining Eric holdings.** Two owner-confirmed real statuses (Marriott Titanium, Aeroplan 25K) were imported November 12. The rest of Eric's ecosystem remains to be reconciled and loaded; a two-record profile is not complete.
@@ -64,6 +82,7 @@ Full record: `docs/commissions/results/2026-11-14-fable-relational-foundation-RE
 ### Untested
 - Maintenance by models weaker than Claude Haiku 5.5, and repeated runs for reliability.
 - **OP-10 (table maintenance) by any model other than the builder.**
+- **OP-11 (earned benefits) by any model other than the builder.**
 - Google Sheets as the editor for the CSV files. Only plain CSV, including a BOM + CRLF variant, was exercised.
 - Discovery research performed by a weaker model.
 - Behaviour at scale (hundreds of rules). Evaluation is simple iteration; expected fine, not measured.
@@ -91,3 +110,5 @@ None are built in. No subscription, hosting or API is required to run, test, que
 5. Review `dev/fable-integration` and decide whether to merge it to `main`.
 6. Confirm the expiry date of Eric's Aeroplan 25K. Without it the holding cannot be tracked, and after Marriott Titanium's recorded expiry (2027-01-31) the engine will report it as unresolved.
 7. Decide how household sharing should be represented before loading benefits whose value depends on it.
+8. Decide (Argon, content) which real earned-benefit rules to author first, and which period types they need. Anything other than a calendar year needs an engineering step before it can be loaded.
+9. Before any real earned benefit is recorded for Eric or Todd: the owner supplies each figure, date and balance. None has been entered or inferred.

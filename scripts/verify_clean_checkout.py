@@ -35,6 +35,14 @@ ok &= run([sys.executable, "-m", "prices", "tables", "status"], dst)
 ok &= run([sys.executable, "-m", "prices", "status", "--profile", "eric", "--as-of", "2026-11-14"], dst)
 ok &= run([sys.executable, "fixtures/synthetic_cards.py", os.path.join(os.path.dirname(dst), "fixture")], dst)
 ok &= run([sys.executable, "scripts/demo_card_maintenance.py"], dst)
+# earned benefits: rebuild the synthetic fixture and compare it with the committed copy, then report, demo and guards
+rebuilt = os.path.join(os.path.dirname(dst), "fixture-earned")
+ok &= run([sys.executable, "fixtures/synthetic_earned.py", rebuilt], dst)
+ok &= run(["diff", "-r", "-q", rebuilt, os.path.join(dst, "fixtures", "synthetic-earned")], dst)
+ok &= run([sys.executable, "-m", "prices", "--root", "fixtures/synthetic-earned", "earned", "--profile", "synthetic-alex", "--as-of", "2027-03-10"], dst)
+ok &= run([sys.executable, "scripts/demo_earned.py"], dst)
+ok &= run([sys.executable, "scripts/mutation_check_earned.py"], dst)
+ok &= run([sys.executable, "scripts/compare_with_baseline.py"], dst, dict(ENV, GIT_CONFIG_NOSYSTEM="1"))
 ok &= run(["git", "status", "--porcelain"], dst, dict(os.environ))   # the run must not have modified the checkout
 left = subprocess.run(["git", "status", "--porcelain"], cwd=dst, capture_output=True, text=True).stdout.strip()
 if left:

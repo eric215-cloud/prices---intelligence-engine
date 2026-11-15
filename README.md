@@ -12,7 +12,7 @@ It keeps sourced rules about loyalty programs, one person's actual holdings, and
 ## Start here
 
 ```
-python3 -m unittest discover -s tests          # 144 tests, a few seconds
+python3 -m unittest discover -s tests          # 218 tests, about ten seconds
 python3 -m prices lint                         # must print: 0 error(s)
 python3 -m prices status --profile synthetic-demo --as-of 2026-11-12
 python3 -m prices goal "Find promising ways for me to fly business class to Japan" --profile synthetic-demo --as-of 2026-11-12
@@ -32,7 +32,7 @@ Run every command from this directory (the one containing `prices/`, `data/` and
 | `docs/operations/` | One card per maintenance operation |
 | `docs/DISCOVERY.md` | The discovery procedure |
 | `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/SCHEMA.md` | Design, decision record, record formats |
-| `prices/` | Source code (about 2,900 lines, standard library only) |
+| `prices/` | Source code (about 3,800 lines, standard library only) |
 | `prices/schema.json` | Machine-readable schema for every record and for changesets |
 | `data/kb/` | Knowledge base: entities, rules, evidence, vocabulary |
 | `data/candidates/` | Unverified discoveries (never used as fact) |
@@ -41,10 +41,11 @@ Run every command from this directory (the one containing `prices/`, `data/` and
 | `data/audit/` | Append-only log and a copy of every applied changeset |
 | `profiles/eric/` | Authoritative personal records. **Empty and unverified** |
 | `profiles/synthetic-*/` | Invented demonstration people. Not Eric |
-| `tests/` | Automated tests, including acceptance tests A–I and the card/table tests J–K |
+| `tests/` | Automated tests, including acceptance tests A–I, the card/table tests J–K and the earned-benefit tests L–M |
 | `tables/` | CSV view of cards, benefits and sources; also the input to `tables import`. The store in `data/` remains the system of record |
 | `docs/RELATIONAL_TABLES.md` | Card roles, network-tier baselines, applicability, and the table rules |
-| `fixtures/` | Invented cards and people used to test the card tables. Not real data |
+| `docs/EARNED_ENTITLEMENTS.md` | Benefits earned by reaching a threshold: public rule, personal achievement, current entitlement, and time |
+| `fixtures/` | Invented cards, people and spending used to test the card tables and earned benefits. Not real data |
 | `successor_test/` | Harness for testing whether a smaller model can maintain the system |
 
 ## Everyday use
@@ -58,6 +59,7 @@ Run every command from this directory (the one containing `prices/`, `data/` and
 | Get research tasks | `python3 -m prices discover forward --profile <p>` |
 | Change any record | Write a changeset, then `python3 -m prices apply <file>` (see the maintainer guide) |
 | See card roles and which benefits really apply to each card | `python3 -m prices cards [--profile <p>]` |
+| See what a person has earned by reaching a threshold: progress, eligibility, what is actually on the account, dates, credit remaining | `python3 -m prices earned --profile <p>` (`docs/operations/OP-11-earned-benefits.md`) |
 | Edit cards and card benefits in a spreadsheet | `python3 -m prices tables export`, edit `tables/*.csv`, `python3 -m prices tables import --author NAME --date YYYY-MM-DD` (`docs/operations/OP-10-tables.md`) |
 | Export the whole project | `python3 -m prices export --out prices-export.zip` |
 
