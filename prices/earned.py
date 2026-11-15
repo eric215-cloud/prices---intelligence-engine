@@ -66,10 +66,10 @@ def expected_end(term, label):
 def term_text(term):
     if term.get("ends") != "fixed":
         return "end date not stated by the rule" + (" (%s)" % term["note"] if term.get("note") else "")
-    which = "the last day" if term.get("month_end") else "day %d" % term["day"]
-    off = term["year_offset"]
-    year = "the qualifying year" if off == 0 else "the year after the qualifying year" if off == 1 else "%d years after the qualifying year" % off
-    return "through %s of %s in %s" % (which, calendar.month_name[term["month"]], year)
+    month, off = calendar.month_name[term["month"]], term["year_offset"]
+    which = "the last day of %s" % month if term.get("month_end") else "%s %d" % (month, term["day"])
+    year = "of the qualifying year" if off == 0 else "of the following year" if off == 1 else "%d years after the qualifying year" % off
+    return "through %s %s" % (which, year)
 
 
 def known_from(reading, cycle_end):
@@ -100,6 +100,9 @@ def achievement(threshold, qual, as_of, period="calendar_year"):
         out["progress"] = {"value": last["value"], "as_of": last["observed_on"], "reading": last["id"],
                            "kind": last.get("value_kind", "exact"), "final": bool(last.get("final")),
                            "age_days": (as_of - to_date(last["observed_on"])).days}
+    elif usable:     # only undated statements so far: show the largest, and say its date is unknown
+        last = max(usable, key=lambda r: (r["value"], r["id"]))
+        out["progress"] = {"value": last["value"], "as_of": UNKNOWN, "reading": last["id"], "kind": "at_least", "final": False, "age_days": None}
     if as_of < start:
         out.update(state=NOT_STARTED, detail="the qualifying period starts %s" % start)
         return out
@@ -242,7 +245,7 @@ def survey(store, profile, as_of):
                        "unit": group[0]["earn"].get("unit", "") if group else "", "qualification": q["id"] if q else None,
                        "readings": q["readings"] if q else [], "benefits": []}
                 for rule in group:
-                    cyc["benefits"].append(_benefit(store, prof, h, held, rule, label, q, insts, as_of, flag, facts))
+                    cyc["benefits"].append(_benefit(store, prof, h, held, acct_note, rule, label, q, insts, as_of, flag, facts))
                 if cyc["benefits"] or q:
                     cyc["progress"] = achievement(0, q, as_of, period)["progress"] if q else None
                     cycles.append(cyc)
@@ -252,7 +255,7 @@ def survey(store, profile, as_of):
             "owner": prof.meta["owner"], "accounts": accounts, "flags": flags, "facts": facts}
 
 
-def _benefit(store, prof, h, held, rule, label, q, insts, as_of, flag, facts):
+def _benefit(store, prof, h, held, acct_note, rule, label, q, insts, as_of, flag, facts):
     ents, earn = store.entities, rule["earn"]
     out_ent, status = rule["output"], rule["verification"]["status"]
     start, end = cycle_bounds(earn["period"], label)
@@ -288,6 +291,10 @@ def _benefit(store, prof, h, held, rule, label, q, insts, as_of, flag, facts):
             flag("QUALIFICATION_NOT_RECORDED", "review", e["id"],
                  "%s stands on the owner's confirmation alone: reaching the threshold in cycle %s is not established on file (%s)"
                  % (out_ent, label, ach["state"]))
+        if st == ACTIVE and not held:
+            flag("ACCOUNT_NOT_HELD", "review", e["id"],
+                 "%s is recorded as active, but account %s is %s. Confirm whether the benefit survived (revise_entitlement)"
+                 % (out_ent, h["id"], acct_note))
         if st == ACTIVE and exp is not None and day(e["expires_on"]) is not None and day(e["expires_on"]) != exp:
             flag("TERM_DIFFERS_FROM_RULE", "info", e["id"],
                  "personal expiry %s differs from the rule's stated term (%s); the personal date is used" % (e["expires_on"], exp))
@@ -302,10 +309,17 @@ def _benefit(store, prof, h, held, rule, label, q, insts, as_of, flag, facts):
             flag("UNCONFIRMED_ENTITLEMENT", "review", e["id"], "%s is recorded but not confirmed" % out_ent)
         elif st == UNRESOLVED:
             flag("ENTITLEMENT_UNRESOLVED", "review", e["id"], "%s: %s" % (out_ent, "; ".join(why)))
-        if st in (EXPIRED, ENDED) and not any(o["rule"] == rule["id"] and o["state"] != "superseded" and o["cycle"] > label for o in insts):
+        later = [o for o in insts if o["rule"] == rule["id"] and o["state"] != "superseded" and o["cycle"] > label]
+        if st in (EXPIRED, ENDED) and not later:
             flag("EXPIRED_ENTITLEMENT", "review", e["id"],
                  "%s from cycle %s %s on %s and no later cycle's instance is on record"
                  % (out_ent, label, "ended" if st == ENDED else "expired", e.get("ended_on") if st == ENDED else e["expires_on"]))
+        # the most recent lapse of a credit line that still had something left on it
+        if st in (EXPIRED, ENDED) and cr and cr["remaining"] > 0 and \
+                not any(instance_state(o, as_of, earn["period"])[0] in (EXPIRED, ENDED) for o in later):
+            flag("CREDIT_LAPSED_UNUSED", "review", e["id"],
+                 "%s from cycle %s lapsed with %s %s unused%s" % (out_ent, label, num(cr["remaining"]), cr["unit"],
+                 " (possibly less: %s of use is unconfirmed)" % num(cr["possibly_used"]) if cr["possibly_used"] else ""))
         via = "entitlement:" + e["id"]
         if st == ACTIVE:
             facts.append(("have:" + out_ent, LEVELS, NONE, via, []))
@@ -320,7 +334,10 @@ def _benefit(store, prof, h, held, rule, label, q, insts, as_of, flag, facts):
         flag("CONFLICTING_ENTITLEMENTS", "review", rule["id"],
              "%d records for %s, account %s, cycle %s: %s" % (len(live), out_ent, h["id"], label, ", ".join(e["id"] for e in live)))
 
-    if rows:
+    # An award that needs activation is only "eligible" until the day its record says it took effect.
+    waiting = bool(rows) and all(r["state"] == NOT_YET_EFFECTIVE for r in rows) and earn["activation"] == "required" \
+        and ach["state"] == ACHIEVED and covers
+    if rows and not waiting:
         best = sorted(rows, key=lambda r: [ACTIVE, UNRESOLVED, EXHAUSTED, NOT_YET_EFFECTIVE, ENDED, EXPIRED].index(r["state"]))[0]
         state, detail = best["state"], "; ".join(best["reasons"])
     elif not covers:
@@ -335,11 +352,13 @@ def _benefit(store, prof, h, held, rule, label, q, insts, as_of, flag, facts):
         state, detail = LAPSED_UNCLAIMED, "threshold reached, nothing was ever recorded on the account, and the rule's term ended %s" % exp
     else:
         state = ACTIVATION_REQUIRED if earn["activation"] == "required" else EARNED_NOT_CONFIRMED
-        detail = ("eligible; the separate activation step is not recorded as done" if earn["activation"] == "required" else
+        detail = ("eligible; the separate activation step had not been done on this date (a record shows it taking effect %s)"
+                  % rows[0]["effective_from"] if waiting else
+                  "eligible; the separate activation step is not recorded as done" if earn["activation"] == "required" else
                   "eligible; not yet confirmed as present on the account")
 
     # eligibility (never possession): only while nothing is recorded for this rule, account and cycle
-    if not rows and covers and state in (UNRESOLVED, ACTIVATION_REQUIRED, EARNED_NOT_CONFIRMED):
+    if (not rows or waiting) and covers and state in (UNRESOLVED, ACTIVATION_REQUIRED, EARNED_NOT_CONFIRMED):
         unknowns = []
         if state == UNRESOLVED:
             unknowns.append("qualification %s for cycle %s is not established: %s" % (q["id"], label, ach["state"]))
@@ -393,7 +412,7 @@ def boundary_dates(store, profile):
         for r in q["readings"]:
             for d in (day(r["observed_on"]), day(r.get("confirmed_on"))):
                 if d:
-                    out.add(d)
+                    out.update([d, d + ONE_DAY])
     for e in prof.entitlements.values():
         for key, plus in (("effective_from", 0), ("confirmed_on", 0), ("confirmed_on", 1), ("expires_on", 1), ("ended_on", 1)):
             d = day(e.get(key))

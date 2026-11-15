@@ -6,7 +6,7 @@ import os
 import sys
 import zipfile
 
-from . import cards, changes, discovery, goals, review, tables
+from . import cards, changes, discovery, earned, goals, review, tables
 from .engine import evaluate
 from .lint import lint
 from .store import Store, read_audit
@@ -73,6 +73,11 @@ def cmd_status(args):
         print("\n4. UNRESOLVED POSSIBILITIES (%d)" % len(r["unresolved"]))
         for x in r["unresolved"]:
             print("   %-32s %s" % (x["entity"], _steps(x)))
+        if "earned_entitlements" in r:
+            print("\n   Earned benefits on record (%d)  - detail: python3 -m prices earned --profile %s" % (len(r["earned_entitlements"]), r["profile"]))
+            for x in r["earned_entitlements"]:
+                left = "" if x["remaining"] is None else "  remaining %s" % earned.num(x["remaining"])
+                print("   %-18s %-32s cycle %s  %s to %s%s" % (x["state"], x["entity"], x["cycle"], x["effective_from"], x["expires_on"], left))
         print("\nFLAGS (%d)" % len(r["flags"]))
         for f in r["flags"]:
             print("   [%s] %s %s: %s" % (f["severity"], f["code"], f["subject"], f["detail"]))
@@ -190,6 +195,94 @@ def cmd_discover(args):
         obj["tasks_omitted_by_budget"] = max(0, len(obj["tasks"]) - args.budget)
         obj["tasks"] = obj["tasks"][:args.budget]
     print(json.dumps(obj, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_earned(args):
+    store = Store.load(_root(args))
+    day = _today(args)
+    sv = earned.survey(store, args.profile, day)
+    res = evaluate(store, args.profile, day)
+    sv.pop("facts")
+    sv["accounts"] = [a for a in sv["accounts"] if not args.account or a["account"] == args.account]
+    for a in sv["accounts"]:
+        a["cycles"] = [c for c in a["cycles"] if not args.cycle or c["cycle"] == args.cycle]
+        for c in a["cycles"]:
+            for b in c["benefits"]:
+                b["engine_status"] = res.have(b["entity"])      # entity-level: all accounts and cycles together
+                b["chain"] = {"rule_evidence": [store.evidence[e] for e in b["public"]["evidence"] if e in store.evidence],
+                              "readings": [r for r in c["readings"] if r["id"] in b["achievement"]["basis"]]}
+    sv["flags"] = res.flags
+
+    def text(o):
+        n = earned.num
+        print("EARNED BENEFITS  profile=%s  owner=%s  as-of=%s%s" % (o["profile"], o["owner"], o["as_of"], "  [SYNTHETIC DATA]" if o["synthetic"] else ""))
+        print("Each benefit shows three separate things: the PUBLIC RULE (what is on offer to anyone), the ACHIEVEMENT")
+        print("(what this person's own dated records show) and the ENTITLEMENT (what is actually on the account on this date).")
+        if not o["accounts"]:
+            print("\nNo account of this person has an earned-benefit rule or record.")
+        for a in o["accounts"]:
+            print("\nACCOUNT %s  %s  [%s]" % (a["account"], a["card_name"], a["account_state"]))
+            if not a["cycles"]:
+                print("   nothing on offer and nothing recorded for this account on this date")
+            for c in a["cycles"]:
+                print("  QUALIFYING YEAR %s  (%s to %s)   measure %s" % (c["cycle"], c["period"][0], c["period"][1], c["measure"]))
+                pr = c["progress"]
+                if pr:
+                    print("    progress on file  %s%s%s %s  (reading %s%s)" % (
+                        "at least " if pr["kind"] == "at_least" else "", n(pr["value"]), " " + c["unit"] if c["unit"] else "",
+                        "on a date that is not recorded" if pr["as_of"] == "unknown" else "as of " + pr["as_of"] + (", final" if pr["final"] else ""),
+                        pr["reading"], "" if pr["age_days"] is None else ", %d days before this date" % pr["age_days"]))
+                else:
+                    print("    progress on file  none usable on this date" + ("" if c["qualification"] else " (no record for this cycle)"))
+                if args.detail:
+                    for r in c["readings"]:
+                        print("      reading %-14s %10s %-8s observed %-10s %-11s %s" % (
+                            r["id"], n(r["value"]), r.get("value_kind", "exact"), r["observed_on"], r["state"],
+                            ("by %s on %s" % (r["confirmed_by"], r["confirmed_on"]) if r["state"] == "confirmed" else "") +
+                            ("  -> %s" % r["superseded_by"] if r.get("superseded_by") else "") + ("  [%s]" % r["basis"] if r.get("basis") else "")))
+                for b in c["benefits"]:
+                    pub, ach, ent = b["public"], b["achievement"], b["entitlement"]
+                    print("\n    %s  [%s]" % (b["name"], b["entity"]))
+                    print("      PUBLIC RULE   %s (%s)%s: %s %s on %s in one %s; lasts %s%s; activation %s%s" % (
+                        pub["rule"], pub["verification"], "" if pub["offered_for_cycle"] else ", NOT ON OFFER FOR THIS CYCLE",
+                        n(pub["threshold"]), pub["unit"], pub["measure"], pub["period"].replace("_", " "), pub["term"],
+                        " (for this cycle: %s)" % pub["expected_end"] if pub["expected_end"] else "", pub["activation"],
+                        "; allowance %s %s" % (n(pub["allowance"]["amount"]), pub["allowance"]["unit"]) if pub["allowance"] else ""))
+                    print("                    evidence: %s%s" % (", ".join(pub["evidence"]) or "none",
+                          "; offer valid %s to %s" % (pub["offer_valid"][0] or "open", pub["offer_valid"][1] or "open") if any(pub["offer_valid"]) else ""))
+                    if args.detail:
+                        for e in b["chain"]["rule_evidence"]:
+                            print("                    source %s: %s (%s, %s, retrieved %s)" % (e["id"], e["title"], e["publisher"], e["source_type"], e["retrieved_on"]))
+                    print("      ACHIEVEMENT   %s%s" % (ach["state"], " - " + ach["detail"] if ach["detail"] else ""))
+                    print("      ENTITLEMENT   %s%s" % (ent["state"], " - " + ent["detail"] if ent["detail"] else ""))
+                    for i in b["instances"]:
+                        who = "confirmed by %s on %s" % (i["confirmed_by"], i["confirmed_on"]) if i["record_state"] == "confirmed" else "NOT CONFIRMED"
+                        print("                    record %s: %s  %s to %s%s  (%s)" % (
+                            i["id"], i["state"], i["effective_from"], i["expires_on"],
+                            ", ended %s" % i["ended_on"] if i["ended_on"] else "", who))
+                        for why in i["reasons"]:
+                            print("                      unresolved: %s" % why)
+                        cr = i["credit"]
+                        if cr:
+                            print("                      credit: allowance %s %s; used %s (confirmed)%s; remaining %s%s" % (
+                                n(cr["allowance"]), cr["unit"], n(cr["used"]),
+                                "; possibly used %s (not confirmed or undated)" % n(cr["possibly_used"]) if cr["possibly_used"] else "",
+                                n(cr["remaining"]), " (at least %s)" % n(cr["remaining_at_least"]) if cr["possibly_used"] else ""))
+                        if args.detail:
+                            if i["basis"]:
+                                print("                      basis: %s" % i["basis"])
+                            for u in i["usage"]:
+                                print("                      use %-12s %8s on %-10s %s%s" % (u["id"], n(u["amount"]), u["used_on"], u["state"],
+                                      "  [%s]" % u["basis"] if u.get("basis") else ""))
+                    if b["withdrawn"]:
+                        print("                    withdrawn records (kept as history): %s" % ", ".join(b["withdrawn"]))
+                    print("      ENGINE        %s for this person on this date, counting every account and cycle" % b["engine_status"])
+        print("\nFLAGS (%d)" % len(o["flags"]))
+        for f in o["flags"]:
+            print("   [%s] %s %s: %s" % (f["severity"], f["code"], f["subject"], f["detail"]))
+        print("\nOnly ENTITLEMENT = ACTIVE means the benefit can be used on this date. ACHIEVED means eligible, not held.")
+    _emit(args, sv, text)
     return 0
 
 
@@ -391,6 +484,12 @@ def main(argv=None):
             p.add_argument("text")
             p.add_argument("--tag", action="append", help="explicit goal tag (repeatable); overrides keyword matching")
             p.add_argument("--limit", type=int, default=5)
+    p = add("earned", cmd_earned, "earned benefits per person, account and qualifying year: public rule, achievement, entitlement")
+    p.add_argument("--profile", required=True)
+    p.add_argument("--as-of", dest="as_of", help="evaluation date YYYY-MM-DD (default today)")
+    p.add_argument("--account", help="only this account (holding id)")
+    p.add_argument("--cycle", help="only this qualifying year, e.g. 2026")
+    p.add_argument("--detail", action="store_true", help="also list every reading, use and source behind each line")
     p = add("cards", cmd_cards, "card roles and which benefits are confirmed, excluded or unproven per card")
     p.add_argument("--profile", help="only cards this person holds, with the benefit's status for them")
     p.add_argument("--as-of", dest="as_of", help="evaluation date YYYY-MM-DD (default today)")
