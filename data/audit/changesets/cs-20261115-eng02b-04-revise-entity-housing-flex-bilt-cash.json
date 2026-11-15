@@ -1,0 +1,31 @@
+{
+  "attestation": {
+    "by": "Commissioning build",
+    "on": "2026-11-15",
+    "statement": "Revised under commission ENG-02B (Bilt election correction; sponsor Eric, coordinator Bradley, 2026-11-15), which orders this correction. Engineering read the published terms; no named reviewer has yet checked these definitions line by line."
+  },
+  "author": "Fable (engineering, ENG-02B)",
+  "data": {
+    "set": {
+      "election": {
+        "anniversary_cycle_days": 62,
+        "card": "card.bilt-palladium",
+        "choose_before_anniversary": "2027-01-01",
+        "follows": "election.bilt-palladium.legacy-election",
+        "governs": [
+          "cb.bilt-palladium.housing-flex-bilt-cash-legacy"
+        ],
+        "group": "bilt-palladium.housing-rewards",
+        "opened_before": "2027-01-01",
+        "source_note": "Bilt Rewards Card Offer Terms, last updated October 27, 2026 (bilt.com/terms/bilt-card-offer-terms), read by engineering on 2026-11-15 for ENG-02B; Argon to confirm against the published text. Rewards Option for accounts opened before 2027, until their first Card Anniversary Date on or after January 1, 2027: selectable in the app, a change takes effect on the first day of the next Billing Cycle. From that anniversary it continues only under a Legacy Election. Not offered to accounts opened on or after January 1, 2027. Card Anniversary Date: one year after the first day of the first Billing Cycle that begins after the Account Open Date, then the same day each year. anniversary_cycle_days 62 is an engineering allowance for where that day can fall, NOT a published figure; anniversary_on on the holding replaces it."
+      },
+      "name": "Bilt Palladium housing rewards: Flexible Bilt Cash",
+      "notes": "Public option definition. Before the transition anniversary a person's Rewards Option is recorded as a holding of this entity (OP-12); it is never inferred. Afterwards it applies only with the Legacy Election and is not recorded separately."
+    }
+  },
+  "date": "2026-11-15",
+  "id": "cs-20261115-eng02b-04-revise-entity-housing-flex-bilt-cash",
+  "op": "revise_entity",
+  "reason": "ENG-02B: Flexible Bilt Cash is not a separate election after the transition anniversary: it is part of the linked Legacy Election.",
+  "target": "election.bilt-palladium.housing-flex-bilt-cash"
+}

@@ -1,0 +1,26 @@
+{
+  "changeset": "cs-20261115-eng02b-05-revise-entity-annual-credits-legacy",
+  "records": {
+    "data/kb/entities/election.bilt-palladium.annual-credits-legacy.json": {
+      "after": "23f365ce30a1c727",
+      "before": {
+        "election": {
+          "card": "card.bilt-palladium",
+          "default_before_anniversary": "2027-01-01",
+          "elect_before_anniversary": "2027-01-01",
+          "governs": [
+            "cb.bilt-palladium.annual-bilt-cash-200-legacy",
+            "cb.bilt-palladium.hotel-credit-400-semiannual-legacy"
+          ],
+          "group": "bilt-palladium.annual-credits",
+          "opened_before": "2027-01-01",
+          "source_note": "Engineering transcription of Argon's ENG-02 (Argon_PRICES_Content_Integration_Report.md) and the candidate's own restrictions text; Argon to confirm. $200: 'Applies prior to first 2027+ card anniversary or afterward only if legacy Flex/credit election is preserved'; report: 'under pre-2027 opening or preserved legacy election'. $400: 'Replaced by $600 Bilt Cash at first 2027+ anniversary unless legacy structure is preserved'."
+        },
+        "id": "election.bilt-palladium.annual-credits-legacy",
+        "kind": "election",
+        "name": "Bilt Palladium annual credits election: legacy $200 Bilt Cash + $400 hotel credit",
+        "notes": "Public option definition. A person's choice is recorded as a holding of this entity (OP-12); it is never inferred."
+      }
+    }
+  }
+}

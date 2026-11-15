@@ -564,6 +564,41 @@ def _lint_elections(store, err, warn):
             warn("INCOMPLETE_ELECTION_GROUP", store.path("entities", opts[0]["id"]), "election group %s has only one option so far" % g)
         if sum("default_before_anniversary" in o["election"] for o in opts) > 1:
             err("BAD_ELECTION_SHAPE", store.path("entities", opts[0]["id"]), "election group %s has more than one default option" % g)
+    # linked options (ENG-02B): an option may follow an option of another group on the same card
+    followed = {o["election"]["follows"] for opts in groups.values() for o in opts if "follows" in o["election"]}
+    cycle = {}
+    for g, opts in sorted(groups.items()):
+        dates = {o["election"][k] for o in opts for k in ("choose_before_anniversary", "default_before_anniversary") if k in o["election"]}
+        if len(dates) > 1 and any("follows" in o["election"] for o in opts):
+            err("BAD_ELECTION_SHAPE", store.path("entities", opts[0]["id"]),
+                "election group %s has linked options, so its choice period needs ONE date; found %s" % (g, ", ".join(sorted(dates))))
+        for o in opts:
+            t, p = o["election"], store.path("entities", o["id"])
+            up = t.get("follows")
+            if up is not None:
+                u = ents.get(up, {}).get("election") if ents.get(up, {}).get("kind") == "election" else None
+                if not isinstance(u, dict):
+                    err("UNKNOWN_REFERENCE", p, "follows %r: no election option has that id" % up)
+                elif u["card"] != t["card"] or u["group"] == g:
+                    err("BAD_ELECTION_SHAPE", p, "follows %r: it must be an option of another group on the same card" % up)
+                elif any("follows" in x["election"] for x in groups[u["group"]]):
+                    err("BAD_ELECTION_SHAPE", p, "follows %r, whose own group has linked options; links are one level deep" % up)
+            for k in ("choose_before_anniversary", "after_exit_from_anniversary"):
+                if k in t and up is None:
+                    err("BAD_ELECTION_SHAPE", p, "%s needs follows: it says what applies once this option's own period is over" % k)
+            if not t["governs"] and o["id"] not in followed:
+                warn("ELECTION_GOVERNS_NOTHING", p, "this option governs no rule and no option follows it, so it changes nothing yet")
+            n = t.get("anniversary_cycle_days")
+            if n is not None and n < 1:
+                err("BAD_ELECTION_SHAPE", p, "anniversary_cycle_days must be 1 or more")
+            if any(k.endswith("_anniversary") for k in t):
+                cycle.setdefault(t["card"], {}).setdefault(n or 0, o["id"])
+    for card, seen in sorted(cycle.items()):
+        if len(seen) > 1:
+            # a warning, not an error: definitions are revised one changeset at a time, so a card passes through this state
+            warn("ANNIVERSARY_RULE_DIFFERS", store.path("entities", sorted(seen.values())[0]),
+                 "election options on %s disagree about anniversary_cycle_days (%s); a card has one anniversary rule"
+                 % (card, ", ".join("%s on %s" % (k, v) for k, v in sorted(seen.items()))))
     for r in rules.values():
         if ents.get(r.get("output"), {}).get("kind") == "election":
             err("BAD_ELECTION_SHAPE", store.path("rules", r["id"]), "rules never produce an election: it is the cardholder's choice, recorded per person")
@@ -582,10 +617,16 @@ def _lint_elections(store, err, warn):
                     err("UNEXPECTED_FIELD", p, "opened_on belongs only on holdings of a card")
                 elif h.get("valid_from") and h["valid_from"] < h["opened_on"]:
                     err("BAD_DATES", p, "valid_from %s is before the account was opened (%s)" % (h["valid_from"], h["opened_on"]))
+            if h.get("anniversary_on") and kind != "card":
+                err("UNEXPECTED_FIELD", p, "anniversary_on belongs only on holdings of a card")
             if kind != "election":
                 continue
             if h["state"] == "withdrawn":
                 continue
+            t = ents[h["entity"]]["election"]
+            if "follows" in t and "choose_before_anniversary" not in t:
+                warn("ELECTION_NOT_SELECTABLE", p, "%s is not chosen on its own (it applies when %s does); this record is not used. "
+                     "Withdraw it and record that option instead" % (h["entity"], t["follows"]))
             g = option_group.get(h["entity"])
             by_group.setdefault(g, []).append(h)
             card = ents[h["entity"]]["election"]["card"]

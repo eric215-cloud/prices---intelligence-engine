@@ -1,14 +1,17 @@
 {
   "election": {
+    "anniversary_cycle_days": 62,
     "card": "card.bilt-palladium",
+    "choose_before_anniversary": "2027-01-01",
+    "follows": "election.bilt-palladium.refreshed-arrangement",
     "governs": [
       "cb.bilt-palladium.housing-tiered-points"
     ],
     "group": "bilt-palladium.housing-rewards",
-    "source_note": "Engineering transcription of Argon's ENG-02 (Argon_PRICES_Content_Integration_Report.md) and the candidate's own restrictions text; Argon to confirm. Restriction: 'Mutually exclusive with Flexible Bilt Cash option in a given billing cycle'."
+    "source_note": "Bilt Rewards Card Offer Terms, last updated October 27, 2026 (bilt.com/terms/bilt-card-offer-terms), read by engineering on 2026-11-15 for ENG-02B; Argon to confirm against the published text. Rewards Option for accounts opened before 2027, until their first Card Anniversary Date on or after January 1, 2027: selectable in the app, a change takes effect on the first day of the next Billing Cycle (Housing-only is the option when none is selected). From that anniversary, and for later accounts from opening, it is the only housing structure unless a Legacy Election was made. Card Anniversary Date: one year after the first day of the first Billing Cycle that begins after the Account Open Date, then the same day each year. anniversary_cycle_days 62 is an engineering allowance for where that day can fall, NOT a published figure; anniversary_on on the holding replaces it."
   },
   "id": "election.bilt-palladium.housing-tiered-points",
   "kind": "election",
-  "name": "Bilt Palladium housing rewards election: housing-only tiered points",
-  "notes": "Public option definition. A person's choice is recorded as a holding of this entity (OP-12); it is never inferred."
+  "name": "Bilt Palladium housing rewards: Housing-only tiered points",
+  "notes": "Public option definition. Before the transition anniversary a person's Rewards Option is recorded as a holding of this entity (OP-12); it is never inferred. Afterwards it applies with the refreshed arrangement and is not recorded separately."
 }

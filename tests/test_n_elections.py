@@ -457,7 +457,9 @@ class TestLiveBiltDefinitions(unittest.TestCase):
             self.assertEqual(got("2026-11-15"), {"housing-tiered-points": UNRESOLVED, "housing-flex-bilt-cash-legacy": UNRESOLVED,
                                                  "annual-bilt-cash-200-legacy": ESTABLISHED, "hotel-credit-400-semiannual-legacy": ESTABLISHED,
                                                  "annual-bilt-cash-600-post2027": NOT_AVAILABLE})
-            self.assertEqual(set(got("2027-06-01").values()), {UNRESOLVED})          # this cardholder's 2027 anniversary, nothing recorded
+            # ENG-02B: the published Card Anniversary Date is counted from the first billing cycle after opening, so for an
+            # account opened 2025-06-01 it falls between 2027-06-02 and 2027-08-02 (it is not 2027-06-01, as ENG-02 assumed).
+            self.assertEqual(set(got("2027-08-02").values()), {UNRESOLVED})          # this cardholder's 2027 anniversary has come, nothing recorded
             self.assertEqual(evaluate(s, "synthetic-bilt", "2026-11-15").have(B + "base-2x-everyday"), NOT_AVAILABLE)   # still a candidate there
             for day in ("2026-11-15", "2027-06-01", "2028-01-01"):
                 for group in (("housing-tiered-points", "housing-flex-bilt-cash-legacy"), ("annual-bilt-cash-200-legacy", "annual-bilt-cash-600-post2027")):

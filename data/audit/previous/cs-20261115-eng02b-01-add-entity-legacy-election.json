@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-eng02b-01-add-entity-legacy-election",
+  "records": {
+    "data/kb/entities/election.bilt-palladium.legacy-election.json": {
+      "after": "93eace7a64d13651",
+      "before": null
+    }
+  }
+}

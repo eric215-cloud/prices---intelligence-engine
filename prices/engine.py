@@ -215,7 +215,7 @@ class Result:
     def basis(self, atom):
         L = self.level_of(atom)
         via = self.via[L][atom][0] if L else ""
-        return "personal" if via.startswith(("holding:", "retain:", "entitlement:", "election:", "election-default:")) else "derived"
+        return "personal" if via.startswith(("holding:", "retain:", "entitlement:", "election:", "election-default:", "election-link:")) else "derived"
 
     def report(self):
         """The four epistemic categories, kept apart."""

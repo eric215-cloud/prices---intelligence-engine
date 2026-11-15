@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-eng02b-02-add-entity-refreshed-arrangement",
+  "records": {
+    "data/kb/entities/election.bilt-palladium.refreshed-arrangement.json": {
+      "after": "b750f622e7fd3c67",
+      "before": null
+    }
+  }
+}

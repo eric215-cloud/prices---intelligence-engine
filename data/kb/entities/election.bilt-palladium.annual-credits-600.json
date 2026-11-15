@@ -1,15 +1,17 @@
 {
   "election": {
+    "after_exit_from_anniversary": true,
+    "anniversary_cycle_days": 62,
     "card": "card.bilt-palladium",
+    "follows": "election.bilt-palladium.refreshed-arrangement",
     "governs": [
       "cb.bilt-palladium.annual-bilt-cash-600-post2027"
     ],
     "group": "bilt-palladium.annual-credits",
-    "source_note": "Engineering transcription of Argon's ENG-02 (Argon_PRICES_Content_Integration_Report.md) and the candidate's own restrictions text; Argon to confirm. Restriction: 'Effective at first card anniversary in 2027 or later unless cardholder elected to retain legacy $200 Bilt Cash + $400 hotel credit structure'.",
-    "starts_at_anniversary": "2027-01-01"
+    "source_note": "Bilt Rewards Card Offer Terms, last updated October 27, 2026 (bilt.com/terms/bilt-card-offer-terms), read by engineering on 2026-11-15 for ENG-02B; Argon to confirm against the published text. Credited on the account opening date (accounts opened on or after January 1, 2027) and on each Card Anniversary Date; for earlier accounts without a Legacy Election, from their first Card Anniversary Date on or after January 1, 2027; for a cardholder who leaves a Legacy Election, from the next Card Anniversary Date after the move. Never together with the legacy benefits. Card Anniversary Date: one year after the first day of the first Billing Cycle that begins after the Account Open Date, then the same day each year. anniversary_cycle_days 62 is an engineering allowance for where that day can fall, NOT a published figure; anniversary_on on the holding replaces it."
   },
   "id": "election.bilt-palladium.annual-credits-600",
   "kind": "election",
-  "name": "Bilt Palladium annual credits election: $600 Bilt Cash (from the first 2027+ anniversary)",
-  "notes": "Public option definition. A person's choice is recorded as a holding of this entity (OP-12); it is never inferred."
+  "name": "Bilt Palladium annual benefit, refreshed: $600 Bilt Cash",
+  "notes": "Public option definition. Not recorded per person on its own: it applies when the option it follows does (OP-12)."
 }

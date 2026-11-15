@@ -1,18 +1,19 @@
 {
   "election": {
+    "anniversary_cycle_days": 62,
     "card": "card.bilt-palladium",
     "default_before_anniversary": "2027-01-01",
-    "elect_before_anniversary": "2027-01-01",
+    "follows": "election.bilt-palladium.legacy-election",
     "governs": [
       "cb.bilt-palladium.annual-bilt-cash-200-legacy",
       "cb.bilt-palladium.hotel-credit-400-semiannual-legacy"
     ],
     "group": "bilt-palladium.annual-credits",
     "opened_before": "2027-01-01",
-    "source_note": "Engineering transcription of Argon's ENG-02 (Argon_PRICES_Content_Integration_Report.md) and the candidate's own restrictions text; Argon to confirm. $200: 'Applies prior to first 2027+ card anniversary or afterward only if legacy Flex/credit election is preserved'; report: 'under pre-2027 opening or preserved legacy election'. $400: 'Replaced by $600 Bilt Cash at first 2027+ anniversary unless legacy structure is preserved'."
+    "source_note": "Bilt Rewards Card Offer Terms, last updated October 27, 2026 (bilt.com/terms/bilt-card-offer-terms), read by engineering on 2026-11-15 for ENG-02B; Argon to confirm against the published text. Accounts opened before 2027 have these benefits, whatever their Rewards Option, until their first Card Anniversary Date on or after January 1, 2027. From then they continue only under a Legacy Election; a cardholder who later moves loses them on the first day of the next Billing Cycle. Card Anniversary Date: one year after the first day of the first Billing Cycle that begins after the Account Open Date, then the same day each year. anniversary_cycle_days 62 is an engineering allowance for where that day can fall, NOT a published figure; anniversary_on on the holding replaces it."
   },
   "id": "election.bilt-palladium.annual-credits-legacy",
   "kind": "election",
-  "name": "Bilt Palladium annual credits election: legacy $200 Bilt Cash + $400 hotel credit",
-  "notes": "Public option definition. A person's choice is recorded as a holding of this entity (OP-12); it is never inferred."
+  "name": "Bilt Palladium annual benefits, legacy: $200 Bilt Cash and $400 hotel credit",
+  "notes": "Public option definition. Not recorded per person on its own: it applies when the option it follows does (OP-12)."
 }

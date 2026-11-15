@@ -50,11 +50,17 @@
       "properties": {
         "group": {"$ref": "#/$defs/id"},
         "card": {"$ref": "#/$defs/id"},
-        "governs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/id"}},
+        "governs": {"type": "array", "items": {"$ref": "#/$defs/id"}},
         "opened_before": {"$ref": "#/$defs/date"},
         "default_before_anniversary": {"$ref": "#/$defs/date"},
         "starts_at_anniversary": {"$ref": "#/$defs/date"},
         "elect_before_anniversary": {"$ref": "#/$defs/date"},
+        "follows": {"$ref": "#/$defs/id", "x-doc": "An option of ANOTHER group on the same card. This option is in effect when that one is; nobody records it separately once the choice period is over."},
+        "choose_before_anniversary": {"$ref": "#/$defs/date", "x-doc": "The cardholder's own choice of this option counts only before the first card anniversary on or after this date (accounts opened before it). Needs follows."},
+        "default_opened_on_or_after": {"$ref": "#/$defs/date", "x-doc": "Applies without any record, from the day the account is opened, to accounts opened on or after this date."},
+        "permanent_exit": {"enum": [true], "x-doc": "Once an election of this option has ended it cannot be made again."},
+        "after_exit_from_anniversary": {"enum": [true], "x-doc": "Needs follows. If the followed option took effect after the person left another option of its group, this option starts at the first card anniversary on or after that change."},
+        "anniversary_cycle_days": {"type": "integer", "x-doc": "The issuer counts the card anniversary from the first day of the first billing cycle that begins after opening; that day is 1 to this many days after opened_on. Same value on every option of the card. anniversary_on on the holding removes the uncertainty."},
         "source_note": {"type": "string"}
       }
     },
@@ -278,6 +284,7 @@
         "acquired_via": {"$ref": "#/$defs/id"},
         "acquired_on": {"$ref": "#/$defs/date"},
         "opened_on": {"$ref": "#/$defs/date"},
+        "anniversary_on": {"$ref": "#/$defs/date", "x-doc": "Card holdings only: a card anniversary date as the issuer shows it. Used where the anniversary is not the opening date's own month and day."},
         "withdrawn_on": {"$ref": "#/$defs/date"},
         "confirmed_on": {"$ref": "#/$defs/date"},
         "confirmed_by": {"type": "string"},

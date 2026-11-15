@@ -1,0 +1,25 @@
+{
+  "author": "Fable (engineering, ENG-02B)",
+  "data": {
+    "entity": {
+      "election": {
+        "anniversary_cycle_days": 62,
+        "card": "card.bilt-palladium",
+        "elect_before_anniversary": "2027-01-01",
+        "governs": [],
+        "group": "bilt-palladium.arrangement",
+        "opened_before": "2027-01-01",
+        "permanent_exit": true,
+        "source_note": "Bilt Rewards Card Offer Terms, last updated October 27, 2026 (bilt.com/terms/bilt-card-offer-terms), read by engineering on 2026-11-15 for ENG-02B; Argon to confirm against the published text. Legacy Election: made in the Bilt app before the first Card Anniversary Date on or after January 1, 2027, by a cardholder whose active Rewards Option is Flexible Bilt Cash; it keeps Flexible Bilt Cash (no switch to Housing-only under the legacy structure), the $200 Bilt Cash benefit and the $400 hotel credit. A later move to the new structure takes effect on the first day of the next Billing Cycle and cannot be undone. The terms do not say whether the election can be cancelled before that anniversary. Card Anniversary Date: one year after the first day of the first Billing Cycle that begins after the Account Open Date, then the same day each year. anniversary_cycle_days 62 is an engineering allowance for where that day can fall, NOT a published figure; anniversary_on on the holding replaces it."
+      },
+      "id": "election.bilt-palladium.legacy-election",
+      "kind": "election",
+      "name": "Bilt Palladium Legacy Election: keep Flexible Bilt Cash, the $200 Bilt Cash benefit and the $400 hotel credit",
+      "notes": "Public option definition. A person's Legacy Election is recorded as a holding of this entity (OP-12); it is never inferred. Ending it records the permanent move to the refreshed arrangement."
+    }
+  },
+  "date": "2026-11-15",
+  "id": "cs-20261115-eng02b-01-add-entity-legacy-election",
+  "op": "add_entity",
+  "reason": "ENG-02B: the published Legacy Election is one linked arrangement, not two separate elections. This entity is one side of it. Changes no rule."
+}
