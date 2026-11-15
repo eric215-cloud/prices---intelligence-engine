@@ -169,9 +169,11 @@ def credit(inst, as_of):
             "remaining": allow - used, "remaining_at_least": max(0, allow - used - maybe)}
 
 
-def instance_state(inst, as_of, period="calendar_year"):
-    """Where one entitlement record stands on `as_of`: (state, [reasons it is unresolved], credit or None)."""
-    start, _end = cycle_bounds(period, inst["cycle"])
+def instance_state(inst, as_of, period="calendar_year", start=None):
+    """Where one entitlement record stands on `as_of`: (state, [reasons it is unresolved], credit or None).
+    `start`: first day the record could be in effect (given by credits.py for a recurring credit's period)."""
+    if start is None:
+        start, _end = cycle_bounds(period, inst["cycle"])
     lo, hi, ended, conf = day(inst["effective_from"]), day(inst["expires_on"]), day(inst.get("ended_on")), day(inst.get("confirmed_on"))
     cr = credit(inst, as_of) if "allowance" in inst else None
     if as_of < (lo or start):
@@ -221,7 +223,9 @@ def survey(store, profile, as_of):
     def flag(code, severity, subject, detail):
         flags.append({"code": code, "severity": severity, "subject": subject, "detail": detail})
 
-    referenced = {q["account"] for q in prof.qualifications.values()} | {e["account"] for e in prof.entitlements.values()}
+    # entitlement records are shared with recurring credits (credits.py); only those of earns rules are handled here
+    earned_recs = [e for e in prof.entitlements.values() if store.rules.get(e["rule"], {}).get("kind") != "grants"]
+    referenced = {q["account"] for q in prof.qualifications.values()} | {e["account"] for e in earned_recs}
     for h in sorted(prof.holdings.values(), key=lambda h: h["id"]):
         rules = by_card.get(h["entity"], [])
         if not rules and h["id"] not in referenced:
@@ -230,7 +234,7 @@ def survey(store, profile, as_of):
         acct_note = ("confirmed, held on this date" if held else
                      "recorded but not confirmed" if h["state"] == "unconfirmed" and in_effect(h, as_of) else "not held on this date")
         quals = {(q["measure"], q["cycle"]): q for q in prof.qualifications.values() if q["account"] == h["id"]}
-        insts = [e for e in prof.entitlements.values() if e["account"] == h["id"]]
+        insts = [e for e in earned_recs if e["account"] == h["id"]]
         labels = {c for (_m, c) in quals} | {e["cycle"] for e in insts}
         if held and any(r["verification"]["status"] != "retired" and _covers(r, *cycle_bounds(r["earn"]["period"], str(as_of.year))) for r in rules):
             labels.add(str(as_of.year))

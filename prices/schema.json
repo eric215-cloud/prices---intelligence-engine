@@ -94,6 +94,27 @@
       "properties": {"amount": {"type": "number"}, "unit": {"$ref": "#/$defs/text"}}
     },
 
+    "credit": {
+      "x-doc": "Structured terms of a recurring credit, on a grants rule that says a card carries a benefit. A key that is absent means the source does not say; it never means zero, unlimited or unrestricted. The rule's own valid_from / valid_to are the offer's effective and expiration dates.",
+      "type": "object", "additionalProperties": false,
+      "required": ["amount", "unit", "cycle"],
+      "properties": {
+        "amount": {"type": "number"},
+        "unit": {"$ref": "#/$defs/text"},
+        "cycle": {"enum": ["calendar_year", "calendar_half", "calendar_quarter", "calendar_month", "anniversary_year", "multi_year"]},
+        "years": {"type": "integer"},
+        "anchor": {"enum": ["account_opening", "last_use"]},
+        "max_per_transaction": {"x-hint": "a number, or the word none when the source says there is no per-transaction cap",
+                                "oneOf": [{"type": "number"}, {"enum": ["none"]}]},
+        "min_stay_nights": {"type": "integer"},
+        "min_transaction": {"type": "number"},
+        "rollover": {"enum": ["none", "allowed"]},
+        "rollover_max": {"x-hint": "a number, or the word none when the source says rollover is uncapped",
+                         "oneOf": [{"type": "number"}, {"enum": ["none"]}]},
+        "note": {"type": "string"}
+      }
+    },
+
     "earn": {
       "x-doc": "Public terms of an earned benefit: reach `threshold` on `measure` within one `period` on the card named in `when`. Says nothing about any person.",
       "type": "object", "additionalProperties": false,
@@ -172,13 +193,14 @@
     "entitlement": {
       "x-doc": "One earned benefit actually on one person's account, from one qualifying cycle, with its own dates.",
       "type": "object", "additionalProperties": false,
+      "x-doc": "cycle: the qualifying year of an earned benefit (YYYY), or the allowance period of a recurring credit (YYYY, YYYY-H1, YYYY-Q3, YYYY-07).",
       "required": ["id", "rule", "entity", "account", "cycle", "state", "effective_from", "expires_on"],
       "properties": {
         "id": {"$ref": "#/$defs/id"},
         "rule": {"$ref": "#/$defs/id"},
         "entity": {"$ref": "#/$defs/id"},
         "account": {"$ref": "#/$defs/id"},
-        "cycle": {"type": "string", "pattern": "^[0-9]{4}$"},
+        "cycle": {"type": "string", "pattern": "^[0-9]{4}(-(H[12]|Q[1-4]|0[1-9]|1[0-2]))?$"},
         "state": {"enum": ["confirmed", "unconfirmed", "superseded"]},
         "effective_from": {"$ref": "#/$defs/date_or_unknown"},
         "expires_on": {"$ref": "#/$defs/date_or_unknown"},
@@ -214,6 +236,7 @@
         "summary": {"$ref": "#/$defs/text"},
         "superseded_by": {"$ref": "#/$defs/id"},
         "earn": {"$ref": "#/$defs/earn"},
+        "credit": {"$ref": "#/$defs/credit"},
         "retention": {"$ref": "#/$defs/retention"},
         "transfer": {"type": "object", "additionalProperties": false, "required": ["from"],
                      "properties": {"from": {"$ref": "#/$defs/id"}, "ratio": {"type": "string"}, "note": {"type": "string"}}},
@@ -309,6 +332,7 @@
             "summary": {"$ref": "#/$defs/text"},
             "superseded_by": {"$ref": "#/$defs/id"},
             "earn": {"$ref": "#/$defs/earn"},
+            "credit": {"$ref": "#/$defs/credit"},
             "retention": {"$ref": "#/$defs/retention"},
             "transfer": {"type": "object"},
             "valid_from": {"$ref": "#/$defs/date"},
@@ -378,7 +402,7 @@
                         "add_entity", "revise_entity", "add_candidate", "promote_candidate", "reject_candidate",
                         "revert_changeset",
                         "set_holding", "end_holding", "set_metric",
-                        "record_progress", "record_entitlement", "revise_entitlement", "record_usage", "correct_entry",
+                        "record_progress", "record_entitlement", "revise_entitlement", "record_usage", "correct_entry", "set_credit_terms",
                         "record_discovery_run", "add_observation", "prune_observations"]},
         "author": {"$ref": "#/$defs/text"},
         "date": {"$ref": "#/$defs/date"},

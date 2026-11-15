@@ -346,7 +346,7 @@ def evaluate(store, profile, as_of, include_candidates=False):
                 contested.append((h, src, mode))
 
     # 2b. earned benefits: base facts from the person's own qualification and entitlement records
-    if prof.qualifications or prof.entitlements:
+    if prof.qualifications or any(store.rules.get(e["rule"], {}).get("kind") != "grants" for e in prof.entitlements.values()):
         from . import earned
         earned.inject(r, store, prof, as_of)
 

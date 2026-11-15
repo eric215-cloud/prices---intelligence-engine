@@ -27,9 +27,21 @@ def review(store, profile, d1, d2):
     review_set = set()
     for c in changes:
         review_set.update(c["downstream_before"])
-    return {"profile": profile, "from": str(to_date(d1)), "to": str(to_date(d2)), "changes": changes,
-            "new_flags": new_flags(a, b),
-            "downstream_review": sorted(review_set - {c["atom"] for c in changes})}
+    out = {"profile": profile, "from": str(to_date(d1)), "to": str(to_date(d2)), "changes": changes,
+           "new_flags": new_flags(a, b),
+           "downstream_review": sorted(review_set - {c["atom"] for c in changes})}
+    ending = _credit_periods(store, profile, d1, d2)
+    if ending:                    # key exists only when a structured credit applies to this person in the window
+        out["credit_periods"] = ending
+    return out
+
+
+def _credit_periods(store, profile, d1, d2):
+    """Allowance periods of recurring credits that end in the window (credits.py). Empty for stores without credit terms."""
+    if not any(isinstance(r.get("credit"), dict) for r in store.rules.values()):
+        return []
+    from .credits import events
+    return events(store, profile, d1, d2)
 
 
 def boundaries(store, profile, start, until):
@@ -65,4 +77,7 @@ def timeline(store, profile, start, until):
         if changes or flags:
             events.append({"date": d.isoformat(), "changes": changes, "new_flags": flags})
         prev = cur
-    return events
+    by_date = {e["date"]: e for e in events}
+    for c in _credit_periods(store, profile, start, until):      # each on the last day of its period
+        by_date.setdefault(c["date"], {"date": c["date"], "changes": [], "new_flags": []}).setdefault("credit_periods", []).append(c)
+    return [by_date[d] for d in sorted(by_date)]

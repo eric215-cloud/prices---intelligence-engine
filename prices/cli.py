@@ -127,6 +127,10 @@ def cmd_review(args):
         for f in o["new_flags"]:
             print("   [%s] %s %s: %s" % (f["severity"], f["code"], f["subject"], f["detail"]))
         print("   downstream review list: " + (", ".join(o["downstream_review"]) or "none"))
+        if o.get("credit_periods"):
+            print("   credit periods ending in this window (published allowance; not a personal balance):")
+            for c in o["credit_periods"]:
+                print("      " + _credit_event(c))
     _emit(args, obj, text)
     return 0
 
@@ -143,6 +147,8 @@ def cmd_timeline(args):
             _print_changes(e["changes"])
             for f in e["new_flags"]:
                 print("   [%s] %s %s: %s" % (f["severity"], f["code"], f["subject"], f["detail"]))
+            for c in e.get("credit_periods", []):
+                print("   credit period ends: " + _credit_event(c, dated=False))
     _emit(args, ev, text)
     return 0
 
@@ -298,6 +304,115 @@ def cmd_earned(args):
             print("   (%d other flag(s) not about earned benefits: python3 -m prices status --profile %s)" % (o["other_flags"], o["profile"]))
         print("\nOnly ENTITLEMENT = ACTIVE means the benefit can be used on this date. ACHIEVED means eligible, not held.")
     _emit(args, sv, text)
+    return 0
+
+
+def _credit_event(c, dated=True):
+    return "%s%s  period %s ends (%s %s published, account %s, applies: %s); %s; %s" % (
+        c["date"] + "  " if dated else "", c["benefit"], c["period"], earned.num(c["amount"]), c["unit"], c["account"], c["applies"],
+        c["unused"], c["then"])
+
+
+def _credit_terms(t):
+    """Published terms as text. 'not stated' is printed for everything the source does not say."""
+    def stated(v, fmt):
+        return "not stated by the source" if v is None else ("none" if v == "none" else fmt % earned.num(v))
+    lines = ["%s %s %s" % (earned.num(t["amount"]), t["unit"], t["cycle_text"]) +
+             (" (at most %s %s in a calendar year)" % (earned.num(t["per_calendar_year_at_most"]), t["unit"]) if t["per_calendar_year_at_most"] else ""),
+             "per transaction: maximum %s; minimum stay %s; minimum transaction %s" % (
+                 stated(t["max_per_transaction"], "%s " + t["unit"]), stated(t["min_stay_nights"], "%s night(s)"),
+                 stated(t["min_transaction"], "%s " + t["unit"])),
+             "rollover: " + ("not stated by the source" if t["rollover"] is None else "none; unused allowance expires with the period"
+                             if t["rollover"] == "none" else "allowed, maximum " + stated(t["rollover_max"], "%s " + t["unit"]))]
+    if t.get("note"):
+        lines.append("note: " + t["note"])
+    return lines
+
+
+def _credit_period(p):
+    if p is None or p["state"] == "NO_OFFER":
+        return "none on this date - %s" % (p["reason"] if p else "the offer is not in effect")
+    if p["state"] != "KNOWN":
+        return "%s - %s" % (p["state"], p["reason"])
+    text = "%s  %s to %s" % (p["label"] or "(new period)", p["start"], p["end"] or "the next use")
+    for k in ("cut", "note"):
+        if p.get(k):
+            text += "  [%s]" % p[k]
+    return text
+
+
+def cmd_credits(args):
+    from . import credits
+    store = Store.load(_root(args))
+    day = _today(args)
+    if not args.profile:
+        obj = credits.published(store, day, args.candidates, args.card)
+
+        def text(o):
+            print("PUBLISHED RECURRING CREDITS  as-of=%s%s" % (o["as_of"], "  (including candidates awaiting review)" if args.candidates else ""))
+            print("These are the card's published terms. Nothing here is anyone's balance.")
+            if not o["credits"]:
+                print("\nNo rule%s has structured credit terms." % (" or candidate" if args.candidates else " in force"))
+            for c in o["credits"]:
+                print("\n%s  [%s]  on %s" % (c["name"], c["benefit"], c["card"]))
+                print("   RULE        %s (%s)%s; offer %s; evidence: %s" % (c["rule"], c["rule_state"], " " + c["candidate"] if c["candidate"] else "",
+                                                                         c["offer"]["text"], ", ".join(c["evidence"]) or "none"))
+                for i, line in enumerate(_credit_terms(c["terms"])):
+                    print("   %-11s %s" % ("TERMS" if i == 0 else "", line))
+                print("   PERIOD NOW  %s" % _credit_period(c["period"]))
+        _emit(args, obj, text)
+        return 0
+    obj = credits.survey(store, args.profile, day, args.candidates, args.card)
+    if args.until:
+        obj["periods_ending"] = credits.events(store, args.profile, day, args.until, args.candidates)
+
+    def text(o):
+        print("RECURRING CREDITS  profile=%s  owner=%s  as-of=%s%s%s" % (o["profile"], o["owner"], o["as_of"], "  [SYNTHETIC DATA]" if o["synthetic"] else "",
+                                                                     "  (including candidates awaiting review)" if args.candidates else ""))
+        if not o["accounts"]:
+            print("\nNo card this person holds on this date has structured credit terms%s." % ("" if args.candidates else " in force"))
+        for a in o["accounts"]:
+            print("\nACCOUNT %s  %s  [%s; opened %s]" % (a["account"], a["card_name"], a["account_state"], a["opened_on"] or "not recorded"))
+            for c in a["credits"]:
+                print("\n  %s  [%s]" % (c["name"], c["benefit"]))
+                lines = _credit_terms(c["terms"])
+                print("     PUBLISHED   %s (%s): %s" % (c["rule"], c["rule_state"], lines[0]))
+                for line in lines[1:] + ["offer: %s; evidence: %s" % (c["offer"]["text"], ", ".join(c["evidence"]) or "none")]:
+                    print("                 " + line)
+                ap = c["applies"]
+                print("     APPLIES     %s for this person on this date%s" % (ap["status"], "" if not ap["needs"] else " - " + "; ".join(ap["needs"])))
+                if "election" in ap:
+                    e = ap["election"]
+                    print("                 only under election %s (%s): %s" % (e["option"], e["group"], "in effect" if e["in_effect"] else "NOT in effect - " + e["reason"]))
+                print("     PERIOD      %s" % _credit_period(c["period"]))
+                if "next" in c and ap["status"] != "NOT_AVAILABLE":
+                    print("                 %s: %s; %s" % (c["next"]["date"], c["next"]["what"], c["next"]["unused"]))
+                if "allowance" in c:
+                    print("     ALLOWANCE   %s %s - %s" % (earned.num(c["allowance"]["amount"]), c["allowance"]["unit"], c["allowance"]["note"]))
+                elif ap["status"] == "NOT_AVAILABLE":
+                    print("     ALLOWANCE   none for this person: the benefit does not apply to them on this date")
+                else:
+                    print("     ALLOWANCE   not determined: the allowance period is not known")
+                p = c["personal"]
+                if "record" not in p:
+                    print("     PERSONAL    %s - %s" % (p["state"].replace("_", " "), p["text"]))
+                else:
+                    left = "remaining %s" % earned.num(p["remaining"]) + ("" if not p["possibly_used"] else " (at least %s; %s more may have been used, unconfirmed)"
+                                                                         % (earned.num(p["remaining_at_least"]), earned.num(p["possibly_used"])))
+                    print("     PERSONAL    record %s: %s%s  %s to %s  (%s)" % (
+                        p["record"], p["state"], " - " + "; ".join(p["reasons"]) if p["reasons"] else "", p["effective_from"], p["expires_on"],
+                        "confirmed by %s on %s" % (p["confirmed_by"], p["confirmed_on"]) if p["confirmed_by"] else "not confirmed by the owner"))
+                    print("                 allowance %s %s; used %s (confirmed); %s" % (earned.num(p["allowance"]), p["unit"], earned.num(p["used"]), left))
+        if "periods_ending" in o:
+            print("\nPERIODS ENDING through %s (%d)" % (args.until, len(o["periods_ending"])))
+            for c in o["periods_ending"]:
+                print("   " + _credit_event(c))
+        print("\nFLAGS (%d)" % len(o["flags"]))
+        for f in o["flags"]:
+            print("   [%s] %s %s: %s" % (f["severity"], f["code"], f["subject"], f["detail"]))
+        print("\nPUBLISHED and ALLOWANCE are the card's terms. Only PERSONAL says anything about this person's own balance, "
+              "and only from records the owner confirmed.")
+    _emit(args, obj, text)
     return 0
 
 
@@ -505,6 +620,12 @@ def main(argv=None):
     p.add_argument("--account", help="only this account (holding id)")
     p.add_argument("--cycle", help="only this qualifying year, e.g. 2026")
     p.add_argument("--detail", action="store_true", help="also list every reading, use and source behind each line")
+    p = add("credits", cmd_credits, "recurring card credits: published terms, the allowance period for a date, and what is recorded for a person")
+    p.add_argument("--profile", help="show the credits on this person's card accounts (without it: published terms only)")
+    p.add_argument("--as-of", dest="as_of", help="evaluation date YYYY-MM-DD (default today)")
+    p.add_argument("--card", help="only this card (entity id)")
+    p.add_argument("--until", help="with --profile: also list allowance periods ending up to this date")
+    p.add_argument("--candidates", action="store_true", help="also show credit terms on candidates awaiting review (never established)")
     p = add("cards", cmd_cards, "card roles and which benefits are confirmed, excluded or unproven per card")
     p.add_argument("--profile", help="only cards this person holds, with the benefit's status for them")
     p.add_argument("--as-of", dest="as_of", help="evaluation date YYYY-MM-DD (default today)")

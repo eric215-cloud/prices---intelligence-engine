@@ -14,6 +14,8 @@ Protocol (docs/RELATIONAL_TABLES.md has the full version)
     - A changed cell in an existing row is an update, if that column may be updated.
     - Rows are never deleted. Put `retire` (rules) or `withdraw` (candidates) in `_action`.
     - Columns starting with `=` and files starting with `view_` are read-only.
+    - credits.csv holds the structured terms of recurring credits, one row per card_benefits row that has them
+      (same id). An empty cell means "the source does not say"; `none` means the source says there is none.
     - Any error anywhere: nothing is applied.
 """
 import csv
@@ -29,6 +31,8 @@ from .store import Store
 
 RULE_TAIL = ["summary", "restrictions", "valid_from", "valid_to", "evidence", "review_by",
              "=state", "=last_verified", "_action", "ended_on"]
+CREDIT_CELLS = ["amount", "unit", "cycle", "years", "anchor", "max_per_transaction", "min_stay_nights", "min_transaction",
+                "rollover", "rollover_max", "note"]
 COLUMNS = {
     "parties": ["id", "kind", "name", "network", "notes"],
     "benefits": ["id", "name", "notes"],
@@ -36,10 +40,11 @@ COLUMNS = {
     "cards": ["id", "name"] + list(ROLES) + ["annual_fee_usd", "sources", "notes"],
     "tier_baselines": ["id", "tier", "benefit", "=benefit_name"] + RULE_TAIL,
     "card_benefits": ["id", "card", "benefit", "=benefit_name", "applicability", "superseded_by"] + RULE_TAIL,
+    "credits": ["id", "=card", "=benefit", "=benefit_name", "=state"] + CREDIT_CELLS + ["_action", "_evidence"],
     "view_applicability": ["card", "card_name", "network_tier", "benefit", "benefit_name", "basis", "standing", "meaning", "detail"],
     "view_holdings": ["profile", "owner", "synthetic", "entity", "name", "kind", "state", "valid_from", "valid_to", "acquired_via", "quantity"],
 }
-AUTHORING = ("parties", "benefits", "sources", "cards", "tier_baselines", "card_benefits")
+AUTHORING = ("parties", "benefits", "sources", "cards", "tier_baselines", "card_benefits", "credits")
 VIEWS = ("view_applicability", "view_holdings")
 LOGIC = {"tier_baselines": ["tier", "benefit"], "card_benefits": ["card", "benefit", "applicability", "superseded_by"]}
 MANIFEST = "MANIFEST.json"
@@ -68,6 +73,47 @@ def _rule_row(table, rule, state, verification, evidence_ids, ents):
         row["applicability"] = "confirmed" if rule["kind"] == "grants" else "excluded"
         row["superseded_by"] = rule.get("superseded_by", "")
     return row
+
+
+def _credit_row(rule, state, ents):
+    c = rule["credit"]
+    row = {"id": rule["id"], "=card": single_holds(rule["when"]) or "", "=benefit": rule["output"],
+           "=benefit_name": ents.get(rule["output"], {}).get("name", ""), "=state": state, "_action": "", "_evidence": ""}
+    for k in CREDIT_CELLS:
+        v = c.get(k)
+        row[k] = "" if v is None else (_num(v) if isinstance(v, (int, float)) and not isinstance(v, bool) else str(v))
+    return row
+
+
+def _credit_block(row, where, errs):
+    """A credits.csv row as a credit block. Empty cell = key left out = the source does not say."""
+    def number(col, whole=False, none_ok=False):
+        text = row[col]
+        if none_ok and text.lower() == "none":
+            return "none"
+        try:
+            v = float(text)
+            if whole and v != int(v):
+                raise ValueError
+            return int(v) if v == int(v) else v
+        except ValueError:
+            errs.append("BAD_VALUE: %s: %s must be a %s%s (got %r)" % (where, col, "whole number" if whole else "number",
+                                                                    ", or the word none" if none_ok else "", text))
+            return None
+    block = {}
+    for col in ("amount", "unit", "cycle"):
+        if not row[col]:
+            errs.append("MISSING_VALUE: %s: %s required" % (where, col))
+    if row["amount"]:
+        block["amount"] = number("amount")
+    for col in ("unit", "cycle", "anchor", "rollover", "note"):
+        if row[col]:
+            block[col] = row[col]
+    for col, whole, none_ok in (("years", True, False), ("max_per_transaction", False, True), ("min_stay_nights", True, False),
+                                ("min_transaction", False, False), ("rollover_max", False, True)):
+        if row[col]:
+            block[col] = number(col, whole, none_ok)
+    return block
 
 
 def _table_of(rule, kind_of):
@@ -104,6 +150,8 @@ def rows_from_store(store):
         t = _table_of(r, kind_of)
         if t:
             out[t][r["id"]] = _rule_row(t, r, r["verification"]["status"], r["verification"], r["evidence"], ents)
+        if t == "card_benefits" and isinstance(r.get("credit"), dict):
+            out["credits"][r["id"]] = _credit_row(r, r["verification"]["status"], ents)
     for c in store.candidates.values():
         if c["status"] != "proposed":
             continue
@@ -113,6 +161,8 @@ def rows_from_store(store):
         if t and pr["id"] not in out[t]:
             out[t][pr["id"]] = _rule_row(t, pr, "candidate", {}, [e["id"] for e in c["evidence"]], ents)
             cand_of[pr["id"]] = c["id"]
+            if t == "card_benefits" and isinstance(pr.get("credit"), dict):
+                out["credits"][pr["id"]] = _credit_row(pr, "candidate", ents)
             for ev in c["evidence"]:
                 out["sources"].setdefault(ev["id"], source_row(ev))
     for i, m in enumerate(matrix(store)):
@@ -353,6 +403,16 @@ def plan(store, root, tdir, author, date):
                 errs.append("MISSING_VALUE: %s: name cannot be empty" % where)
             emit("revise_entity", where, target=row["id"], data={"set": sets}, **({"evidence": evs} if evs else {}))
 
+    # ---- credits rows for card_benefits rows that are new in this same import travel inside the new candidate
+    fold = {}
+    for row in new["credits"]:
+        if row["id"] in {r["id"] for r in new["card_benefits"]}:
+            where = "credits row %s" % row["id"]
+            for col in ("_action", "_evidence"):
+                if row[col]:
+                    errs.append("BAD_VALUE: %s: leave %s empty for a row that is new in card_benefits too" % (where, col))
+            fold[row["id"]] = _credit_block(row, where, errs)
+
     # ---- rule tables
     taken = {r["id"] for r in store.rules.values()} | {c["proposed_rule"]["id"] for c in store.candidates.values() if c["status"] == "proposed"}
     cand_ids = set(store.candidates)
@@ -385,6 +445,8 @@ def plan(store, root, tdir, author, date):
                 opt(rule, col, row[col])
             if t == "card_benefits":
                 opt(rule, "superseded_by", row["superseded_by"])
+                if row["id"] in fold:
+                    rule["credit"] = fold[row["id"]]
             cid, n = "c-" + row["id"], 1
             while cid in cand_ids:
                 n += 1
@@ -451,6 +513,43 @@ def plan(store, root, tdir, author, date):
                 elif added:
                     emit("add_evidence", where, target=row["id"], **ev)
 
+    # ---- credits: set, correct or remove the structured terms of an existing rule or candidate (its id never changes)
+    def credit_op(row, where, state, block=None):
+        evs = [e for e in (source(s, where) for s in _ids(row["_evidence"])) if e is not None]
+        if state != "candidate" and not _ids(row["_evidence"]):
+            errs.append("EVIDENCE_REQUIRED: %s: this rule is in force. Put the id of the source for these terms in _evidence "
+                        "(a new sources row, or an existing one retrieved again)" % where)
+        emit("set_credit_terms", where, target=row["id"], data={"remove": True} if block is None else {"credit": block},
+             **({"evidence": evs} if evs else {}))
+
+    for row in new["credits"]:
+        if row["id"] in fold:
+            continue
+        where = "credits row %s" % row["id"]
+        got = base["card_benefits"].get(row["id"])
+        if got is None:
+            errs.append("UNKNOWN_RULE: %s: no card_benefits row has this id. Credit terms belong to a card benefit" % where)
+            continue
+        if row["_action"]:
+            errs.append("BAD_VALUE: %s: leave _action empty on a new row" % where)
+        credit_op(row, where, got["=state"], _credit_block(row, where, errs))
+    for b, row in changed["credits"]:
+        where, state, action = "credits row %s" % row["id"], b["=state"], row["_action"].lower()
+        same = all(row[c] == b[c] for c in CREDIT_CELLS)
+        if state == "retired":
+            errs.append("ROW_READ_ONLY: %s belongs to a retired rule. Retired rows are history." % where)
+        elif action == "remove":
+            if not same:
+                errs.append("BAD_VALUE: %s: to remove the credit terms, put remove in _action and change nothing else" % where)
+            else:
+                credit_op(row, where, state)
+        elif action:
+            errs.append("BAD_VALUE: %s: _action must be empty or remove" % where)
+        elif same:
+            errs.append("BAD_VALUE: %s: _evidence is filled in but no credit term changed" % where)
+        else:
+            credit_op(row, where, state, _credit_block(row, where, errs))
+
     errs += ["UNUSED_SOURCE: sources row %s is new but no row cites it. Cite it or remove it." % s
              for s in sorted(set(new_sources) - used)]
     if errs:
@@ -459,7 +558,8 @@ def plan(store, root, tdir, author, date):
     # ---- give ids, then prove the whole batch against the pipeline, in memory
     digest = hashlib.sha256(store.digest().encode())   # ids depend on the starting state and on the edits
     for t in AUTHORING:
-        digest.update(render(t, edited[t]).encode("utf-8"))
+        if t != "credits" or edited[t]:        # an empty credits table leaves the ids of older imports unchanged
+            digest.update(render(t, edited[t]).encode("utf-8"))
     tag, sets, origins, cur = digest.hexdigest()[:8], [], [], store
     for n, (cs, origin) in enumerate(out, start=1):
         cs["id"] = "cs-%s-tbl-%s-%02d-%s" % (date.replace("-", ""), tag, n, cs["op"].replace("_", "-"))

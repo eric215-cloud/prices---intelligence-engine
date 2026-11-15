@@ -96,6 +96,14 @@ def shape_issues(rule, kind_of):
             out.append(("UNEXPECTED_FIELD", "superseded_by belongs only on excludes rules"))
     if rule["kind"] != "earns" and "earn" in rule:
         out.append(("UNEXPECTED_FIELD", "an 'earn' block belongs only on earns rules"))
+    if "credit" in rule:
+        from .credits import shape
+        if rule["kind"] != "grants":
+            out.append(("UNEXPECTED_FIELD", "a 'credit' block belongs only on grants rules (an earned credit states its allowance in 'earn')"))
+        elif kind_of(subject) != "card" or kind_of(target) != "benefit":
+            out.append(("BAD_CREDIT_SHAPE", "credit terms belong on a card-benefit rule: when {\"holds\": <card>} -> output <benefit>"))
+        for msg in (shape(rule["credit"]) if isinstance(rule["credit"], dict) else []):
+            out.append(("BAD_CREDIT_SHAPE", msg))
     if rule["kind"] == "earns" and kind_of(subject) == "card":   # the same no-inheritance guard as every deriving rule
         if kind_of(target) in NOT_HOLDABLE:
             out.append(("TIER_INHERITANCE", "%s: an organization or network tier is never earned" % target))
@@ -370,6 +378,7 @@ def lint(store):
 def _lint_earned(store, err, warn):
     """Personal progress and earned-benefit records: scoped to the person's own account, dated honestly, attested."""
     from .earned import UNKNOWN, cycle_bounds
+    from .credits import is_credit_rule, label_bounds, label_ok
     ents, rules = store.entities, store.rules
     offered = {}
     for r in rules.values():
@@ -437,8 +446,16 @@ def _lint_earned(store, err, warn):
         for e in sorted(prof.entitlements.values(), key=lambda e: e["id"]):
             p = store.path("entitlements", e["id"], name)
             rule, h = rules.get(e["rule"]), prof.holdings.get(e["account"])
-            if rule is None or rule["kind"] != "earns" or "earn" not in rule:
-                err("UNKNOWN_REFERENCE", p, "rule %r is not an earns rule" % e["rule"])
+            recurring = is_credit_rule(rule)          # a period of a recurring card credit (credits.py); else an earned benefit
+            if rule is None or not (recurring or (rule["kind"] == "earns" and "earn" in rule)):
+                err("UNKNOWN_REFERENCE", p, "rule %r is not an earns rule or a rule with credit terms" % e["rule"])
+                continue
+            if recurring and not label_ok(rule["credit"], e["cycle"]):
+                err("BAD_PERIOD", p, "cycle %r is not a period of a %s credit (examples: 2027, 2027-H1, 2027-Q3, 2027-07)"
+                    % (e["cycle"], rule["credit"]["cycle"]))
+                continue
+            if not recurring and len(e["cycle"]) != 4:
+                err("BAD_PERIOD", p, "cycle %r: an earned benefit's cycle is a four-digit qualifying year" % e["cycle"])
                 continue
             if e["entity"] != rule["output"]:
                 err("ENTITY_MISMATCH", p, "entity %s is not what rule %s offers (%s)" % (e["entity"], rule["id"], rule["output"]))
@@ -446,20 +463,31 @@ def _lint_earned(store, err, warn):
                 err("UNKNOWN_ACCOUNT", p, "account %r is not a holding of profile %s. An earned benefit belongs to the person's own account" % (e["account"], name))
             elif h["entity"] != single_holds(rule["when"]):
                 err("ACCOUNT_MISMATCH", p, "account %s is a %s, but rule %s is about %s" % (e["account"], h["entity"], rule["id"], single_holds(rule["when"])))
-            start, _end = cycle_bounds(rule["earn"]["period"], e["cycle"])
             lo, hi = e["effective_from"], e["expires_on"]
+            if recurring:
+                start, bounds = None, label_bounds(rule["credit"], e["cycle"])
+                if bounds and real(lo) and real(hi) and ((lo != UNKNOWN and lo > bounds[1].isoformat()) or (hi != UNKNOWN and hi < bounds[0].isoformat())):
+                    err("BAD_DATES", p, "%s to %s does not overlap period %s (%s to %s)" % (lo, hi, e["cycle"], bounds[0], bounds[1]))
+                if not bounds and real(lo) and lo != UNKNOWN and lo[:4] != e["cycle"]:
+                    err("BAD_DATES", p, "cycle %s must be the year in which this period starts (effective_from is %s)" % (e["cycle"], lo))
+            else:
+                start, _end = cycle_bounds(rule["earn"]["period"], e["cycle"])
             for field in ("effective_from", "expires_on"):
                 if not real(e[field]):
                     err("BAD_DATES", p, "%s is not a real date" % field)
             if real(lo) and real(hi):
-                if lo != UNKNOWN and lo < start.isoformat():
+                if start is not None and lo != UNKNOWN and lo < start.isoformat():
                     err("BAD_DATES", p, "effective_from %s is before qualifying cycle %s begins" % (lo, e["cycle"]))
                 if lo != UNKNOWN and hi != UNKNOWN and hi < lo:
                     err("BAD_DATES", p, "expires_on is before effective_from")
                 if e.get("ended_on") and lo != UNKNOWN and e["ended_on"] < lo:
                     err("BAD_DATES", p, "ended_on is before effective_from")
             attested(e, p, "entitlement")
-            want = rule["earn"].get("allowance")
+            want = {"unit": rule["credit"]["unit"]} if recurring else rule["earn"].get("allowance")
+            cap = rule["credit"].get("max_per_transaction") if recurring else None
+            for u in e.get("usage", []):
+                if isinstance(cap, (int, float)) and u["state"] != "superseded" and u["amount"] > cap:
+                    warn("USE_OVER_TRANSACTION_CAP", p, "usage %s (%s) exceeds the rule's per-transaction maximum of %s" % (u["id"], u["amount"], cap))
             if want and "allowance" not in e:
                 err("MISSING_ALLOWANCE", p, "rule %s grants a consumable allowance; record the amount actually granted" % rule["id"])
             if "allowance" in e and (not want or e["allowance"]["unit"] != want["unit"] or e["allowance"]["amount"] <= 0):

@@ -130,6 +130,43 @@ def op_revise_rule(store, cs):
         r["verification"]["last_verified"] = cs["date"]
 
 
+def op_set_credit_terms(store, cs):
+    """Set, correct or remove the structured credit terms of a card-benefit rule, or of a candidate still awaiting review.
+
+    The rule's id, condition and output are untouched, so nothing that refers to it (elections, personal records) breaks.
+    data.credit is the complete block and replaces the old one: a key left out means "the source does not say"."""
+    from .credits import find
+    _need("target" in cs, "MISSING_TARGET", "target (the rule id, also for a candidate's proposed rule) is required")
+    owner, r, where = find(store, cs["target"])
+    _need(r is not None, "UNKNOWN_TARGET", "no rule, and no candidate awaiting review, has the rule id %r" % cs["target"])
+    data = cs.get("data") or {}
+    remove = data.get("remove") is True
+    _need(remove != ("credit" in data), "BAD_DATA", "give data.credit (the complete terms) or data.remove: true, not both and not neither")
+    if where == "rule":
+        _need(r["verification"]["status"] != "retired", "RETIRED", "retired rules are history; they are not revised")
+        _need(cs.get("evidence"), "EVIDENCE_REQUIRED", "changing the published terms of a rule in force needs evidence: "
+                                                       "the source they come from, retrieved again or new")
+        _need(evidence_ok(store.vocab["evidence_policy"], cs["evidence"]), "INSUFFICIENT_EVIDENCE",
+              "the evidence must satisfy the evidence policy")
+        _add_evidence(store, cs, r)
+    else:
+        for e in cs.get("evidence", []):          # a candidate keeps its sources with it; more may be added, never replaced
+            old = next((x for x in owner["evidence"] if x["id"] == e["id"]), None)
+            _need(old is None or old == e, "EVIDENCE_ID_EXISTS", "evidence id %r already exists with different content" % e["id"])
+            _need(e["retrieved_on"] <= cs["date"], "BAD_DATES", "evidence %r retrieved after the changeset date" % e["id"])
+            if old is None:
+                owner["evidence"].append(e)
+    if remove:
+        _need("credit" in r, "BAD_STATE", "%s has no credit terms to remove" % cs["target"])
+        del r["credit"]
+    else:
+        _need(isinstance(data["credit"], dict), "BAD_DATA", "data.credit must be an object")
+        _need(r.get("credit") != data["credit"], "NO_CHANGE", "%s already has exactly these credit terms" % cs["target"])
+        r["credit"] = dict(data["credit"])
+    if where == "rule" and r["verification"]["status"] == "verified":
+        r["verification"]["last_verified"] = cs["date"]
+
+
 def op_flag_rule(store, cs):
     r = _rule(store, cs)
     _need(r["verification"]["status"] != "retired", "RETIRED", "rule is already retired")
@@ -398,13 +435,23 @@ def op_record_entitlement(store, cs):
     e = dict(_data(cs, "entitlement", dict))
     _need(isinstance(e.get("id"), str), "BAD_DATA", "entitlement.id missing")
     _need(e["id"] not in prof.entitlements, "ID_EXISTS", "entitlement %r already exists; use revise_entitlement to change it" % e["id"])
+    from .credits import is_credit_rule, label_ok
     rule = store.rules.get(e.get("rule", ""))
-    _need(rule is not None and rule["kind"] == "earns", "UNKNOWN_RULE", "entitlement.rule must name an earns rule")
+    recurring = is_credit_rule(rule)      # one allowance period of a recurring card credit, as the account shows it
+    _need(rule is not None and (rule["kind"] == "earns" or recurring), "UNKNOWN_RULE",
+          "entitlement.rule must name an earns rule, or a rule in force that has credit terms (a candidate is not in force)")
     h = _own_account(prof, e.get("account", ""))
     _need(h["entity"] == rule["when"].get("holds"), "ACCOUNT_MISMATCH",
           "account %s is a %s; rule %s is about %s" % (h["id"], h["entity"], rule["id"], rule["when"].get("holds")))
     _need(e.setdefault("entity", rule["output"]) == rule["output"], "ENTITY_MISMATCH", "rule %s offers %s" % (rule["id"], rule["output"]))
-    _need(isinstance(e.get("cycle"), str) and len(e["cycle"]) == 4 and e["cycle"].isdigit(), "BAD_DATA", "cycle must be a four-digit qualifying year")
+    if recurring:
+        _need(isinstance(e.get("cycle"), str) and label_ok(rule["credit"], e["cycle"]), "BAD_PERIOD",
+              "cycle must name the allowance period of this %s credit (examples: 2027, 2027-H1, 2027-Q3, 2027-07; for an "
+              "anniversary or multi-year period, the year in which it starts)" % rule["credit"]["cycle"])
+        _need(isinstance(e.get("allowance"), dict), "MISSING_ALLOWANCE",
+              "record the allowance the account shows for this period. Do not copy it from the rule without the owner's word")
+    else:
+        _need(isinstance(e.get("cycle"), str) and len(e["cycle"]) == 4 and e["cycle"].isdigit(), "BAD_DATA", "cycle must be a four-digit qualifying year")
     for field in ("effective_from", "expires_on"):
         _need(field in e, "MISSING_DATA", "entitlement.%s is required. If it is not known, write the word unknown; do not leave it out "
                                           "and do not copy the rule's general term" % field)
@@ -441,7 +488,12 @@ def op_revise_entitlement(store, cs):
         e["confirmed_on"] = cs["attestation"]["on"]     # the owner has re-confirmed the record as it now stands
 
 
-def _new_usage(cs, prof, e, usage):
+def _transaction_cap(store, e):
+    c = store.rules.get(e["rule"], {}).get("credit") or {}
+    return c["max_per_transaction"] if isinstance(c.get("max_per_transaction"), (int, float)) else None
+
+
+def _new_usage(cs, prof, e, usage, cap=None):
     u = dict(usage)
     _need("allowance" in e, "NO_ALLOWANCE", "%s has no consumable allowance; use cannot be recorded against it" % e["id"])
     _need(e["state"] != "superseded", "BAD_STATE", "entitlement %s was withdrawn" % e["id"])
@@ -449,6 +501,9 @@ def _new_usage(cs, prof, e, usage):
     _need(all(x["id"] != u["id"] for x in e.get("usage", [])), "ID_EXISTS", "usage %r already exists on %s" % (u["id"], e["id"]))
     _need(isinstance(u.get("amount"), (int, float)) and not isinstance(u.get("amount"), bool) and u["amount"] > 0, "BAD_VALUE",
           "usage.amount must be a number greater than zero")
+    _need(cap is None or u["amount"] <= cap, "USE_EXCEEDS_TRANSACTION_CAP",
+          "one use of %s is more than the published maximum of %s per transaction. Record each transaction separately; "
+          "if the account really shows one credit above the maximum, escalate" % (u.get("amount"), cap))
     _need("used_on" in u, "MISSING_DATA", "usage.used_on is required: the date of use, or the word unknown")
     _when(u["used_on"], "usage.used_on", cs)
     _owner_confirms(cs, prof, u, "usage")
@@ -471,7 +526,7 @@ def op_record_usage(store, cs):
     _need("target" in cs, "MISSING_TARGET", "target (entitlement id) is required")
     e = prof.entitlements.get(cs["target"])
     _need(e is not None, "UNKNOWN_TARGET", "no entitlement %r in profile %s" % (cs["target"], prof.name))
-    _new_usage(cs, prof, e, _data(cs, "usage", dict))
+    _new_usage(cs, prof, e, _data(cs, "usage", dict), _transaction_cap(store, e))
 
 
 def op_correct_entry(store, cs):
@@ -494,7 +549,7 @@ def op_correct_entry(store, cs):
             rule = next(r for r in store.rules.values() if r["kind"] == "earns" and r.get("earn", {}).get("measure") == rec["measure"])
             added = _new_reading(cs, prof, rec, new, rule["earn"]["period"])
         else:
-            added = _new_usage(cs, prof, rec, new)
+            added = _new_usage(cs, prof, rec, new, _transaction_cap(store, rec))
         old["superseded_by"] = added["id"]
 
 
