@@ -23,8 +23,9 @@ Everything demonstrated uses an invented card, invented benefits, invented peopl
 | `2fccd03` | Checkpoint 2: `earned` report command, fixture builder, `tests/test_l_earned.py`. (Its message says 56 tests; the correct count is 44) |
 | `fc0b4d5` | Checkpoint 3: committed fixture, `tests/test_m_earned_pipeline.py`, mutation check |
 | `29fd419` | Checkpoint 4: eligibility kept separate from account records (see 6.3); demo; baseline comparison |
-| `ab4f4e0` | Checkpoint 5: OP-11 card, design document, decisions D-24 to D-33, schema, status. Clean-checkout verification run on this commit |
-| next commit | This file and a cosmetic change to `scripts/verify_export.py` |
+| `ab4f4e0` | Checkpoint 5: OP-11 card, design document, decisions D-24 to D-33, schema, status; verifier scripts extended. Clean-checkout verification run on this commit |
+| `6b388f3` | Checkpoint 6: this file. (Its message also mentions `scripts/verify_export.py`; that one-line change is in `ab4f4e0`) |
+| next commit | A correction to this table only. No code, test or data changes after `ab4f4e0`; the clean-checkout verification was repeated on the final commit and passed |
 
 25 files changed outside the fixture, about 3,100 lines added, 31 changed. No file under `data/`, `profiles/` or `tables/` changed. No existing test file changed.
 
