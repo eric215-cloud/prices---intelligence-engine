@@ -1,0 +1,25 @@
+{
+  "author": "Fable (engineering, ENG-02)",
+  "data": {
+    "entity": {
+      "election": {
+        "card": "card.bilt-palladium",
+        "elect_before_anniversary": "2027-01-01",
+        "governs": [
+          "cb.bilt-palladium.housing-flex-bilt-cash-legacy"
+        ],
+        "group": "bilt-palladium.housing-rewards",
+        "opened_before": "2027-01-01",
+        "source_note": "Engineering transcription of Argon's ENG-02 (Argon_PRICES_Content_Integration_Report.md) and the candidate's own restrictions text; Argon to confirm. Restriction: 'Available only to accounts opened before 2027 that preserve the legacy election prior to their first 2027+ card anniversary'; 'Mutually exclusive with housing-only tiered option'."
+      },
+      "id": "election.bilt-palladium.housing-flex-bilt-cash",
+      "kind": "election",
+      "name": "Bilt Palladium housing rewards election: Flexible Bilt Cash (legacy)",
+      "notes": "Public option definition. A person's choice is recorded as a holding of this entity (OP-12); it is never inferred."
+    }
+  },
+  "date": "2026-11-15",
+  "id": "cs-20261115-eng02-02-add-entity-housing-flex-bilt-cash",
+  "op": "add_entity",
+  "reason": "ENG-02: make this mutually exclusive cardholder option explicit, so the rules it governs apply only when the cardholder's election of it is recorded. Content values are Argon's; this changes no rule."
+}

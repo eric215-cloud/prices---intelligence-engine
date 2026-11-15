@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-eng02-03-add-entity-annual-credits-legacy",
+  "records": {
+    "data/kb/entities/election.bilt-palladium.annual-credits-legacy.json": {
+      "after": "fc3445a0e2f1dc34",
+      "before": null
+    }
+  }
+}

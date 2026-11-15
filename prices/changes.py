@@ -19,7 +19,7 @@ from .schema import Schema
 from .store import LEDGER_PATH, Store, append_audit, read_audit
 
 RANK = {"ESTABLISHED": 3, "CONDITIONAL": 2, "UNRESOLVED": 1, "NOT_AVAILABLE": 0}
-ENTITY_REVISABLE = ("name", "notes", "tags", "how", "economics", "program", "network", "card", "sources")
+ENTITY_REVISABLE = ("name", "notes", "tags", "how", "economics", "program", "network", "card", "sources", "election")
 REVISABLE = ("valid_from", "valid_to", "restrictions", "open_questions", "value_note", "summary", "review_by", "retention_note")
 MAX_REVIEW_DAYS = 400
 
@@ -178,6 +178,10 @@ def op_revise_entity(store, cs):
         if k == "sources":
             _need(isinstance(v, list) and set(e.get("sources", [])) <= set(v), "EVIDENCE_REMOVED",
                   "sources may be added to an entity, never removed")
+        if k == "election":
+            # changing which rules an option governs, or its dates, changes who can be granted what: a reviewer decides
+            _need(e["kind"] == "election", "BAD_DATA", "only an election entity has an 'election' block")
+            _reviewer(store, _attested(cs))
     _add_evidence(store, cs)
     for k, v in changes.items():
         if v is None:

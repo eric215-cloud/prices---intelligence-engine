@@ -78,6 +78,12 @@ def cmd_status(args):
             for x in r["earned_entitlements"]:
                 left = "" if x["remaining"] is None else "  remaining %s" % earned.num(x["remaining"])
                 print("   %-18s %-32s cycle %s  %s to %s%s" % (x["state"], x["entity"], x["cycle"], x["effective_from"], x["expires_on"], left))
+        if "elections" in r:
+            print("\n   Card elections (%d)  - one option per group; nothing is assumed when none is recorded" % len(r["elections"]))
+            for x in r["elections"]:
+                state = ("IN EFFECT  " + x["established"]) if x["established"] else (
+                    "UNRESOLVED " + (", ".join(x["unresolved"]) if x["unresolved"] else "(no option possible)"))
+                print("   %-36s %s  - %s" % (x["group"], state, x["reason"]))
         print("\nFLAGS (%d)" % len(r["flags"]))
         for f in r["flags"]:
             print("   [%s] %s %s: %s" % (f["severity"], f["code"], f["subject"], f["detail"]))

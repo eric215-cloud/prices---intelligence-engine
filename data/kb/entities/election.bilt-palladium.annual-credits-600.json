@@ -1,0 +1,15 @@
+{
+  "election": {
+    "card": "card.bilt-palladium",
+    "governs": [
+      "cb.bilt-palladium.annual-bilt-cash-600-post2027"
+    ],
+    "group": "bilt-palladium.annual-credits",
+    "source_note": "Engineering transcription of Argon's ENG-02 (Argon_PRICES_Content_Integration_Report.md) and the candidate's own restrictions text; Argon to confirm. Restriction: 'Effective at first card anniversary in 2027 or later unless cardholder elected to retain legacy $200 Bilt Cash + $400 hotel credit structure'.",
+    "starts_at_anniversary": "2027-01-01"
+  },
+  "id": "election.bilt-palladium.annual-credits-600",
+  "kind": "election",
+  "name": "Bilt Palladium annual credits election: $600 Bilt Cash (from the first 2027+ anniversary)",
+  "notes": "Public option definition. A person's choice is recorded as a holding of this entity (OP-12); it is never inferred."
+}

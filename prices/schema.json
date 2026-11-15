@@ -29,7 +29,7 @@
       "properties": {
         "id": {"$ref": "#/$defs/id"},
         "kind": {"enum": ["program", "card", "currency", "status", "benefit", "action", "capability",
-                          "organization", "network_tier"]},
+                          "organization", "network_tier", "election"]},
         "name": {"$ref": "#/$defs/text"},
         "program": {"$ref": "#/$defs/id"},
         "network": {"$ref": "#/$defs/id"},
@@ -38,7 +38,24 @@
         "tags": {"type": "array", "items": {"type": "string"}},
         "how": {"type": "string"},
         "economics": {"type": "object"},
-        "notes": {"type": "string"}
+        "notes": {"type": "string"},
+        "election": {"$ref": "#/$defs/election"}
+      }
+    },
+
+    "election": {
+      "x-doc": "One option of one cardholder election group on one card (kind: election). The rules listed in governs apply only while the person's election is this option. Dates in the *_anniversary fields mean: the first card anniversary on or after this date (from opened_on on the person's card holding).",
+      "type": "object", "additionalProperties": false,
+      "required": ["group", "card", "governs"],
+      "properties": {
+        "group": {"$ref": "#/$defs/id"},
+        "card": {"$ref": "#/$defs/id"},
+        "governs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/id"}},
+        "opened_before": {"$ref": "#/$defs/date"},
+        "default_before_anniversary": {"$ref": "#/$defs/date"},
+        "starts_at_anniversary": {"$ref": "#/$defs/date"},
+        "elect_before_anniversary": {"$ref": "#/$defs/date"},
+        "source_note": {"type": "string"}
       }
     },
 
@@ -237,6 +254,7 @@
         "valid_to": {"$ref": "#/$defs/date_or_null"},
         "acquired_via": {"$ref": "#/$defs/id"},
         "acquired_on": {"$ref": "#/$defs/date"},
+        "opened_on": {"$ref": "#/$defs/date"},
         "confirmed_on": {"$ref": "#/$defs/date"},
         "confirmed_by": {"type": "string"},
         "quantity": {"type": "number"},

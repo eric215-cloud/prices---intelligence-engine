@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-eng02-01-add-entity-housing-tiered-points",
+  "records": {
+    "data/kb/entities/election.bilt-palladium.housing-tiered-points.json": {
+      "after": "d181ed286bed9709",
+      "before": null
+    }
+  }
+}

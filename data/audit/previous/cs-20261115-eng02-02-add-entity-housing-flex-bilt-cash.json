@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-eng02-02-add-entity-housing-flex-bilt-cash",
+  "records": {
+    "data/kb/entities/election.bilt-palladium.housing-flex-bilt-cash.json": {
+      "after": "31c6819a61a9a6de",
+      "before": null
+    }
+  }
+}

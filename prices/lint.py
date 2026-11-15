@@ -294,6 +294,7 @@ def lint(store):
                 err("UNATTESTED_CONFIRMATION", store.path("metrics", m["id"], name), "confirmed metrics need confirmed_by")
 
     _lint_earned(store, err, warn)
+    _lint_elections(store, err, warn)
 
     # 6. candidates stay self-contained; they may introduce entities but never touch rules
     for c in store.candidates.values():
@@ -492,6 +493,108 @@ def _lint_earned(store, err, warn):
                     warn("CONFLICTING_ENTITLEMENTS", p, "second live record for the same rule, account and cycle (see %s); "
                                                         "the engine treats both as unresolved" % live[key])
                 live[key] = e["id"]
+
+
+def _lint_elections(store, err, warn):
+    """Cardholder election groups (public) and the elections people record (personal). See prices/elections.py."""
+    import datetime
+    ents, rules = store.entities, store.rules
+    proposed = {c["proposed_rule"].get("id"): c for c in store.candidates.values() if c.get("proposed_rule", {}).get("id")}
+    groups, governed = {}, {}
+    for e in ents.values():
+        p = store.path("entities", e["id"])
+        t = e.get("election")
+        if e["kind"] != "election":
+            if t is not None:
+                err("UNEXPECTED_FIELD", p, "an 'election' block belongs only on entities of kind election")
+            continue
+        if not isinstance(t, dict):
+            err("BAD_ELECTION_SHAPE", p, "an election entity needs an 'election' block: group, card, governs")
+            continue
+        groups.setdefault(t["group"], []).append(e)
+        if ents.get(t["card"], {}).get("kind") != "card":
+            err("BAD_ELECTION_SHAPE", p, "election.card %r is not a card entity" % t["card"])
+        for rid in t["governs"]:
+            r = rules.get(rid) or (proposed[rid]["proposed_rule"] if rid in proposed else None)
+            if r is None:
+                err("UNKNOWN_REFERENCE", p, "governs %r: no rule or candidate rule has that id" % rid)
+                continue
+            if r["kind"] not in ("grants", "acquire", "transfer"):
+                err("BAD_ELECTION_SHAPE", p, "governs %r: a %s rule derives nothing, so an election cannot govern it" % (rid, r["kind"]))
+            if t["card"] not in [i for k, i, neg in _leaves(r["when"]) if k == "holds" and not neg]:
+                err("BAD_ELECTION_SHAPE", p, "governs %r, whose condition does not require holding %s" % (rid, t["card"]))
+            if rid in governed and governed[rid] != e["id"]:
+                err("ELECTION_OVERLAP", p, "rule %r is already governed by %s; a rule belongs to one option only" % (rid, governed[rid]))
+            governed[rid] = e["id"]
+    for g, opts in sorted(groups.items()):
+        cards = {o["election"]["card"] for o in opts}
+        if len(cards) > 1:
+            for o in opts:
+                err("BAD_ELECTION_SHAPE", store.path("entities", o["id"]), "election group %s spans several cards: %s" % (g, ", ".join(sorted(cards))))
+        if len(opts) < 2:
+            # still safe (its rules need a recorded election), but an election with one option is probably unfinished
+            warn("INCOMPLETE_ELECTION_GROUP", store.path("entities", opts[0]["id"]), "election group %s has only one option so far" % g)
+        if sum("default_before_anniversary" in o["election"] for o in opts) > 1:
+            err("BAD_ELECTION_SHAPE", store.path("entities", opts[0]["id"]), "election group %s has more than one default option" % g)
+    for r in rules.values():
+        if ents.get(r.get("output"), {}).get("kind") == "election":
+            err("BAD_ELECTION_SHAPE", store.path("rules", r["id"]), "rules never produce an election: it is the cardholder's choice, recorded per person")
+    option_group = {o["id"]: g for g, opts in groups.items() for o in opts}
+    for name in store.profile_names():
+        if "profiles/%s/profile.json" % name not in store.files:
+            continue
+        prof = store.profile(name)
+        held_cards = {h["entity"] for h in prof.holdings.values()}
+        by_group = {}
+        for h in prof.holdings.values():
+            p = store.path("holdings", h["id"], name)
+            kind = ents.get(h["entity"], {}).get("kind")
+            if h.get("opened_on"):
+                if kind != "card":
+                    err("UNEXPECTED_FIELD", p, "opened_on belongs only on holdings of a card")
+                elif h.get("valid_from") and h["valid_from"] < h["opened_on"]:
+                    err("BAD_DATES", p, "valid_from %s is before the account was opened (%s)" % (h["valid_from"], h["opened_on"]))
+            if kind != "election":
+                continue
+            g = option_group.get(h["entity"])
+            by_group.setdefault(g, []).append(h)
+            card = ents[h["entity"]]["election"]["card"]
+            if card not in held_cards:
+                warn("ELECTION_WITHOUT_CARD", p, "an election for %s is recorded but the person has no holding of %s" % (g, card))
+            if not h.get("valid_from"):
+                warn("ELECTION_START_NOT_RECORDED", p, "the election has no valid_from; before its confirmation date it is treated as unknown")
+        lo_day, hi_day = datetime.date.min, datetime.date.max
+        for g, hs in sorted(by_group.items()):
+            for i, a in enumerate(hs):
+                for b in hs[i + 1:]:
+                    if a["entity"] == b["entity"]:
+                        continue
+                    a0, a1 = _day(a.get("valid_from"), lo_day), _day(a.get("valid_to"), hi_day)
+                    b0, b1 = _day(b.get("valid_from"), lo_day), _day(b.get("valid_to"), hi_day)
+                    if a0 <= b1 and b0 <= a1:
+                        warn("CONFLICTING_ELECTIONS", store.path("holdings", b["id"], name),
+                             "%s and %s are both recorded for %s on overlapping dates; neither will be applied on those dates"
+                             % (a["entity"], b["entity"], g))
+
+
+def _day(s, default):
+    import datetime
+    try:
+        return datetime.date.fromisoformat(s) if s else default
+    except (TypeError, ValueError):
+        return default
+
+
+def _leaves(cond, neg=False):
+    if "holds" in cond:
+        yield ("holds", cond["holds"], neg)
+    elif "not" in cond:
+        yield from _leaves(cond["not"], not neg)
+    elif "all" in cond or "any" in cond:
+        for c in cond.get("all", cond.get("any", [])):
+            yield from _leaves(c, neg)
+    else:
+        yield ("metric", cond.get("metric"), neg)
 
 
 def errors(store):

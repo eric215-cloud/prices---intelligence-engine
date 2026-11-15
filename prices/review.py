@@ -50,6 +50,9 @@ def boundaries(store, profile, start, until):
     if prof.qualifications or prof.entitlements:
         from .earned import boundary_dates
         ds |= boundary_dates(store, profile)
+    if any(e["kind"] == "election" for e in store.entities.values()):
+        from . import elections
+        ds |= elections.boundary_dates(store, profile)
     return sorted(d for d in ds if start < d <= until)
 
 

@@ -9,7 +9,9 @@ What it checks, in order:
      with the listed sha256 and size.
   2. Starting from the engineering base, every changeset in Argon's audit log re-applies through the ordinary
      pipeline (prices.changes.apply), in log order, with the same result, changed files and store digests.
-  3. After `tables export`, the replayed data/, profiles/ and tables/ equal this checkout's, byte for byte.
+  3. After `tables export`, every file of the replayed data/, profiles/ and tables/ is in this checkout byte for
+     byte (the audit log as a prefix). Files added since the intake are listed; only audit records and election
+     definitions (ENG-02) may be added.
   4. Argon's packaged data equals the replay, except two audit records the package left out (listed below).
   5. Counts: 10 active rules (same files as the base), 113 proposed candidates, none promoted by Argon,
      profiles/ byte-identical to the base, lint 0 errors, tables in sync.
@@ -112,11 +114,21 @@ check(not mismatch, "%d changesets re-applied with identical results and digests
 code, _out = prices_cmd(replay, "tables", "export")
 check(code == 0, "tables export on the replay")
 
-print("\n3. This checkout equals the replay")
+print("\n3. This checkout contains the replay unchanged")
+LOG = "data/audit/log.jsonl"
 for sub in ("data", "profiles", "tables"):
     a, b = files(replay, sub), files(ROOT, sub)
-    diff = sorted((a ^ b) | {p for p in a & b if read(replay, p) != read(ROOT, p)})
-    check(not diff, "%s/ identical (%d files)%s" % (sub, len(a), ": " + ", ".join(diff[:3]) if diff else ""))
+    missing = sorted(a - b)
+    changed = sorted(p for p in a & b if p != LOG and read(replay, p) != read(ROOT, p))
+    check(not missing and not changed, "%s/: all %d intake files present and unchanged%s" % (sub, len(a), ": " + ", ".join((missing + changed)[:3]) if missing or changed else ""))
+    added = sorted(b - a)
+    allowed_new = [p for p in added if p.startswith(("data/audit/changesets/", "data/audit/previous/", "data/kb/entities/election."))]
+    check(added == allowed_new, "%s/: added since the intake: %d file(s), all audit records or election definitions%s"
+          % (sub, len(added), "" if added == allowed_new else ": " + ", ".join(sorted(set(added) - set(allowed_new))[:3])))
+    for p in added:
+        if p.startswith("data/kb/"):
+            print("            added: %s" % p)
+check(read(ROOT, LOG).startswith(read(replay, LOG)), "audit log: the intake log is an unchanged prefix of this checkout's log")
 
 print("\n4. Argon's packaged store equals the replay, apart from what the package left out")
 for sub in ("data", "profiles", "tables"):

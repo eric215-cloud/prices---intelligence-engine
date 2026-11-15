@@ -215,7 +215,7 @@ class Result:
     def basis(self, atom):
         L = self.level_of(atom)
         via = self.via[L][atom][0] if L else ""
-        return "personal" if via.startswith(("holding:", "retain:", "entitlement:")) else "derived"
+        return "personal" if via.startswith(("holding:", "retain:", "entitlement:", "election:", "election-default:")) else "derived"
 
     def report(self):
         """The four epistemic categories, kept apart."""
@@ -234,8 +234,8 @@ class Result:
             kind, ent = atom.split(":", 1)
             st = self.status(atom)
             name = self.entities.get(ent, {}).get("name", ent)
-            if self.entities.get(ent, {}).get("kind") == "action":
-                continue
+            if self.entities.get(ent, {}).get("kind") in ("action", "election"):
+                continue   # actions are steps; elections are reported per group below
             row = {"entity": ent, "name": name}
             row.update(self.tokens(atom))
             if kind == "can_get":
@@ -250,6 +250,9 @@ class Result:
                 rep["conditional"].append(row)
             elif st == UNRESOLVED:
                 rep["unresolved"].append(row)
+        if getattr(self, "elections", None):          # key exists only for people who hold a card with election groups
+            rep["elections"] = [{"group": d["group"], "card_holding": d["card"], "established": d["established"],
+                                 "unresolved": d["possible"], "reason": d["reason"]} for d in self.elections]
         if getattr(self, "earned", None) is not None:   # key exists only for people with earned-benefit records
             from .earned import summary_rows
             rep["earned_entitlements"] = summary_rows(self.earned)
@@ -262,6 +265,9 @@ def evaluate(store, profile, as_of, include_candidates=False):
     r = Result(store, profile, as_of)
     r._metrics = prof.metrics
     rules = []
+    # cardholder elections: a governed rule also needs the person's election of its option (elections.py)
+    from .elections import gate, governed
+    gov = governed(store)
 
     # 1. sourced rules -> internal rules, with the levels at which each may be used
     for rule in sorted(store.rules.values(), key=lambda x: x["id"]):
@@ -277,7 +283,7 @@ def evaluate(store, profile, as_of, include_candidates=False):
             levels, toks = (P, U), frozenset([("unknown", "rule %s is unverified" % rule["id"])])
         if rule["kind"] in NON_DERIVING or rule["kind"] in PERSONAL_KINDS:
             continue   # baseline/excludes: applicability matrix only (cards.py). earns: personal records only (earned.py)
-        rules.append({"id": rule["id"], "kind": rule["kind"], "output": rule["output"], "when": rule["when"],
+        rules.append({"id": rule["id"], "kind": rule["kind"], "output": rule["output"], "when": gate(rule["id"], rule["when"], gov),
                       "levels": levels, "tokens": toks, "src": rule})
     if include_candidates:
         for c in sorted(store.candidates.values(), key=lambda x: x["id"]):
@@ -286,7 +292,7 @@ def evaluate(store, profile, as_of, include_candidates=False):
             pr = c["proposed_rule"]
             if pr["kind"] in NON_DERIVING or pr["kind"] in PERSONAL_KINDS:
                 continue
-            rules.append({"id": "candidate:" + c["id"], "kind": pr["kind"], "output": pr["output"], "when": pr["when"],
+            rules.append({"id": "candidate:" + c["id"], "kind": pr["kind"], "output": pr["output"], "when": gate(pr.get("id"), pr["when"], gov),
                           "levels": (U,), "tokens": frozenset([("unknown", "candidate %s is not promoted" % c["id"])]),
                           "src": pr})
 
@@ -295,6 +301,8 @@ def evaluate(store, profile, as_of, include_candidates=False):
     for h in sorted(prof.holdings.values(), key=lambda x: x["id"]):
         if h["state"] == "ended":
             continue
+        if store.entities.get(h["entity"], {}).get("kind") == "election":
+            continue   # elections are decided per group in step 2c, never one holding at a time
         if not in_effect(h, as_of):
             vt = to_date(h.get("valid_to"))
             if vt is not None and vt < as_of:
@@ -341,6 +349,11 @@ def evaluate(store, profile, as_of, include_candidates=False):
     if prof.qualifications or prof.entitlements:
         from . import earned
         earned.inject(r, store, prof, as_of)
+
+    # 2c. cardholder elections: which option of each group is in effect on this date (never inferred from silence)
+    if gov:
+        from . import elections
+        elections.inject(r, store, prof, as_of)
 
     # 3. actions are things the person could do: assumable at C and U
     for ent in sorted(store.entities.values(), key=lambda x: x["id"]):
