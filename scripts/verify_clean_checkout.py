@@ -43,6 +43,13 @@ ok &= run([sys.executable, "-m", "prices", "--root", "fixtures/synthetic-earned"
 ok &= run([sys.executable, "scripts/demo_earned.py"], dst)
 ok &= run([sys.executable, "scripts/mutation_check_earned.py"], dst)
 ok &= run([sys.executable, "scripts/compare_with_baseline.py"], dst, dict(ENV, GIT_CONFIG_NOSYSTEM="1"))
+# recurring credits (ENG-01): rebuild the fixture and compare it with the committed copy, then report, demo and guards
+rebuilt = os.path.join(os.path.dirname(dst), "fixture-credits")
+ok &= run([sys.executable, "fixtures/synthetic_credits.py", rebuilt], dst)
+ok &= run(["diff", "-r", "-q", rebuilt, os.path.join(dst, "fixtures", "synthetic-credits")], dst)
+ok &= run([sys.executable, "-m", "prices", "--root", "fixtures/synthetic-credits", "credits", "--profile", "synthetic-alex", "--as-of", "2027-03-10"], dst)
+ok &= run([sys.executable, "scripts/demo_credits.py"], dst)
+ok &= run([sys.executable, "scripts/mutation_check_credits.py"], dst)
 # Argon intake and cardholder elections
 ok &= run([sys.executable, "scripts/verify_argon_intake.py"], dst, dict(ENV, GIT_CONFIG_NOSYSTEM="1"))
 ok &= run([sys.executable, "scripts/demo_elections.py"], dst)

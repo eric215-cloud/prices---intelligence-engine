@@ -77,6 +77,7 @@ Safeguards, each enforced by lint and covered by a test:
 | `sources.csv` | Source registry | Evidence records |
 | `tier_baselines.csv` | What a tier advertises | `baseline` rules |
 | `card_benefits.csv` | What a card has (`confirmed`) or does not have (`excluded`) | `grants` / `excludes` rules |
+| `credits.csv` | Structured terms of recurring credits: one row per `card_benefits` row that has them (same `id`). An empty cell means the source does not say; `none` means the source says there is none. A rule in force changes only with a source id in `_evidence`; `_action = remove` takes the terms off (OP-13, `docs/RECURRING_CREDITS.md`) | `credit` block on the `grants` rule or on the candidate's proposed rule |
 | `view_applicability.csv` | One line per card × benefit with its standing | Generated; read-only |
 | `view_holdings.csv` | Who holds what | Generated; read-only |
 | `MANIFEST.json` | Fingerprints of the exported files | Generated; do not edit |

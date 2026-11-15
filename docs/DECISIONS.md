@@ -194,6 +194,38 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 - No lower-capability model has run the new procedure (OP-11). The procedure has been exercised only by its author and by automated tests.
 - Full list: `docs/EARNED_ENTITLEMENTS.md` section 8.
 
+## D-40  Credit terms live on the card-benefit rule, once (2026-11-15)
+**Decision.** A recurring credit's terms are an optional `credit` block on the `grants` rule "card C carries benefit B". Nothing is added to the benefit entity. The offer's effective and expiration dates remain the rule's `valid_from` / `valid_to`; the block has no dates. A `credit` block is refused on any other kind of rule; an earned credit keeps its allowance in `earn.allowance`.
+**Why.** The rule is the record that is sourced, reviewed, dated, retired and audited, and it is specific to a card (the same benefit could be carried by two cards on different terms). Putting terms on the entity as well, or dates in the block as well, would create a second place to disagree with.
+
+## D-41  Absent means "the source does not say"
+**Decision.** Every optional term is either stated (a number, or the word `none` where the source says there is none) or absent. Absent is reported as "not stated by the source" and is never read as zero, unlimited or unrestricted. Terms are replaced as a whole block, so a key left out of a correction goes back to "not stated".
+**Why.** The commission: unknown must stay unknown. Three states per field (value, stated none, not stated) is the smallest representation that keeps them apart; a default would silently pick one.
+
+## D-42  The credit block describes; the engine decides who it applies to
+**Decision.** Adding, changing or removing a `credit` block changes no engine answer. Whether a credit applies to a person is the ordinary status of `have:<benefit>`, so holdings, verification, offer dates and cardholder elections (D-35) all count without any credit-specific logic. The credits report reads that status; it cannot grant.
+**Why.** One eligibility mechanism. It is also what keeps ENG-02 intact: a credit on one side of an election is governed like any other rule.
+
+## D-43  Periods that depend on an unrecorded date are unresolved
+**Decision.** Calendar periods are computed from the date alone. An anniversary year needs `opened_on` on the person's card holding (never `valid_from`); a multi-year period needs its anchor: `opened_on`, or an owner-confirmed, dated record of the last use; with no stated anchor it is unresolved. A February 29 opening is unresolved on February 28 of other years. A period cut by the offer's `valid_to` keeps the published amount (not pro-rated).
+**Why.** "Missing account-opening dates producing an unresolved anniversary rather than an invented date." Pro-rating would be inventing a number the source did not give.
+
+## D-44  Personal balances reuse the earned-benefit record; one record per rule, account and period
+**Decision.** What a cardholder's account shows for one period is an entitlement record whose `rule` is a credit rule in force, `cycle` the period label, with `allowance` and append-only `usage`. Same operations, attestation and correction rules as earned benefits (D-31). No record means NOT RECORDED. The record never grants the benefit, cannot be made against a candidate, and a single use above the published per-transaction maximum is refused.
+**Alternatives considered.** Usage events attached to the rule with remaining = published amount minus recorded use: rejected, because it turns the published allowance into a personal balance by default. A separate balance-observation record type: a second accounting system with no demonstrated need.
+**Cost.** One record per period is by hand; for a monthly credit that is twelve a year if someone wants a balance each month. Nothing is created automatically, because the program would have to assume the allowance.
+
+## D-45  Terms are set by one operation that keeps the rule's identity; candidates are amended in place
+**Decision.** `set_credit_terms` targets a rule id. For a rule in force it needs evidence meeting the evidence policy (as `revise_rule` does) and leaves `last_verified` alone: recording the credit's terms is not a re-verification of the rule. For a candidate awaiting review it needs neither reviewer nor new evidence, and the candidate keeps its id and its `proposed` status.
+**Why in place.** The existing way to change a candidate is withdraw and re-add under a new id. For Argon's candidates that would change rule ids that election options already govern, and would reduce the count of proposed candidates. Terms are a structured transcription of what the candidate's prose already says; the reviewer sees them at promotion; every change is in the audit log with a before-snapshot.
+
+## D-46  A separate table, credits.csv, keyed by the card_benefits row id
+**Decision.** Terms are authored in `tables/credits.csv`, one row per card_benefits row that has terms, instead of eleven more columns on `card_benefits.csv`. An empty credits table leaves older import ids unchanged.
+**Departure from Argon's wording.** ENG-01's acceptance says "round-trips credit columns in `card_benefits.csv` (or `benefits.csv`)". The round trip is delivered; the columns are in their own file. Reasons: most card benefits are not credits; the existing header, fixtures and input files stay valid; and a candidate's terms can be editable while its card_benefits row stays read-only. If Argon prefers columns on `card_benefits.csv`, the change is confined to `prices/tables.py`.
+
+## D-47  Period ends are surfaced in review and timeline, on the period's last day
+**Decision.** `review` and `timeline` list each allowance period ending in the window for credits that apply (or may apply) to the person, with the published amount and what happens to an unused amount. The key is present only when there is something to list, so reports for people without credit terms are byte-identical to before.
+
 ## Limits of the Argon intake and election work (2026-11-15), stated plainly
 
 - The 113 Argon candidates are integrated exactly as packaged and none is promoted. Engineering did not review their content.
@@ -201,3 +233,10 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 - The Bilt option definitions are a transcription; whether the legacy credits and the Flex housing option form one election or two is Argon's question to answer (modelled as two).
 - No lower-capability model has run OP-12.
 - Full list: `docs/ELECTIONS.md` section 7 and the commission results file.
+
+## Limits of the recurring-credit work (2026-11-15), stated plainly
+
+- No real credit has structured terms: Argon's candidates were not edited. Which of them fit the block is Argon's call.
+- Statement-cycle card years, per-grant expiry (Bilt Cash), activation requirements, shared credits and non-calendar sub-periods are not modelled. Full table: `docs/RECURRING_CREDITS.md` section 6.
+- The carried-over amount under a rollover rule is not computed.
+- No lower-capability model has run OP-13.

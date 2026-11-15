@@ -1,10 +1,12 @@
 """Show that people and data with no earned-benefit records get byte-identical output from an older commit and from this checkout.
 
-    python3 scripts/compare_with_baseline.py [baseline-commit]        (default: cdce9e1, the Argon intake before ENG-02)
+    python3 scripts/compare_with_baseline.py [baseline-commit]        (default: 8039477, the commit before ENG-01)
 
-On dev/fable-integration the default was 6eb9ec9 (before earned benefits). On dev/argon-content-intake it is the
-intake checkpoint, so the comparison isolates what the election work (ENG-02) changed. Against 6eb9ec9 the live
-data now differs by design (Argon's content), so the file-set check below fails for data/ and tables/ there.
+The default baseline moves with each commission, so the comparison isolates what the latest work changed:
+6eb9ec9 before earned benefits, cdce9e1 before elections (ENG-02), 8039477 before recurring credits (ENG-01).
+ENG-01 added one table, credits.csv. Wherever tables are kept (live, and in the two older fixtures) that file is new
+and the tables MANIFEST.json lists it; those two files are left out of the file-set comparison and checked
+separately: every such credits.csv must be the header line only.
 
 Needs git (it unpacks the baseline commit into a temp directory with `git archive`); nothing else.
 Runs the same list of read-only commands with the OLD code on the OLD files and with the NEW code on
@@ -21,10 +23,13 @@ import tarfile
 import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE = sys.argv[1] if len(sys.argv) > 1 else "cdce9e1"
+BASE = sys.argv[1] if len(sys.argv) > 1 else "8039477"
 DATES = ("2026-11-14", "2027-03-15", "2028-01-05")
-UNCHANGED = ("data/kb/rules", "data/kb/evidence", "data/candidates", "profiles", "tables", "fixtures/synthetic-cards", "fixtures/synthetic-earned",
-             "tests/test_l_earned.py", "tests/test_m_earned_pipeline.py", "fixtures/synthetic-cards-input", "fixtures/synthetic_cards.py",
+NEW_TABLE_FILES = ("credits.csv", "MANIFEST.json")      # see the note above
+EMPTY_CREDITS = ("tables/credits.csv", "fixtures/synthetic-cards/tables/credits.csv", "fixtures/synthetic-earned/tables/credits.csv",
+                 "fixtures/synthetic-cards-input/credits.csv")
+UNCHANGED = ("data", "profiles", "tables", "fixtures/synthetic-cards", "fixtures/synthetic-earned",
+             "tests/test_l_earned.py", "tests/test_m_earned_pipeline.py", "tests/test_n_elections.py", "fixtures/synthetic-cards-input", "fixtures/synthetic_cards.py",
              "tests/util.py", "tests/test_a_conditional.py", "tests/test_b_temporal.py", "tests/test_c_i_evidence_cycles.py",
              "tests/test_d_h_discovery_goal.py", "tests/test_e_maintenance.py", "tests/test_j_relational.py", "tests/test_k_tables.py",
              "tests/test_live_data.py", "successor_test")
@@ -64,6 +69,8 @@ def tree_digest(tree, rel):
     for d, subdirs, names in os.walk(base):
         subdirs[:] = sorted(s for s in subdirs if s != "__pycache__")
         for n in sorted(names):
+            if n in NEW_TABLE_FILES and (os.path.basename(d) == "tables" or d.endswith("synthetic-cards-input")):
+                continue
             path = os.path.join(d, n)
             h.update(os.path.relpath(path, tree).encode())
             with open(path, "rb") as f:
@@ -88,6 +95,12 @@ for rel in UNCHANGED:
     same = tree_digest(old, rel) == tree_digest(ROOT, rel)
     bad += 0 if same else 1
     print("   %-9s %s" % ("same" if same else "DIFFERENT", rel))
+
+for rel in EMPTY_CREDITS:
+    with open(os.path.join(ROOT, rel), encoding="utf-8") as f:
+        empty = len(f.read().splitlines()) == 1
+    bad += 0 if empty else 1
+    print("   %-9s %s is the header line only" % ("ok" if empty else "DIFFERENT", rel))
 
 print("\n2. Output of the old program on the old files vs this program on these files")
 cmds = commands(old)

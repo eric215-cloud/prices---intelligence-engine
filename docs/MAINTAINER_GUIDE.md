@@ -54,8 +54,11 @@ Use the task's date as the changeset `date`. If the task gives no date, use toda
 | You finished a discovery research task | OP-08 | `record_discovery_run` |
 | A temporary promotion or a confirmed availability check | OP-09 | `add_observation`, `prune_observations` |
 | A card's benefit, role or fee changed; a benefit applies or does not apply to a card | OP-10 | edit `tables/*.csv`, then `tables import` |
+| A recurring credit's published terms (amount, how often it resets, per-transaction maximum, minimums, rollover); what one cardholder's account shows for one period of it | OP-13 | edit `tables/credits.csv` then `tables import`, or `set_credit_terms`; `record_entitlement`, `record_usage` |
 | A cardholder's choice between mutually exclusive card options (e.g. Bilt housing rewards, Bilt annual credits); a card account's opening date; a wrong election | OP-12 | `set_holding`, `end_holding` (on the election option; `withdrawn: true` for a mistake) |
 | A person's progress toward a spending or activity threshold; an earned benefit landing on their account; use of an earned credit; a correction to any of these | OP-11 | `record_progress`, `record_entitlement`, `record_usage`, `correct_entry`, `revise_entitlement` |
+
+**Published is not personal.** A card publishing a 500 credit each year tells you nothing about what anyone has left. Record a balance or a use only from the owner's own statement; leave every term the source does not state empty, never 0 and never a likely value (OP-13).
 
 **Offered is not earned, and earned is not held.** A card offering a benefit for reaching a threshold tells you nothing about any person. A person reaching the threshold is *eligible*. Only an entitlement record confirmed by the owner means the benefit is *on the account*. Never record one because of the other, and never fill in a date nobody gave you: write the word `unknown` (OP-11).
 
@@ -119,6 +122,7 @@ python3 -m prices goal "text of the objective" --profile <p>
 python3 -m prices novelty  work/<candidate-changeset>.json
 python3 -m prices cards    [--profile <p>]
 python3 -m prices earned   --profile <p> [--as-of YYYY-MM-DD] [--cycle YYYY] [--detail]
+python3 -m prices credits  [--profile <p>] [--as-of YYYY-MM-DD] [--until YYYY-MM-DD] [--candidates]
 python3 -m prices tables   export | status | plan | import   (plan and import need --author and --date)
 python3 -m prices audit
 python3 -m unittest discover -s tests

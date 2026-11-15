@@ -25,16 +25,17 @@ Records are JSON files. A deterministic engine reads rules and one person's hold
 | `schema.py` + `schema.json` | ~100 + schema | Shape of every record and changeset. Small validator, no dependency |
 | `store.py` | ~150 | Load and save JSON files as `{path: object}`. Interprets nothing |
 | `engine.py` | ~395 | Derive statuses with inspectable derivations |
-| `lint.py` | ~500 | Whole-store checks: references, evidence policy, contradictions, negation cycles, card roles, no tier inheritance, earned-benefit records |
+| `lint.py` | ~630 | Whole-store checks: references, evidence policy, contradictions, negation cycles, card roles, no tier inheritance, earned-benefit records |
 | `review.py` | ~60 | Compare two dates; list downstream consequences; timeline |
-| `changes.py` | ~635 | The only write path: operations, staging, all-or-nothing batches, impact report, audit log, before-snapshots |
+| `changes.py` | ~700 | The only write path: operations, staging, all-or-nothing batches, impact report, audit log, before-snapshots |
 | `discovery.py` | ~210 | Coverage ledger and research-task planners; novelty check |
 | `goals.py` | ~155 | Objective -> tagged targets -> five-section report |
 | `cards.py` | ~120 | Card roles and the applicability report (confirmed / excluded / unproven). Derives nothing |
+| `credits.py` | ~460 | Recurring card credits: the allowance period for a date, published terms, what is recorded for a person, period ends for review and timeline. Reads the engine's answer for who a credit applies to; grants nothing; stores nothing |
 | `elections.py` | ~300 | Cardholder elections: which option of each group is in effect for a person on a date; gates the rules an option governs. Stores nothing |
 | `earned.py` | ~445 | Earned benefits: achievement from dated readings, state of each entitlement record, credit arithmetic. Computes the engine's base facts for them and the `earned` report from one function, so the two cannot disagree. Stores nothing |
-| `tables.py` | ~485 | CSV tables: export from the store; compile edits into changesets |
-| `cli.py` | ~535 | Commands |
+| `tables.py` | ~585 | CSV tables: export from the store; compile edits into changesets |
+| `cli.py` | ~660 | Commands |
 
 ## The four kinds of knowledge are stored apart
 
@@ -104,6 +105,10 @@ Added 2026-11-14; full description in `docs/RELATIONAL_TABLES.md`.
 - Two rule kinds never derive: `baseline` (what a network tier advertises) and `excludes` (what a card does not carry). The engine skips them; `cards.py` reads them to report, per card and benefit, `CONFIRMED`, `EXCLUDED`, `SUPERSEDED`, `PENDING_REVIEW` or `UNPROVEN`.
 - A tier benefit reaches a holder only through an ordinary verified `grants` rule for that card, with evidence labelled as being about that card. Lint blocks every route by which a tier could confer something.
 - `tables/` holds CSV views of these records. Edits are compiled into changesets and applied all-or-nothing. The store remains the system of record.
+
+## Recurring credits
+
+A `grants` rule that says a card carries a benefit may carry a `credit` block: amount per period, cycle, limits, rollover. The block changes no engine answer. `credits.py` reads three things and keeps them apart: the block (published terms), the engine's status of `have:<benefit>` for a person on a date (so elections and verification count), and the person's own entitlement records for that rule, account and period (the same records and operations as earned benefits; `earned.py` does the arithmetic and otherwise ignores them). A period that depends on an unrecorded date is unresolved. Full description: `docs/RECURRING_CREDITS.md`.
 
 ## Cardholder elections
 

@@ -135,10 +135,14 @@ for sub in ("data", "profiles", "tables"):
     a, b = files(replay, sub), files(pkg, sub)
     only_replay, only_pkg = sorted(a - b), sorted(b - a)
     differ = sorted(p for p in a & b if read(replay, p) != read(pkg, p))
-    expected_only = LEFT_OUT_OF_PACKAGE if sub == "data" else []
-    expected_differ = ["data/audit/log.jsonl"] if sub == "data" else []
+    # tables: ENG-01 (after the intake) added one table, credits.csv. The current program exports it, empty, and lists it in the manifest.
+    expected_only = LEFT_OUT_OF_PACKAGE if sub == "data" else ["tables/credits.csv"] if sub == "tables" else []
+    expected_differ = ["data/audit/log.jsonl"] if sub == "data" else ["tables/MANIFEST.json"] if sub == "tables" else []
     check((only_replay, only_pkg, differ) == (expected_only, [], expected_differ),
-          "%s/: package equals replay%s" % (sub, " except the two left-out audit records and the log lines for them" if sub == "data" else ""))
+          "%s/: package equals replay%s" % (sub, " except the two left-out audit records and the log lines for them" if sub == "data" else
+                                            " except the credits.csv table added later by ENG-01 and the manifest that lists it" if sub == "tables" else ""))
+    if sub == "tables":
+        check(len(read(replay, "tables/credits.csv").decode().splitlines()) == 1, "tables/credits.csv is the header line only: no credit terms were added to Argon's content")
 replay_log = read(replay, "data/audit/log.jsonl").decode().splitlines()
 base_log = read(base, "data/audit/log.jsonl").decode().splitlines()
 pkg_lines = read(pkg, "data/audit/log.jsonl").decode().splitlines()

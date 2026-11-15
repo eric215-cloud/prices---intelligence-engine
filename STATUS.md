@@ -1,6 +1,6 @@
 # PRICES status report — 2026-11-14
 
-Foundation built 2026-11-12 by Claude Fable 5.2 (commissioning build). Relational foundation and earned benefits added 2026-11-14 on branch `dev/fable-integration`; Argon's Bilt Palladium and Chase Sapphire Reserve content (candidate-only) and cardholder elections added 2026-11-15 on branch `dev/argon-content-intake` (neither merged to `main`). This report separates what was observed from what is claimed.
+Foundation built 2026-11-12 by Claude Fable 5.2 (commissioning build). Relational foundation and earned benefits added 2026-11-14 on branch `dev/fable-integration`; Argon's Bilt Palladium and Chase Sapphire Reserve content (candidate-only) and cardholder elections added 2026-11-15 on branch `dev/argon-content-intake`; structured recurring credits (ENG-01) added 2026-11-15 on branch `dev/eng-01-recurring-credits` (none merged to `main`). This report separates what was observed from what is claimed.
 
 ## Acceptance demonstrations
 
@@ -54,17 +54,30 @@ Full record: `docs/commissions/results/2026-11-14-fable-earned-entitlements-RESU
 
 Full record: `docs/commissions/results/2026-11-15-fable-argon-intake-bilt-elections-RESULTS.md`.
 
-254 automated tests pass. Run: `python3 -m unittest discover -s tests`.
+### Structured recurring credits, ENG-01 (2026-11-15) — demonstrated on invented cards, people and figures only
+
+| Test | Result | Evidence observed |
+|---|---|---|
+| O Credit periods and reporting | **Pass** | `tests/test_o_credits.py`, 42 tests: calendar year / half / quarter / month and anniversary boundaries, February 29, multi-year periods, offer start and end, unstated terms stay unstated, published allowance is never a personal balance, elections still decide, period ends in review and timeline |
+| P Credit authoring and personal records | **Pass** | `tests/test_p_credits_pipeline.py`, 31 tests on `fixtures/synthetic-credits/`: scenarios A-G with boundary dates; `set_credit_terms` (evidence, history, revert, candidates in place); `credits.csv` round trip and 17 invalid edits; period records, per-transaction cap, corrections; the `credits` report |
+| Safeguards actually guarded | **Pass** | `scripts/mutation_check_credits.py`: 23 of 23 caught |
+| No change for anyone else | **Pass** | `scripts/compare_with_baseline.py` against the commit before ENG-01: 49 commands byte-identical; `data/`, `profiles/`, tables and older fixtures unchanged apart from the new, empty `credits.csv` and the manifest that lists it |
+| Candidate quarantine | **Pass** | 113 proposed candidates, none promoted, none edited; no live rule or candidate has a `credit` block (a test enforces this) |
+| Maintenance procedure OP-13 | **Run by the building model and by tests only** | `scripts/demo_credits.py`. Lower-model execution: **untested** |
+
+Full record: `docs/commissions/results/2026-11-15-fable-eng-01-recurring-credits-RESULTS.md`.
+
+327 automated tests pass. Run: `python3 -m unittest discover -s tests`.
 
 ## Capability status
 
 ### Complete
 - Portable project: Python standard library only, JSON files, git history, zip export.
 - Eligibility engine with four statuses, inspectable derivations, acquisition/retention semantics, time, flags.
-- Whole-store validation and the changeset pipeline with 22 bounded operations (`end_holding` can now also withdraw a mistaken holding), all-or-nothing batches, impact reports, audit log and before-snapshots of every replaced record.
+- Whole-store validation and the changeset pipeline with 23 bounded operations (`end_holding` can now also withdraw a mistaken holding), all-or-nothing batches, impact reports, audit log and before-snapshots of every replaced record.
 - Discovery planners (forward, backward, bridge, exploratory), coverage ledger, candidate quarantine, novelty check.
 - Goal reports in five separated sections.
-- Maintainer guide, twelve operation cards, schema, decision record, successor-test harness.
+- Maintainer guide, thirteen operation cards, schema, decision record, successor-test harness.
 - Card architecture: a card's six parties (co-brand partner, program manager, issuer, capital provider, network, network tier) recorded as descriptive roles the engine never reads.
 - Applicability: network-tier baselines and card exclusions recorded as sourced statements that derive nothing; a tier benefit applies to a card only on verified, card-specific evidence. Report: `python3 -m prices cards`.
 - CSV tables (`tables/`): generated view plus validated, all-or-nothing authoring input. The JSON store remains the system of record.
@@ -80,6 +93,7 @@ Full record: `docs/commissions/results/2026-11-15-fable-argon-intake-bilt-electi
 - **Goal matching is keyword-to-tag.** Goals outside the small tag vocabulary return "no tag matched" until a reviewer adds tags.
 - **Bridge and exploratory discovery** are implemented and unit-tested but were not exercised with real research.
 - **Reviewer and owner controls are procedural.** The program checks the name on an attestation; it cannot check who typed it.
+- **Recurring credits: the machinery is in place; no real credit has structured terms.** Argon's credit candidates still carry their mechanics as prose. Statement-cycle card years, per-grant expiry (Bilt Cash), activation requirements, shared credits and carried-over amounts are not modelled (`docs/RECURRING_CREDITS.md` section 6). A person's balance exists only where the owner recorded a period; nothing is created or assumed automatically.
 - **Card data: candidate-only.** Bilt Palladium and Chase Sapphire Reserve, with their organizations and network tiers, are in the knowledge base and tables as entities and proposed candidates. Transfer ratios are deliberately absent (Argon `Q-BILT-004`, `Q-CSR-001`). Engineering did not review this content.
 - **Card-specific evidence is a label** (`applies_to`) typed by whoever records the source. Reviewer promotion is the control.
 - **Tables cover cards, parties, benefits, sources, tier baselines and card benefits.** Programs, status tiers, bridges, portals and underwriting rules have no table; they are maintained through changesets as before.
@@ -98,6 +112,7 @@ Full record: `docs/commissions/results/2026-11-15-fable-argon-intake-bilt-electi
 - **OP-10 (table maintenance) by any model other than the builder.**
 - **OP-11 (earned benefits) by any model other than the builder.**
 - **OP-12 (card elections) by any model other than the builder.**
+- **OP-13 (recurring credits) by any model other than the builder.**
 - Google Sheets as the editor for the CSV files. Only plain CSV, including a BOM + CRLF variant, was exercised.
 - Discovery research performed by a weaker model.
 - Behaviour at scale (hundreds of rules). Evaluation is simple iteration; expected fine, not measured.
@@ -127,4 +142,5 @@ None are built in. No subscription, hosting or API is required to run, test, que
 7. Decide how household sharing should be represented before loading benefits whose value depends on it.
 8. Argon to confirm the four Bilt election definitions, in particular whether the legacy credits and the Flex housing option are one election or two (modelled as two), and what applies to accounts opened in 2027 before their first anniversary.
 9. Decide (Argon, content) which real earned-benefit rules to author first, and which period types they need. Anything other than a calendar year needs an engineering step before it can be loaded.
-10. Before any real earned benefit or election is recorded for Eric or Todd: the owner supplies each figure, date and balance. None has been entered or inferred.
+10. Argon to enter structured terms for the credit candidates that fit (`tables/credits.csv`; candidates are amended in place and stay candidates), and to say which do not fit.
+11. Before any real earned benefit, election, credit balance or account opening date is recorded for Eric or Todd: the owner supplies each figure, date and balance. None has been entered or inferred.

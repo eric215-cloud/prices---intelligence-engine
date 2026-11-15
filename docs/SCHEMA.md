@@ -28,6 +28,7 @@ Ids are lowercase letters, digits, `.`, `_`, `-`. A record's `id` equals its fil
 | `id`, `summary` | yes | |
 | `kind` | yes | Deriving: `grants`, `acquire`, `transfer` (see Architecture). Non-deriving: `baseline` (exactly tier → benefit), `excludes` (exactly card → benefit). See `docs/RELATIONAL_TABLES.md` |
 | `superseded_by` | `excludes` only, optional | The benefit the card has instead |
+| `credit` | `grants` card-benefit rules only, optional | Structured terms of a recurring credit. See "Credit block" below and `docs/RECURRING_CREDITS.md`. Changed only by `set_credit_terms` or `tables/credits.csv` |
 | `earn` | `earns` only, mandatory | See "Earn block" below. An `earns` rule is public knowledge only: `when` must be exactly `{"holds": <card>}`, `output` a benefit or status, and the engine never derives from it directly (`docs/EARNED_ENTITLEMENTS.md`) |
 | `output` | yes | Entity id produced |
 | `when` | yes | Condition (below) |
@@ -38,6 +39,24 @@ Ids are lowercase letters, digits, `.`, `_`, `-`. A record's `id` equals its fil
 | `value_note` | no | Plain-language worth and caveats |
 | `evidence` | yes | List of evidence ids (may be empty only if unverified) |
 | `verification` | yes | `{status: verified | unverified | retired, last_verified, review_by}` |
+
+### Credit block (rules of kind `grants` that say a card carries a benefit)
+
+A key that is absent means **the source does not say**. It is never read as zero, unlimited or unrestricted.
+
+| Field | Required | Notes |
+|---|---|---|
+| `amount`, `unit` | yes | Allowance for **one period** (a number above zero) and its currency |
+| `cycle` | yes | `calendar_year`, `calendar_half`, `calendar_quarter`, `calendar_month`, `anniversary_year`, `multi_year` |
+| `years` | `multi_year` only | Whole number, 2 or more |
+| `anchor` | `multi_year` only, optional | `account_opening` or `last_use`. Absent: the period is unresolved |
+| `max_per_transaction` | no | A number above zero, or `none` (the source says there is no limit) |
+| `min_stay_nights`, `min_transaction` | no | Minimum stay (whole nights) or transaction amount |
+| `rollover` | no | `none` (unused amount is lost) or `allowed` |
+| `rollover_max` | only with `rollover: allowed` | A number, or `none` (stated as unlimited) |
+| `note` | no | Free text |
+
+The offer's effective and expiration dates are the rule's `valid_from` / `valid_to`.
 
 ### Earn block (rules of kind `earns`)
 
@@ -96,7 +115,7 @@ One person's progress on one of their own accounts, for one measure, in one qual
 
 ## Entitlement — `profiles/<p>/entitlements/<id>.json`
 
-One earned benefit as it actually sits on one account. Written only by `record_entitlement`, `revise_entitlement`, `record_usage` and `correct_entry`.
+One earned benefit as it actually sits on one account, **or one allowance period of a recurring credit** as the account shows it. Written only by `record_entitlement`, `revise_entitlement`, `record_usage` and `correct_entry`. For a recurring credit: `rule` is a rule in force with a `credit` block, `cycle` is the period label (`2027`, `2027-H1`, `2027-Q3`, `2027-07`; for an anniversary or multi-year period, the year it starts in), `allowance` is required, and the record feeds the credits report only (it never makes the benefit held).
 
 | Field | Required | Notes |
 |---|---|---|
@@ -169,5 +188,6 @@ Generated view of the store and authoring input. Columns, ownership and rules: `
 | `SOURCE_LAPSED_FIXED_TERM` | Status safe until expiry but cannot be renewed the same way | Plan renewal |
 | `ACQUISITION_RULE_MISSING` | `acquired_via` points nowhere | Escalate |
 | `NEGATIVE_CYCLE` | Rule excluded for circular exclusion | Escalate |
+| `CREDIT_PERIOD_UNRESOLVED`, `ALLOWANCE_DIFFERS_FROM_RULE`, `PERIOD_DIFFERS_FROM_RULE`, `USE_OVER_TRANSACTION_CAP` (and `CREDIT_USE_UNCONFIRMED`, `UNCONFIRMED_ENTITLEMENT`, `CONFLICTING_ENTITLEMENTS` for a credit period) | Recurring credits; shown by `python3 -m prices credits --profile <p>`, not by `status`. Meanings: OP-13 section 6 | OP-13 with the owner |
 | `ELECTION_NOT_RECORDED`, `CONFLICTING_ELECTIONS`, `UNCONFIRMED_ELECTION`, `ELECTION_START_NOT_RECORDED`, `ANNIVERSARY_NOT_RECORDED`, `ELECTION_NOT_PERMITTED`, `ELECTION_TERMS_UNVERIFIED`, `MULTIPLE_CARD_ACCOUNTS`, `ELECTION_WITHOUT_CARD` | Cardholder elections; none of the group's options is applied (except `ELECTION_TERMS_UNVERIFIED`, info). Meanings: OP-12 section 5 | OP-12 with the owner |
 | `QUALIFICATION_NOT_RECORDED`, `CONFLICTING_QUALIFICATION`, `CONFLICTING_PROGRESS`, `CONFLICTING_ENTITLEMENTS`, `QUALIFICATION_OUTCOME_NOT_RECORDED`, `UNCONFIRMED_ENTITLEMENT`, `ENTITLEMENT_UNRESOLVED`, `CREDIT_USE_UNCONFIRMED`, `EXPIRED_ENTITLEMENT`, `CREDIT_LAPSED_UNUSED`, `ACCOUNT_NOT_HELD`, `TERM_DIFFERS_FROM_RULE`, `ALLOWANCE_DIFFERS_FROM_RULE` | Earned benefits. Meanings: `docs/EARNED_ENTITLEMENTS.md` section 5 | OP-11 with the owner; escalate conflicts |
