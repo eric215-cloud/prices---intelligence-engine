@@ -1,0 +1,14 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "id": "benefit.orbit-summit.phone-protection",
+      "kind": "benefit",
+      "name": "Orbit Summit phone protection"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-b2c9a69a-09-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.orbit-summit.phone-protection"
+}

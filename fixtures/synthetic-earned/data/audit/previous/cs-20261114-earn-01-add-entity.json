@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-01-add-entity",
+  "records": {
+    "data/kb/entities/status.orbit-concierge.json": {
+      "after": "a58755ee6aa795c0",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "changeset": "cs-20261114-fix-05-promote-candidate",
+  "records": {
+    "data/candidates/c-voyager.phone-protection.json": {
+      "after": "d45893e507a3e90b",
+      "before": {
+        "created_on": "2026-11-14",
+        "evidence": [
+          {
+            "applies_to": [
+              "card.northwind-voyager"
+            ],
+            "id": "ev-syn-voyager-guide",
+            "notes": "Invented for testing.",
+            "publisher": "Northwind Bank (synthetic)",
+            "retrieved_on": "2026-11-14",
+            "source_type": "synthetic",
+            "summary": "The card's own guide. Annual travel credit. Phone protection included. Rental cover is primary with a higher cap and replaces the network's secondary cover. No mention of a lounge pass.",
+            "title": "Northwind Voyager Guide to Benefits",
+            "url": "https://example.invalid/northwind/voyager-guide-to-benefits"
+          }
+        ],
+        "id": "c-voyager.phone-protection",
+        "open_questions": [],
+        "proposed_rule": {
+          "id": "voyager.phone-protection",
+          "kind": "grants",
+          "output": "benefit.orbit-summit.phone-protection",
+          "restrictions": [
+            "Monthly phone bill must be paid with the card"
+          ],
+          "summary": "The card's guide confirms Orbit Summit phone protection applies to this card.",
+          "when": {
+            "holds": "card.northwind-voyager"
+          }
+        },
+        "search_path": [
+          "tables import (card_benefits.csv)"
+        ],
+        "status": "proposed"
+      }
+    },
+    "data/kb/rules/voyager.phone-protection.json": {
+      "after": "569f4396e53b5fce",
+      "before": null
+    }
+  }
+}

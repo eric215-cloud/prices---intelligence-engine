@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-04-add-entity",
+  "records": {
+    "data/kb/entities/org.northwind-bank.json": {
+      "after": "ec5468a832b682b8",
+      "before": null
+    }
+  }
+}

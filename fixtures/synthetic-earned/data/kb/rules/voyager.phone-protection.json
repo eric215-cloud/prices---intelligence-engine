@@ -1,0 +1,20 @@
+{
+  "evidence": [
+    "ev-syn-voyager-guide"
+  ],
+  "id": "voyager.phone-protection",
+  "kind": "grants",
+  "output": "benefit.orbit-summit.phone-protection",
+  "restrictions": [
+    "Monthly phone bill must be paid with the card"
+  ],
+  "summary": "The card's guide confirms Orbit Summit phone protection applies to this card.",
+  "verification": {
+    "last_verified": "2026-11-14",
+    "review_by": "2027-05-14",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.northwind-voyager"
+  }
+}

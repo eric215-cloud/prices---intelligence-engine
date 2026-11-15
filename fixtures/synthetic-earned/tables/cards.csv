@@ -1,0 +1,3 @@
+id,name,cobrand_partner,program_manager,issuer,capital_provider,network,network_tier,annual_fee_usd,sources,notes
+card.halcyon-kestrel,Halcyon Kestrel (synthetic),org.halcyon-air,org.ledgerline,org.tidewater-bank,org.meridian-capital,org.orbit,tier.orbit-summit,95,ev-syn-kestrel-terms,
+card.northwind-voyager,Northwind Voyager (synthetic),none,org.northwind-bank,org.northwind-bank,org.northwind-bank,org.orbit,tier.orbit-summit,395,ev-syn-voyager-terms,

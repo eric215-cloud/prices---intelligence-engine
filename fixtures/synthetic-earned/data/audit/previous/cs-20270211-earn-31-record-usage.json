@@ -1,0 +1,37 @@
+{
+  "changeset": "cs-20270211-earn-31-record-usage",
+  "records": {
+    "profiles/synthetic-alex/entitlements/e-2026-milestone-credit.json": {
+      "after": "390b91fe47410b04",
+      "before": {
+        "account": "h-card-northwind-voyager",
+        "allowance": {
+          "amount": 300,
+          "unit": "units"
+        },
+        "basis": "Credit shown on the account page",
+        "confirmed_by": "Alex (synthetic)",
+        "confirmed_on": "2026-11-14",
+        "cycle": "2026",
+        "effective_from": "2026-11-08",
+        "entity": "benefit.voyager.milestone-credit",
+        "expires_on": "2027-12-31",
+        "id": "e-2026-milestone-credit",
+        "rule": "voyager.earn-milestone-credit",
+        "state": "confirmed",
+        "usage": [
+          {
+            "amount": 120,
+            "basis": "Airfare",
+            "changeset": "cs-20261205-earn-25-record-usage",
+            "confirmed_by": "Alex (synthetic)",
+            "confirmed_on": "2026-12-05",
+            "id": "u-2026-12-03",
+            "state": "confirmed",
+            "used_on": "2026-12-03"
+          }
+        ]
+      }
+    }
+  }
+}

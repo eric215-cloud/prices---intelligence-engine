@@ -1,0 +1,14 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "id": "benefit.orbit-summit.lounge-day-pass",
+      "kind": "benefit",
+      "name": "Orbit Summit lounge day pass"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-b2c9a69a-08-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.orbit-summit.lounge-day-pass"
+}

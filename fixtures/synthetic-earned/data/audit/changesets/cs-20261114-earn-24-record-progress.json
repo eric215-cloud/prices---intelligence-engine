@@ -1,0 +1,25 @@
+{
+  "attestation": {
+    "by": "Casey (synthetic)",
+    "on": "2026-11-14",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "account": "h-card-northwind-voyager",
+    "cycle": "2026",
+    "measure": "voyager.qualifying-spend",
+    "reading": {
+      "basis": "August statement",
+      "id": "r-2026-08",
+      "observed_on": "2026-08-31",
+      "state": "confirmed",
+      "value": 41000
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-earn-24-record-progress",
+  "op": "record_progress",
+  "profile": "synthetic-casey",
+  "reason": "Synthetic earned-benefit fixture"
+}

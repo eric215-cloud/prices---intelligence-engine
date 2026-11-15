@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20270116-earn-28-record-entitlement",
+  "records": {
+    "profiles/synthetic-alex/entitlements/e-2026-suite-award.json": {
+      "after": "f67fb3e6f4f0370a",
+      "before": null
+    }
+  }
+}

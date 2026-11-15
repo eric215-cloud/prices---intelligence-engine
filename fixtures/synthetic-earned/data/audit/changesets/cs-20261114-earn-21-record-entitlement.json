@@ -1,0 +1,25 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2026-11-14",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entitlement": {
+      "account": "h-card-northwind-voyager",
+      "basis": "Status shown on the account page",
+      "cycle": "2026",
+      "effective_from": "2026-11-08",
+      "expires_on": "2028-02-29",
+      "id": "e-2026-concierge-status",
+      "rule": "voyager.earn-concierge-status",
+      "state": "confirmed"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-earn-21-record-entitlement",
+  "op": "record_entitlement",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic earned-benefit fixture"
+}

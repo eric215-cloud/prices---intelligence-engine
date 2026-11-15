@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-22-record-entitlement",
+  "records": {
+    "profiles/synthetic-alex/entitlements/e-2026-companion-fare.json": {
+      "after": "610680711f4c62ea",
+      "before": null
+    }
+  }
+}

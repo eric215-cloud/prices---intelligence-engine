@@ -1,0 +1,17 @@
+{
+  "card": {
+    "annual_fee_usd": 395.0,
+    "capital_provider": "org.northwind-bank",
+    "cobrand_partner": null,
+    "issuer": "org.northwind-bank",
+    "network": "org.orbit",
+    "network_tier": "tier.orbit-summit",
+    "program_manager": "org.northwind-bank"
+  },
+  "id": "card.northwind-voyager",
+  "kind": "card",
+  "name": "Northwind Voyager (synthetic)",
+  "sources": [
+    "ev-syn-voyager-terms"
+  ]
+}

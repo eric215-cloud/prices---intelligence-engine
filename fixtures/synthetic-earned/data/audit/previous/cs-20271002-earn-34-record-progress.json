@@ -1,0 +1,26 @@
+{
+  "changeset": "cs-20271002-earn-34-record-progress",
+  "records": {
+    "profiles/synthetic-alex/qualifications/q-h-card-northwind-voyager-voyager.qualifying-spend-2027.json": {
+      "after": "2cd1b701dcb907e8",
+      "before": {
+        "account": "h-card-northwind-voyager",
+        "cycle": "2027",
+        "id": "q-h-card-northwind-voyager-voyager.qualifying-spend-2027",
+        "measure": "voyager.qualifying-spend",
+        "readings": [
+          {
+            "basis": "April statement",
+            "changeset": "cs-20270502-earn-33-record-progress",
+            "confirmed_by": "Alex (synthetic)",
+            "confirmed_on": "2027-05-02",
+            "id": "r-2027-04",
+            "observed_on": "2027-04-30",
+            "state": "confirmed",
+            "value": 29000
+          }
+        ]
+      }
+    }
+  }
+}

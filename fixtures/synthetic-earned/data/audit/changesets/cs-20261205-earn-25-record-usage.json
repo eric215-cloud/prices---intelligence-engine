@@ -1,0 +1,23 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2026-12-05",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "usage": {
+      "amount": 120,
+      "basis": "Airfare",
+      "id": "u-2026-12-03",
+      "state": "confirmed",
+      "used_on": "2026-12-03"
+    }
+  },
+  "date": "2026-12-05",
+  "id": "cs-20261205-earn-25-record-usage",
+  "op": "record_usage",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic earned-benefit fixture",
+  "target": "e-2026-milestone-credit"
+}

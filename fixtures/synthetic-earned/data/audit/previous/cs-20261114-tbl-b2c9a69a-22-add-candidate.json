@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-22-add-candidate",
+  "records": {
+    "data/candidates/c-voyager.travel-credit.json": {
+      "after": "8b6fce7a0b120257",
+      "before": null
+    }
+  }
+}

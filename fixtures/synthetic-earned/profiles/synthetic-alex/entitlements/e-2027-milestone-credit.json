@@ -1,0 +1,17 @@
+{
+  "account": "h-card-northwind-voyager",
+  "allowance": {
+    "amount": 300,
+    "unit": "units"
+  },
+  "basis": "Second credit shown on the account page",
+  "confirmed_by": "Alex (synthetic)",
+  "confirmed_on": "2027-10-08",
+  "cycle": "2027",
+  "effective_from": "2027-10-06",
+  "entity": "benefit.voyager.milestone-credit",
+  "expires_on": "2028-12-31",
+  "id": "e-2027-milestone-credit",
+  "rule": "voyager.earn-milestone-credit",
+  "state": "confirmed"
+}

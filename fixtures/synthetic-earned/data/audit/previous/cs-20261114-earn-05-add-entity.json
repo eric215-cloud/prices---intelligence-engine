@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-05-add-entity",
+  "records": {
+    "data/kb/entities/benefit.orbit-concierge.priority-line.json": {
+      "after": "0989d36e3cc560e0",
+      "before": null
+    }
+  }
+}

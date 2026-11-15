@@ -1,0 +1,30 @@
+{
+  "earn": {
+    "activation": "automatic",
+    "measure": "voyager.qualifying-spend",
+    "period": "calendar_year",
+    "term": {
+      "ends": "fixed",
+      "month": 2,
+      "month_end": true,
+      "year_offset": 2
+    },
+    "threshold": 75000,
+    "unit": "units"
+  },
+  "evidence": [
+    "ev-syn-voyager-milestones"
+  ],
+  "id": "voyager.earn-concierge-status",
+  "kind": "earns",
+  "output": "status.orbit-concierge",
+  "summary": "75,000 in qualifying purchases in a calendar year earns Orbit Concierge status through the end of February two years later.",
+  "verification": {
+    "last_verified": "2026-11-14",
+    "review_by": "2027-11-14",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.northwind-voyager"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "account": "h-card-northwind-voyager",
+  "cycle": "2026",
+  "id": "q-h-card-northwind-voyager-voyager.qualifying-spend-2026",
+  "measure": "voyager.qualifying-spend",
+  "readings": [
+    {
+      "basis": "August statement",
+      "changeset": "cs-20261114-earn-24-record-progress",
+      "confirmed_by": "Casey (synthetic)",
+      "confirmed_on": "2026-11-14",
+      "id": "r-2026-08",
+      "observed_on": "2026-08-31",
+      "state": "confirmed",
+      "value": 41000
+    },
+    {
+      "basis": "Year-end summary",
+      "changeset": "cs-20270104-earn-27-record-progress",
+      "confirmed_by": "Casey (synthetic)",
+      "confirmed_on": "2027-01-04",
+      "final": true,
+      "id": "r-2026-final",
+      "observed_on": "2026-12-31",
+      "state": "confirmed",
+      "value": 61300
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-18-set-holding",
+  "records": {
+    "profiles/synthetic-devon/holdings/h-card-northwind-voyager.json": {
+      "after": "a2d4d6ed0420c02e",
+      "before": null
+    }
+  }
+}

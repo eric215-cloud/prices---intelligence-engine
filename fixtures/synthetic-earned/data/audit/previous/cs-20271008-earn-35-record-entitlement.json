@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20271008-earn-35-record-entitlement",
+  "records": {
+    "profiles/synthetic-alex/entitlements/e-2027-concierge-status.json": {
+      "after": "f4fad4e57af5cf29",
+      "before": null
+    }
+  }
+}

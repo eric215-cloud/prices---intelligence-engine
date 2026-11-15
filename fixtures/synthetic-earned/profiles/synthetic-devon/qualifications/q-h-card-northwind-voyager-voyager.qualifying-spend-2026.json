@@ -1,0 +1,19 @@
+{
+  "account": "h-card-northwind-voyager",
+  "cycle": "2026",
+  "id": "q-h-card-northwind-voyager-voyager.qualifying-spend-2026",
+  "measure": "voyager.qualifying-spend",
+  "readings": [
+    {
+      "basis": "Owner says the threshold was reached during 2026; no statement to hand",
+      "changeset": "cs-20270120-earn-29-record-progress",
+      "confirmed_by": "Devon (synthetic)",
+      "confirmed_on": "2027-01-20",
+      "id": "r-2026-year-only",
+      "observed_on": "unknown",
+      "state": "confirmed",
+      "value": 75000,
+      "value_kind": "at_least"
+    }
+  ]
+}

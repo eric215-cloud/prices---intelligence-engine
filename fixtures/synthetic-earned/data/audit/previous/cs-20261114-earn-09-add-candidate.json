@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-09-add-candidate",
+  "records": {
+    "data/candidates/c-voyager.earn-companion-fare.json": {
+      "after": "4a9ba604584f0901",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "account": "h-card-northwind-voyager",
+  "basis": "Status renewal shown on the account page",
+  "confirmed_by": "Alex (synthetic)",
+  "confirmed_on": "2027-10-08",
+  "cycle": "2027",
+  "effective_from": "2027-10-06",
+  "entity": "status.orbit-concierge",
+  "expires_on": "2029-02-28",
+  "id": "e-2027-concierge-status",
+  "rule": "voyager.earn-concierge-status",
+  "state": "confirmed"
+}

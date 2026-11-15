@@ -210,6 +210,8 @@ def cmd_earned(args):
         for c in a["cycles"]:
             for b in c["benefits"]:
                 b["engine_status"] = res.have(b["entity"])      # entity-level: all accounts and cycles together
+                lvl = res.level_of("have:" + b["entity"])
+                b["engine_source"] = res.via[lvl]["have:" + b["entity"]][0] if lvl else None
                 b["chain"] = {"rule_evidence": [store.evidence[e] for e in b["public"]["evidence"] if e in store.evidence],
                               "readings": [r for r in c["readings"] if r["id"] in b["achievement"]["basis"]]}
     sv["flags"] = res.flags
@@ -277,7 +279,8 @@ def cmd_earned(args):
                                       "  [%s]" % u["basis"] if u.get("basis") else ""))
                     if b["withdrawn"]:
                         print("                    withdrawn records (kept as history): %s" % ", ".join(b["withdrawn"]))
-                    print("      ENGINE        %s for this person on this date, counting every account and cycle" % b["engine_status"])
+                    print("      WHOLE PERSON  %s on this date across all of this person's accounts and qualifying years%s" % (
+                        b["engine_status"], " (from %s)" % (b["engine_source"].replace(":", " ") if b["engine_source"].startswith("entitlement:") else "rule " + b["engine_source"]) if b["engine_source"] else ""))
         print("\nFLAGS (%d)" % len(o["flags"]))
         for f in o["flags"]:
             print("   [%s] %s %s: %s" % (f["severity"], f["code"], f["subject"], f["detail"]))

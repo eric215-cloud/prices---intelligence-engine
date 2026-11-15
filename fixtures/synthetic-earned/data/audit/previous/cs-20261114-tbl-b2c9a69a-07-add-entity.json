@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-07-add-entity",
+  "records": {
+    "data/kb/entities/tier.orbit-summit.json": {
+      "after": "b6e502b3fed886b9",
+      "before": null
+    }
+  }
+}

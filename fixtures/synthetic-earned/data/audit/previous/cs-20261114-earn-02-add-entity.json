@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-02-add-entity",
+  "records": {
+    "data/kb/entities/benefit.voyager.companion-fare.json": {
+      "after": "2d5f763e75dbd8a8",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "changeset": "cs-20261114-fix-07-promote-candidate",
+  "records": {
+    "data/candidates/c-voyager.rental-cover-superseded.json": {
+      "after": "37166fdd0955af3d",
+      "before": {
+        "created_on": "2026-11-14",
+        "evidence": [
+          {
+            "applies_to": [
+              "card.northwind-voyager"
+            ],
+            "id": "ev-syn-voyager-guide",
+            "notes": "Invented for testing.",
+            "publisher": "Northwind Bank (synthetic)",
+            "retrieved_on": "2026-11-14",
+            "source_type": "synthetic",
+            "summary": "The card's own guide. Annual travel credit. Phone protection included. Rental cover is primary with a higher cap and replaces the network's secondary cover. No mention of a lounge pass.",
+            "title": "Northwind Voyager Guide to Benefits",
+            "url": "https://example.invalid/northwind/voyager-guide-to-benefits"
+          }
+        ],
+        "id": "c-voyager.rental-cover-superseded",
+        "open_questions": [],
+        "proposed_rule": {
+          "id": "voyager.rental-cover-superseded",
+          "kind": "excludes",
+          "output": "benefit.orbit-summit.rental-cover",
+          "summary": "The network's secondary rental cover does not apply; the card provides its own primary cover instead.",
+          "superseded_by": "benefit.voyager.primary-rental-cover",
+          "when": {
+            "holds": "card.northwind-voyager"
+          }
+        },
+        "search_path": [
+          "tables import (card_benefits.csv)"
+        ],
+        "status": "proposed"
+      }
+    },
+    "data/kb/rules/voyager.rental-cover-superseded.json": {
+      "after": "6cd13300d4941477",
+      "before": null
+    }
+  }
+}

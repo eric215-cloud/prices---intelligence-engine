@@ -1,0 +1,15 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "id": "tier.orbit-summit",
+      "kind": "network_tier",
+      "name": "Orbit Summit (synthetic network tier)",
+      "network": "org.orbit"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-b2c9a69a-07-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: parties row tier.orbit-summit"
+}

@@ -1,0 +1,31 @@
+{
+  "earn": {
+    "activation": "required",
+    "activation_action": "action.voyager.activate-suite-award",
+    "measure": "voyager.qualifying-spend",
+    "period": "calendar_year",
+    "term": {
+      "day": 31,
+      "ends": "fixed",
+      "month": 12,
+      "year_offset": 1
+    },
+    "threshold": 75000,
+    "unit": "units"
+  },
+  "evidence": [
+    "ev-syn-voyager-milestones"
+  ],
+  "id": "voyager.earn-suite-award",
+  "kind": "earns",
+  "output": "benefit.voyager.suite-award",
+  "summary": "75,000 in qualifying purchases in a calendar year makes one suite night award available; it must be activated in the rewards portal.",
+  "verification": {
+    "last_verified": "2026-11-14",
+    "review_by": "2027-11-14",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.northwind-voyager"
+  }
+}

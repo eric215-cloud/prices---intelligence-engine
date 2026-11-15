@@ -1,0 +1,17 @@
+{
+  "card": {
+    "annual_fee_usd": 95.0,
+    "capital_provider": "org.meridian-capital",
+    "cobrand_partner": "org.halcyon-air",
+    "issuer": "org.tidewater-bank",
+    "network": "org.orbit",
+    "network_tier": "tier.orbit-summit",
+    "program_manager": "org.ledgerline"
+  },
+  "id": "card.halcyon-kestrel",
+  "kind": "card",
+  "name": "Halcyon Kestrel (synthetic)",
+  "sources": [
+    "ev-syn-kestrel-terms"
+  ]
+}

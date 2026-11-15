@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-17-set-holding",
+  "records": {
+    "profiles/synthetic-casey/holdings/h-card-northwind-voyager.json": {
+      "after": "449d3291745fa1d2",
+      "before": null
+    }
+  }
+}

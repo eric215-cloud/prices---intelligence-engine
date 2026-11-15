@@ -1,0 +1,26 @@
+{
+  "changeset": "cs-20270104-earn-27-record-progress",
+  "records": {
+    "profiles/synthetic-casey/qualifications/q-h-card-northwind-voyager-voyager.qualifying-spend-2026.json": {
+      "after": "7bfce8540ed8911a",
+      "before": {
+        "account": "h-card-northwind-voyager",
+        "cycle": "2026",
+        "id": "q-h-card-northwind-voyager-voyager.qualifying-spend-2026",
+        "measure": "voyager.qualifying-spend",
+        "readings": [
+          {
+            "basis": "August statement",
+            "changeset": "cs-20261114-earn-24-record-progress",
+            "confirmed_by": "Casey (synthetic)",
+            "confirmed_on": "2026-11-14",
+            "id": "r-2026-08",
+            "observed_on": "2026-08-31",
+            "state": "confirmed",
+            "value": 41000
+          }
+        ]
+      }
+    }
+  }
+}

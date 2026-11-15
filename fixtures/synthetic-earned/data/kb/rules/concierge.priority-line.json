@@ -1,0 +1,17 @@
+{
+  "evidence": [
+    "ev-syn-voyager-milestones"
+  ],
+  "id": "concierge.priority-line",
+  "kind": "grants",
+  "output": "benefit.orbit-concierge.priority-line",
+  "summary": "Orbit Concierge members may use the priority phone line.",
+  "verification": {
+    "last_verified": "2026-11-14",
+    "review_by": "2027-11-14",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "status.orbit-concierge"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "applies_to": [
+    "tier.orbit-summit"
+  ],
+  "id": "ev-syn-orbit-summit-benefits",
+  "notes": "Invented for testing.",
+  "publisher": "Orbit Payments (synthetic)",
+  "retrieved_on": "2026-11-14",
+  "source_type": "synthetic",
+  "summary": "Network marketing page. Lists rental car cover, phone protection and a lounge day pass for Orbit Summit cards, and says benefits vary by issuer and card.",
+  "title": "Orbit Summit benefits overview",
+  "url": "https://example.invalid/orbit/summit-benefits"
+}

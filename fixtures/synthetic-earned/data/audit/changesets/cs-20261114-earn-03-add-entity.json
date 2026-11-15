@@ -1,0 +1,14 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "id": "benefit.voyager.suite-award",
+      "kind": "benefit",
+      "name": "Northwind Voyager suite night award (synthetic)"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-earn-03-add-entity",
+  "op": "add_entity",
+  "reason": "Synthetic earned-benefit fixture"
+}

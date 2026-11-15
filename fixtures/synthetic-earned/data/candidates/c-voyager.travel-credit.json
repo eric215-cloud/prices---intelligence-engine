@@ -1,0 +1,43 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.northwind-voyager"
+      ],
+      "id": "ev-syn-voyager-guide",
+      "notes": "Invented for testing.",
+      "publisher": "Northwind Bank (synthetic)",
+      "retrieved_on": "2026-11-14",
+      "source_type": "synthetic",
+      "summary": "The card's own guide. Annual travel credit. Phone protection included. Rental cover is primary with a higher cap and replaces the network's secondary cover. No mention of a lounge pass.",
+      "title": "Northwind Voyager Guide to Benefits",
+      "url": "https://example.invalid/northwind/voyager-guide-to-benefits"
+    }
+  ],
+  "id": "c-voyager.travel-credit",
+  "open_questions": [],
+  "proposed_rule": {
+    "id": "voyager.travel-credit",
+    "kind": "grants",
+    "output": "benefit.voyager.travel-credit",
+    "restrictions": [
+      "Travel purchases only",
+      "Resets on the account anniversary"
+    ],
+    "summary": "200 annual travel credit per cardmember year.",
+    "when": {
+      "holds": "card.northwind-voyager"
+    }
+  },
+  "review": {
+    "decided_by": "Synthetic Reviewer",
+    "decided_on": "2026-11-14",
+    "reason": "Fixture promotion",
+    "rule": "voyager.travel-credit"
+  },
+  "search_path": [
+    "tables import (card_benefits.csv)"
+  ],
+  "status": "promoted"
+}

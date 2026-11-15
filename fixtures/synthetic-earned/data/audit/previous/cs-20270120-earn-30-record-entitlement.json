@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20270120-earn-30-record-entitlement",
+  "records": {
+    "profiles/synthetic-devon/entitlements/e-2026-concierge-status.json": {
+      "after": "7a33f9c15258e93a",
+      "before": null
+    }
+  }
+}

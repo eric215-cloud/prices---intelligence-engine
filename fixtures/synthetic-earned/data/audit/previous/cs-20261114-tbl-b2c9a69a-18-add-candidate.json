@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-18-add-candidate",
+  "records": {
+    "data/candidates/c-kestrel.phone-protection-excluded.json": {
+      "after": "9f2ff028f2d2f4a8",
+      "before": null
+    }
+  }
+}

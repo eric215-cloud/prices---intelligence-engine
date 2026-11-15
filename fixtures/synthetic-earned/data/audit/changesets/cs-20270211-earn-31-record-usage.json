@@ -1,0 +1,23 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2027-02-11",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "usage": {
+      "amount": 80,
+      "basis": "Hotel",
+      "id": "u-2027-02-10",
+      "state": "confirmed",
+      "used_on": "2027-02-10"
+    }
+  },
+  "date": "2027-02-11",
+  "id": "cs-20270211-earn-31-record-usage",
+  "op": "record_usage",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic earned-benefit fixture",
+  "target": "e-2026-milestone-credit"
+}

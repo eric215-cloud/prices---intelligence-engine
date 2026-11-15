@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-07-add-candidate",
+  "records": {
+    "data/candidates/c-voyager.earn-concierge-status.json": {
+      "after": "365e1d19e1571bf9",
+      "before": null
+    }
+  }
+}

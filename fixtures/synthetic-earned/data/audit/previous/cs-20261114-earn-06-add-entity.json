@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-06-add-entity",
+  "records": {
+    "data/kb/entities/action.voyager.activate-suite-award.json": {
+      "after": "8285103bea648696",
+      "before": null
+    }
+  }
+}

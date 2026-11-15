@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-17-add-candidate",
+  "records": {
+    "data/candidates/c-baseline.orbit-summit.rental-cover.json": {
+      "after": "b2f8a5c05f6d18c7",
+      "before": null
+    }
+  }
+}

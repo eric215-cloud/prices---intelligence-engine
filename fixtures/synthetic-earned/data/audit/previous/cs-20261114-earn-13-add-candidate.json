@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-13-add-candidate",
+  "records": {
+    "data/candidates/c-voyager.earn-milestone-credit.json": {
+      "after": "7bfcd6fb6decc867",
+      "before": null
+    }
+  }
+}

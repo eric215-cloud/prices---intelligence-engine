@@ -1,0 +1,29 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2027-10-08",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entitlement": {
+      "account": "h-card-northwind-voyager",
+      "allowance": {
+        "amount": 300,
+        "unit": "units"
+      },
+      "basis": "Second credit shown on the account page",
+      "cycle": "2027",
+      "effective_from": "2027-10-06",
+      "expires_on": "2028-12-31",
+      "id": "e-2027-milestone-credit",
+      "rule": "voyager.earn-milestone-credit",
+      "state": "confirmed"
+    }
+  },
+  "date": "2027-10-08",
+  "id": "cs-20271008-earn-36-record-entitlement",
+  "op": "record_entitlement",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic earned-benefit fixture"
+}

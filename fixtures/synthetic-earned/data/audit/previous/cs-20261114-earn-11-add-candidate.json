@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-11-add-candidate",
+  "records": {
+    "data/candidates/c-voyager.earn-suite-award.json": {
+      "after": "0348b85cbdbc3b61",
+      "before": null
+    }
+  }
+}

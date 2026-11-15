@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-fix-22-set-holding",
+  "records": {
+    "profiles/synthetic-blake/holdings/h-card-halcyon-kestrel.json": {
+      "after": "e8af799708285236",
+      "before": null
+    }
+  }
+}

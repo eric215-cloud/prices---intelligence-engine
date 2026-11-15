@@ -1,0 +1,21 @@
+{
+  "evidence": [
+    "ev-syn-voyager-guide"
+  ],
+  "id": "voyager.travel-credit",
+  "kind": "grants",
+  "output": "benefit.voyager.travel-credit",
+  "restrictions": [
+    "Travel purchases only",
+    "Resets on the account anniversary"
+  ],
+  "summary": "200 annual travel credit per cardmember year.",
+  "verification": {
+    "last_verified": "2026-11-14",
+    "review_by": "2027-05-14",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.northwind-voyager"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-21-record-entitlement",
+  "records": {
+    "profiles/synthetic-alex/entitlements/e-2026-concierge-status.json": {
+      "after": "3a4537a7a931c1c0",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "account": "h-card-northwind-voyager",
+  "basis": "Activated in the portal on January 15",
+  "confirmed_by": "Alex (synthetic)",
+  "confirmed_on": "2027-01-16",
+  "cycle": "2026",
+  "effective_from": "2027-01-15",
+  "entity": "benefit.voyager.suite-award",
+  "expires_on": "2027-12-31",
+  "id": "e-2026-suite-award",
+  "rule": "voyager.earn-suite-award",
+  "state": "confirmed"
+}

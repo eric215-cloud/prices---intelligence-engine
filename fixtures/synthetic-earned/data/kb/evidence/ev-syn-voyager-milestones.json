@@ -1,0 +1,13 @@
+{
+  "applies_to": [
+    "card.northwind-voyager"
+  ],
+  "id": "ev-syn-voyager-milestones",
+  "notes": "Invented for testing.",
+  "publisher": "Northwind Bank (synthetic)",
+  "retrieved_on": "2026-11-14",
+  "source_type": "synthetic",
+  "summary": "The card's own milestone terms. 75,000 in qualifying purchases on this card account in a calendar year earns: Orbit Concierge status through the end of February two years later; a companion fare and a suite night award, each through December 31 of the following year; and a 300 travel credit through December 31 of the following year. The suite night award must be activated in the rewards portal. The companion fare is offered for qualifying years up to and including 2026.",
+  "title": "Northwind Voyager milestone benefit terms",
+  "url": "https://example.invalid/northwind/voyager-milestone-terms"
+}

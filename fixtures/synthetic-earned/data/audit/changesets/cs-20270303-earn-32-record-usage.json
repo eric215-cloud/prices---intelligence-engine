@@ -1,0 +1,18 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "usage": {
+      "amount": 60,
+      "basis": "Entered by a maintainer from an email; not yet confirmed by the owner",
+      "id": "u-2027-03-02",
+      "state": "unconfirmed",
+      "used_on": "2027-03-02"
+    }
+  },
+  "date": "2027-03-03",
+  "id": "cs-20270303-earn-32-record-usage",
+  "op": "record_usage",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic earned-benefit fixture",
+  "target": "e-2026-milestone-credit"
+}

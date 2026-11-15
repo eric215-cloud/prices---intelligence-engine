@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-23-record-entitlement",
+  "records": {
+    "profiles/synthetic-alex/entitlements/e-2026-milestone-credit.json": {
+      "after": "ac354851b1a40e58",
+      "before": null
+    }
+  }
+}

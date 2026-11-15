@@ -1,0 +1,13 @@
+{
+  "account": "h-card-northwind-voyager",
+  "basis": "Certificate shown on the account page",
+  "confirmed_by": "Alex (synthetic)",
+  "confirmed_on": "2026-11-14",
+  "cycle": "2026",
+  "effective_from": "2026-11-08",
+  "entity": "benefit.voyager.companion-fare",
+  "expires_on": "2027-12-31",
+  "id": "e-2026-companion-fare",
+  "rule": "voyager.earn-companion-fare",
+  "state": "confirmed"
+}

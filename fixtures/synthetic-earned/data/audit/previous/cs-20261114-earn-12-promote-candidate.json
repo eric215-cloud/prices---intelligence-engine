@@ -1,0 +1,59 @@
+{
+  "changeset": "cs-20261114-earn-12-promote-candidate",
+  "records": {
+    "data/candidates/c-voyager.earn-suite-award.json": {
+      "after": "119a383e23614502",
+      "before": {
+        "created_on": "2026-11-14",
+        "evidence": [
+          {
+            "applies_to": [
+              "card.northwind-voyager"
+            ],
+            "id": "ev-syn-voyager-milestones",
+            "notes": "Invented for testing.",
+            "publisher": "Northwind Bank (synthetic)",
+            "retrieved_on": "2026-11-14",
+            "source_type": "synthetic",
+            "summary": "The card's own milestone terms. 75,000 in qualifying purchases on this card account in a calendar year earns: Orbit Concierge status through the end of February two years later; a companion fare and a suite night award, each through December 31 of the following year; and a 300 travel credit through December 31 of the following year. The suite night award must be activated in the rewards portal. The companion fare is offered for qualifying years up to and including 2026.",
+            "title": "Northwind Voyager milestone benefit terms",
+            "url": "https://example.invalid/northwind/voyager-milestone-terms"
+          }
+        ],
+        "id": "c-voyager.earn-suite-award",
+        "open_questions": [],
+        "proposed_rule": {
+          "earn": {
+            "activation": "required",
+            "activation_action": "action.voyager.activate-suite-award",
+            "measure": "voyager.qualifying-spend",
+            "period": "calendar_year",
+            "term": {
+              "day": 31,
+              "ends": "fixed",
+              "month": 12,
+              "year_offset": 1
+            },
+            "threshold": 75000,
+            "unit": "units"
+          },
+          "id": "voyager.earn-suite-award",
+          "kind": "earns",
+          "output": "benefit.voyager.suite-award",
+          "summary": "75,000 in qualifying purchases in a calendar year makes one suite night award available; it must be activated in the rewards portal.",
+          "when": {
+            "holds": "card.northwind-voyager"
+          }
+        },
+        "search_path": [
+          "fixture"
+        ],
+        "status": "proposed"
+      }
+    },
+    "data/kb/rules/voyager.earn-suite-award.json": {
+      "after": "08c64e72ed0f5ae5",
+      "before": null
+    }
+  }
+}

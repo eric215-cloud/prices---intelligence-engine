@@ -1,0 +1,14 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "id": "org.meridian-capital",
+      "kind": "organization",
+      "name": "Meridian Capital (synthetic capital provider)"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-b2c9a69a-03-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: parties row org.meridian-capital"
+}

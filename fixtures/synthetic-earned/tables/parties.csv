@@ -1,0 +1,8 @@
+id,kind,name,network,notes
+org.halcyon-air,organization,Halcyon Air (synthetic airline),,
+org.ledgerline,organization,Ledgerline Card Services (synthetic program manager),,
+org.meridian-capital,organization,Meridian Capital (synthetic capital provider),,
+org.northwind-bank,organization,Northwind Bank (synthetic),,
+org.orbit,organization,Orbit Payments (synthetic network),,
+org.tidewater-bank,organization,Tidewater Bank (synthetic),,
+tier.orbit-summit,network_tier,Orbit Summit (synthetic network tier),org.orbit,

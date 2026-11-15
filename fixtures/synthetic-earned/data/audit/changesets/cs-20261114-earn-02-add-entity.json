@@ -1,0 +1,14 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "id": "benefit.voyager.companion-fare",
+      "kind": "benefit",
+      "name": "Northwind Voyager companion fare (synthetic)"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-earn-02-add-entity",
+  "op": "add_entity",
+  "reason": "Synthetic earned-benefit fixture"
+}

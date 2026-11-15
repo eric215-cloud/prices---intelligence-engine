@@ -1,0 +1,26 @@
+{
+  "attestation": {
+    "by": "Devon (synthetic)",
+    "on": "2027-01-20",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "account": "h-card-northwind-voyager",
+    "cycle": "2026",
+    "measure": "voyager.qualifying-spend",
+    "reading": {
+      "basis": "Owner says the threshold was reached during 2026; no statement to hand",
+      "id": "r-2026-year-only",
+      "observed_on": "unknown",
+      "state": "confirmed",
+      "value": 75000,
+      "value_kind": "at_least"
+    }
+  },
+  "date": "2027-01-20",
+  "id": "cs-20270120-earn-29-record-progress",
+  "op": "record_progress",
+  "profile": "synthetic-devon",
+  "reason": "Synthetic earned-benefit fixture"
+}

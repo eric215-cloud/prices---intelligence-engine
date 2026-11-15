@@ -1,0 +1,15 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "how": "Sign in to the (invented) Northwind rewards portal, choose the suite night award and link the hotel account. Reaching the spending threshold does not do this for you.",
+      "id": "action.voyager.activate-suite-award",
+      "kind": "action",
+      "name": "Activate the suite night award in the Northwind rewards portal"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-earn-06-add-entity",
+  "op": "add_entity",
+  "reason": "Synthetic earned-benefit fixture"
+}

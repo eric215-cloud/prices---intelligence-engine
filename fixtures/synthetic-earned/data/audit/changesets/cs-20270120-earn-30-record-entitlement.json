@@ -1,0 +1,25 @@
+{
+  "attestation": {
+    "by": "Devon (synthetic)",
+    "on": "2027-01-20",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entitlement": {
+      "account": "h-card-northwind-voyager",
+      "basis": "Status shown on the account page today; start date not shown",
+      "cycle": "2026",
+      "effective_from": "unknown",
+      "expires_on": "2028-02-29",
+      "id": "e-2026-concierge-status",
+      "rule": "voyager.earn-concierge-status",
+      "state": "confirmed"
+    }
+  },
+  "date": "2027-01-20",
+  "id": "cs-20270120-earn-30-record-entitlement",
+  "op": "record_entitlement",
+  "profile": "synthetic-devon",
+  "reason": "Synthetic earned-benefit fixture"
+}

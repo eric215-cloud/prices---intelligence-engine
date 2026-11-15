@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-04-add-entity",
+  "records": {
+    "data/kb/entities/benefit.voyager.milestone-credit.json": {
+      "after": "a141728450e5498c",
+      "before": null
+    }
+  }
+}

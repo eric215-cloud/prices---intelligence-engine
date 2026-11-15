@@ -1,0 +1,42 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.northwind-voyager"
+      ],
+      "id": "ev-syn-voyager-guide",
+      "notes": "Invented for testing.",
+      "publisher": "Northwind Bank (synthetic)",
+      "retrieved_on": "2026-11-14",
+      "source_type": "synthetic",
+      "summary": "The card's own guide. Annual travel credit. Phone protection included. Rental cover is primary with a higher cap and replaces the network's secondary cover. No mention of a lounge pass.",
+      "title": "Northwind Voyager Guide to Benefits",
+      "url": "https://example.invalid/northwind/voyager-guide-to-benefits"
+    }
+  ],
+  "id": "c-voyager.primary-rental-cover",
+  "open_questions": [],
+  "proposed_rule": {
+    "id": "voyager.primary-rental-cover",
+    "kind": "grants",
+    "output": "benefit.voyager.primary-rental-cover",
+    "restrictions": [
+      "Rentals up to 31 days"
+    ],
+    "summary": "Primary rental car cover up to 75,000.",
+    "when": {
+      "holds": "card.northwind-voyager"
+    }
+  },
+  "review": {
+    "decided_by": "Synthetic Reviewer",
+    "decided_on": "2026-11-14",
+    "reason": "Fixture promotion",
+    "rule": "voyager.primary-rental-cover"
+  },
+  "search_path": [
+    "tables import (card_benefits.csv)"
+  ],
+  "status": "promoted"
+}

@@ -1,0 +1,25 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2027-01-16",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entitlement": {
+      "account": "h-card-northwind-voyager",
+      "basis": "Activated in the portal on January 15",
+      "cycle": "2026",
+      "effective_from": "2027-01-15",
+      "expires_on": "2027-12-31",
+      "id": "e-2026-suite-award",
+      "rule": "voyager.earn-suite-award",
+      "state": "confirmed"
+    }
+  },
+  "date": "2027-01-16",
+  "id": "cs-20270116-earn-28-record-entitlement",
+  "op": "record_entitlement",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic earned-benefit fixture"
+}

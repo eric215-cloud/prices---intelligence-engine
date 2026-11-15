@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-earn-15-add-candidate",
+  "records": {
+    "data/candidates/c-concierge.priority-line.json": {
+      "after": "b0d397e0c409d6c9",
+      "before": null
+    }
+  }
+}

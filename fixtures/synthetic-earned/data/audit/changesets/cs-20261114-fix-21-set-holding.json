@@ -1,0 +1,21 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2026-11-14",
+    "statement": "Invented holding for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "holding": {
+      "entity": "card.northwind-voyager",
+      "id": "h-card-northwind-voyager",
+      "state": "confirmed",
+      "valid_from": "2026-01-01"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-fix-21-set-holding",
+  "op": "set_holding",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic holding"
+}

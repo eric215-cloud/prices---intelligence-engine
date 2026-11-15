@@ -1,0 +1,42 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-14",
+      "evidence": [
+        {
+          "applies_to": [
+            "card.halcyon-kestrel"
+          ],
+          "id": "ev-syn-kestrel-guide",
+          "notes": "Invented for testing.",
+          "publisher": "Tidewater Bank (synthetic)",
+          "retrieved_on": "2026-11-14",
+          "source_type": "synthetic",
+          "summary": "The card's own guide. States that Orbit Summit phone protection is not offered on this card. Silent on rental cover and on the lounge pass.",
+          "title": "Halcyon Kestrel Guide to Benefits",
+          "url": "https://example.invalid/tidewater/kestrel-guide-to-benefits"
+        }
+      ],
+      "id": "c-kestrel.phone-protection-excluded",
+      "open_questions": [],
+      "proposed_rule": {
+        "id": "kestrel.phone-protection-excluded",
+        "kind": "excludes",
+        "output": "benefit.orbit-summit.phone-protection",
+        "summary": "The card's guide states that phone protection is not offered on this card.",
+        "when": {
+          "holds": "card.halcyon-kestrel"
+        }
+      },
+      "search_path": [
+        "tables import (card_benefits.csv)"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-b2c9a69a-18-add-candidate",
+  "op": "add_candidate",
+  "reason": "tables import: card_benefits row kestrel.phone-protection-excluded"
+}

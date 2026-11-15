@@ -1,0 +1,25 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2027-10-02",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "account": "h-card-northwind-voyager",
+    "cycle": "2027",
+    "measure": "voyager.qualifying-spend",
+    "reading": {
+      "basis": "September statement",
+      "id": "r-2027-09",
+      "observed_on": "2027-09-30",
+      "state": "confirmed",
+      "value": 78300
+    }
+  },
+  "date": "2027-10-02",
+  "id": "cs-20271002-earn-34-record-progress",
+  "op": "record_progress",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic earned-benefit fixture"
+}
