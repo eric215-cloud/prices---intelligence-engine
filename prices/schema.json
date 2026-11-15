@@ -68,6 +68,114 @@
       }
     },
 
+    "date_or_unknown": {
+      "x-doc": "A real date, or the word unknown. Never guess a date: write unknown.",
+      "type": "string", "pattern": "^(unknown|[0-9]{4}-[0-9]{2}-[0-9]{2})$"},
+
+    "amount": {
+      "type": "object", "additionalProperties": false, "required": ["amount", "unit"],
+      "properties": {"amount": {"type": "number"}, "unit": {"$ref": "#/$defs/text"}}
+    },
+
+    "earn": {
+      "x-doc": "Public terms of an earned benefit: reach `threshold` on `measure` within one `period` on the card named in `when`. Says nothing about any person.",
+      "type": "object", "additionalProperties": false,
+      "required": ["measure", "period", "threshold", "activation", "term"],
+      "properties": {
+        "measure": {"$ref": "#/$defs/id"},
+        "period": {"enum": ["calendar_year"]},
+        "threshold": {"type": "number"},
+        "unit": {"type": "string"},
+        "activation": {"enum": ["automatic", "required"]},
+        "activation_action": {"$ref": "#/$defs/id"},
+        "term": {
+          "type": "object", "additionalProperties": false, "required": ["ends"],
+          "properties": {
+            "ends": {"enum": ["fixed", "not_stated"]},
+            "year_offset": {"type": "integer"},
+            "month": {"type": "integer"},
+            "day": {"type": "integer"},
+            "month_end": {"type": "boolean"},
+            "note": {"type": "string"}
+          }
+        },
+        "allowance": {"$ref": "#/$defs/amount"}
+      }
+    },
+
+    "reading": {
+      "x-doc": "One observation of cumulative progress within a cycle. Append-only: corrections supersede, never overwrite.",
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "value", "observed_on", "state"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "value": {"type": "number"},
+        "value_kind": {"enum": ["exact", "at_least"]},
+        "observed_on": {"$ref": "#/$defs/date_or_unknown"},
+        "final": {"type": "boolean"},
+        "state": {"enum": ["confirmed", "unconfirmed", "superseded"]},
+        "confirmed_by": {"type": "string"},
+        "confirmed_on": {"$ref": "#/$defs/date"},
+        "basis": {"type": "string"},
+        "superseded_by": {"$ref": "#/$defs/id"},
+        "changeset": {"$ref": "#/$defs/id"}
+      }
+    },
+
+    "qualification": {
+      "x-doc": "One person's progress on one measure, on one of their own accounts, in one qualifying cycle.",
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "account", "measure", "cycle", "readings"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "account": {"$ref": "#/$defs/id"},
+        "measure": {"$ref": "#/$defs/id"},
+        "cycle": {"type": "string", "pattern": "^[0-9]{4}$"},
+        "readings": {"type": "array", "items": {"$ref": "#/$defs/reading"}},
+        "notes": {"type": "string"}
+      }
+    },
+
+    "usage_event": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "amount", "used_on", "state"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "amount": {"type": "number"},
+        "used_on": {"$ref": "#/$defs/date_or_unknown"},
+        "state": {"enum": ["confirmed", "unconfirmed", "superseded"]},
+        "confirmed_by": {"type": "string"},
+        "confirmed_on": {"$ref": "#/$defs/date"},
+        "basis": {"type": "string"},
+        "superseded_by": {"$ref": "#/$defs/id"},
+        "changeset": {"$ref": "#/$defs/id"}
+      }
+    },
+
+    "entitlement": {
+      "x-doc": "One earned benefit actually on one person's account, from one qualifying cycle, with its own dates.",
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "rule", "entity", "account", "cycle", "state", "effective_from", "expires_on"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "rule": {"$ref": "#/$defs/id"},
+        "entity": {"$ref": "#/$defs/id"},
+        "account": {"$ref": "#/$defs/id"},
+        "cycle": {"type": "string", "pattern": "^[0-9]{4}$"},
+        "state": {"enum": ["confirmed", "unconfirmed", "superseded"]},
+        "effective_from": {"$ref": "#/$defs/date_or_unknown"},
+        "expires_on": {"$ref": "#/$defs/date_or_unknown"},
+        "ended_on": {"$ref": "#/$defs/date"},
+        "end_reason": {"type": "string"},
+        "allowance": {"$ref": "#/$defs/amount"},
+        "usage": {"type": "array", "items": {"$ref": "#/$defs/usage_event"}},
+        "confirmed_by": {"type": "string"},
+        "confirmed_on": {"$ref": "#/$defs/date"},
+        "basis": {"type": "string"},
+        "notes": {"type": "string"}
+      }
+    },
+
     "verification": {
       "type": "object", "additionalProperties": false,
       "required": ["status"],
@@ -83,11 +191,12 @@
       "required": ["id", "kind", "output", "when", "summary", "evidence", "verification"],
       "properties": {
         "id": {"$ref": "#/$defs/id"},
-        "kind": {"enum": ["grants", "acquire", "transfer", "baseline", "excludes"]},
+        "kind": {"enum": ["grants", "acquire", "transfer", "baseline", "excludes", "earns"]},
         "output": {"$ref": "#/$defs/id"},
         "when": {"$ref": "#/$defs/condition"},
         "summary": {"$ref": "#/$defs/text"},
         "superseded_by": {"$ref": "#/$defs/id"},
+        "earn": {"$ref": "#/$defs/earn"},
         "retention": {"$ref": "#/$defs/retention"},
         "transfer": {"type": "object", "additionalProperties": false, "required": ["from"],
                      "properties": {"from": {"$ref": "#/$defs/id"}, "ratio": {"type": "string"}, "note": {"type": "string"}}},
@@ -175,11 +284,12 @@
           "required": ["id", "kind", "output", "when", "summary"],
           "properties": {
             "id": {"$ref": "#/$defs/id"},
-            "kind": {"enum": ["grants", "acquire", "transfer", "baseline", "excludes"]},
+            "kind": {"enum": ["grants", "acquire", "transfer", "baseline", "excludes", "earns"]},
             "output": {"$ref": "#/$defs/id"},
             "when": {"$ref": "#/$defs/condition"},
             "summary": {"$ref": "#/$defs/text"},
             "superseded_by": {"$ref": "#/$defs/id"},
+            "earn": {"$ref": "#/$defs/earn"},
             "retention": {"$ref": "#/$defs/retention"},
             "transfer": {"type": "object"},
             "valid_from": {"$ref": "#/$defs/date"},
@@ -249,6 +359,7 @@
                         "add_entity", "revise_entity", "add_candidate", "promote_candidate", "reject_candidate",
                         "revert_changeset",
                         "set_holding", "end_holding", "set_metric",
+                        "record_progress", "record_entitlement", "revise_entitlement", "record_usage", "correct_entry",
                         "record_discovery_run", "add_observation", "prune_observations"]},
         "author": {"$ref": "#/$defs/text"},
         "date": {"$ref": "#/$defs/date"},

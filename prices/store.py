@@ -33,9 +33,14 @@ def dumps(obj):
     return json.dumps(obj, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
 
+PERSONAL = ("holdings", "metrics", "qualifications", "entitlements")
+
+
 class Profile:
-    def __init__(self, name, meta, holdings, metrics):
+    def __init__(self, name, meta, holdings, metrics, qualifications=None, entitlements=None):
         self.name, self.meta, self.holdings, self.metrics = name, meta, holdings, metrics
+        self.qualifications = qualifications or {}   # progress toward earned benefits, per account and cycle
+        self.entitlements = entitlements or {}       # earned benefits actually on the account
 
 
 class Store:
@@ -124,14 +129,16 @@ class Store:
             raise KeyError("no such profile: %s (have: %s)" % (name, ", ".join(self.profile_names())))
         hold = {v["id"]: v for p, v in self.files.items() if p.startswith(base + "holdings/")}
         mets = {v["id"]: v for p, v in self.files.items() if p.startswith(base + "metrics/")}
-        return Profile(name, meta, hold, mets)
+        qual = {v["id"]: v for p, v in self.files.items() if p.startswith(base + "qualifications/")}
+        ents = {v["id"]: v for p, v in self.files.items() if p.startswith(base + "entitlements/")}
+        return Profile(name, meta, hold, mets, qual, ents)
 
     # ---------- paths ----------
     @staticmethod
     def path(kind, rec_id, profile=None):
         if kind in PREFIX:
             return PREFIX[kind] + rec_id + ".json"
-        if kind in ("holdings", "metrics"):
+        if kind in PERSONAL:
             return "profiles/%s/%s/%s.json" % (profile, kind, rec_id)
         raise KeyError(kind)
 

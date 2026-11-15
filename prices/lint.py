@@ -4,7 +4,7 @@ Each issue is (severity, code, path, message). Codes are stable so maintainers a
 tests can match on them.
 """
 from .engine import NON_DERIVING, leaves
-from .schema import Schema
+from .schema import Schema, is_date
 from .store import PREFIX, VOCAB_PATH, LEDGER_PATH
 
 _KIND_BY_PREFIX = [(PREFIX["entities"], "entity"), (PREFIX["rules"], "rule"), (PREFIX["evidence"], "evidence"),
@@ -24,6 +24,10 @@ def record_kind(path):
             return "holding"
         if len(parts) == 4 and parts[2] == "metrics":
             return "metric"
+        if len(parts) == 4 and parts[2] == "qualifications":
+            return "qualification"
+        if len(parts) == 4 and parts[2] == "entitlements":
+            return "entitlement"
     return None
 
 
@@ -55,6 +59,32 @@ def shape_issues(rule, kind_of):
         sb = rule.get("superseded_by")
         if sb is not None and (kind_of(sb) != "benefit" or sb == target):
             out.append(("BAD_EXCLUSION_SHAPE", "superseded_by must be a different benefit entity"))
+    elif rule["kind"] == "earns":
+        if kind_of(subject) != "card" or kind_of(target) not in ("benefit", "status"):
+            out.append(("BAD_EARN_SHAPE", "an earns rule is exactly: when {\"holds\": <card>} -> output <benefit or status>"))
+        earn = rule.get("earn")
+        if earn is None:
+            out.append(("BAD_EARN_SHAPE", "an earns rule needs an 'earn' block (measure, period, threshold, activation, term)"))
+        else:
+            term = earn["term"]
+            if earn["threshold"] <= 0:
+                out.append(("BAD_EARN_SHAPE", "earn.threshold must be greater than zero"))
+            if term["ends"] == "fixed":
+                has_day = "day" in term
+                ok = isinstance(term.get("year_offset"), int) and term["year_offset"] >= 0 and term.get("month") in range(1, 13) \
+                    and has_day != bool(term.get("month_end")) and (not has_day or term["day"] in range(1, 29) or
+                                                                    (term["day"] in range(29, 32) and term["month"] != 2
+                                                                     and (term["day"] < 31 or term["month"] in (1, 3, 5, 7, 8, 10, 12))))
+                if not ok:
+                    out.append(("BAD_EARN_SHAPE", "a fixed term needs year_offset >= 0, month 1-12 and either a valid day or month_end: true "
+                                                  "(use month_end for the end of February)"))
+            elif set(term) - {"ends", "note"}:
+                out.append(("BAD_EARN_SHAPE", "a term that is not_stated carries no date fields"))
+            act = earn.get("activation_action")
+            if act is not None and (earn["activation"] != "required" or kind_of(act) != "action"):
+                out.append(("BAD_EARN_SHAPE", "activation_action must be an action entity and is only for activation: required"))
+            if "allowance" in earn and earn["allowance"]["amount"] <= 0:
+                out.append(("BAD_EARN_SHAPE", "earn.allowance.amount must be greater than zero"))
     else:
         refs = [i for k, i, _n in leaves(rule["when"]) if k == "holds"] + [target]
         refs += [i for k, i, _n in leaves(rule.get("retention", {}).get("retain_when", {"all": []})) if k == "holds"]
@@ -64,6 +94,11 @@ def shape_issues(rule, kind_of):
                         "State the benefit for the specific card, with card-specific evidence" % ", ".join(bad)))
         if "superseded_by" in rule:
             out.append(("UNEXPECTED_FIELD", "superseded_by belongs only on excludes rules"))
+    if rule["kind"] != "earns" and "earn" in rule:
+        out.append(("UNEXPECTED_FIELD", "an 'earn' block belongs only on earns rules"))
+    if rule["kind"] == "earns" and kind_of(subject) == "card":   # the same no-inheritance guard as every deriving rule
+        if kind_of(target) in NOT_HOLDABLE:
+            out.append(("TIER_INHERITANCE", "%s: an organization or network tier is never earned" % target))
     return out
 
 
@@ -258,6 +293,8 @@ def lint(store):
             if m["state"] == "confirmed" and not m.get("confirmed_by"):
                 err("UNATTESTED_CONFIRMATION", store.path("metrics", m["id"], name), "confirmed metrics need confirmed_by")
 
+    _lint_earned(store, err, warn)
+
     # 6. candidates stay self-contained; they may introduce entities but never touch rules
     for c in store.candidates.values():
         p = store.path("candidates", c["id"])
@@ -327,6 +364,134 @@ def lint(store):
             if t not in vocab["tags"]:
                 err("UNKNOWN_TAG", store.path("observations", o["id"]), "tag %r is not in vocab" % t)
     return issues
+
+
+def _lint_earned(store, err, warn):
+    """Personal progress and earned-benefit records: scoped to the person's own account, dated honestly, attested."""
+    from .earned import UNKNOWN, cycle_bounds
+    ents, rules = store.entities, store.rules
+    offered = {}
+    for r in rules.values():
+        if r["kind"] == "earns" and "earn" in r:
+            offered.setdefault((single_holds(r["when"]), r["earn"]["measure"]), []).append(r)
+
+    def real(value):
+        return value == UNKNOWN or is_date(value)
+
+    for name in store.profile_names():
+        if "profiles/%s/profile.json" % name not in store.files:
+            continue
+        prof = store.profile(name)
+        owner = prof.meta["owner"]
+
+        def attested(rec, p, what):
+            if rec["state"] != "confirmed":
+                return
+            if not (rec.get("confirmed_by") and rec.get("confirmed_on")):
+                err("UNATTESTED_CONFIRMATION", p, "%s is confirmed but has no confirmed_by / confirmed_on" % what)
+            elif rec["confirmed_by"] != owner:
+                err("UNATTESTED_CONFIRMATION", p, "%s is confirmed by %r; only the profile owner %r can confirm it" % (what, rec["confirmed_by"], owner))
+            if rec.get("confirmed_by") == "synthetic" and not prof.meta["synthetic"]:
+                err("SYNTHETIC_IN_REAL_PROFILE", p, "synthetic confirmation in a non-synthetic profile")
+
+        seen = {}
+        for q in sorted(prof.qualifications.values(), key=lambda q: q["id"]):
+            p = store.path("qualifications", q["id"], name)
+            h = prof.holdings.get(q["account"])
+            if h is None:
+                err("UNKNOWN_ACCOUNT", p, "account %r is not a holding of profile %s. Progress belongs to the person's own account, "
+                                          "never to another person's" % (q["account"], name))
+            elif (h["entity"], q["measure"]) not in offered:
+                err("UNKNOWN_MEASURE", p, "no earns rule measures %r on %s" % (q["measure"], h["entity"]))
+            key = (q["account"], q["measure"], q["cycle"])
+            if key in seen:
+                err("DUPLICATE_QUALIFICATION", p, "same account, measure and cycle as %s" % seen[key])
+            seen[key] = q["id"]
+            start, end = cycle_bounds("calendar_year", q["cycle"])
+            ids = set()
+            for r in q["readings"]:
+                what = "reading %s" % r["id"]
+                if r["id"] in ids:
+                    err("DUPLICATE_ENTRY", p, "%s appears twice" % what)
+                ids.add(r["id"])
+                if r["value"] < 0:
+                    err("BAD_VALUE", p, "%s: value cannot be negative" % what)
+                if not real(r["observed_on"]):
+                    err("BAD_DATES", p, "%s: observed_on is not a real date" % what)
+                elif r["observed_on"] == UNKNOWN:
+                    if r.get("value_kind") != "at_least" or r.get("final"):
+                        err("BAD_READING", p, "%s: a reading with no date can only say 'at least this much' and cannot be final" % what)
+                elif not (start.isoformat() <= r["observed_on"] <= end.isoformat()):
+                    err("OUT_OF_CYCLE", p, "%s: %s is outside cycle %s (%s to %s)" % (what, r["observed_on"], q["cycle"], start, end))
+                elif r.get("confirmed_on") and r["observed_on"] > r["confirmed_on"]:
+                    err("BAD_DATES", p, "%s: confirmed on %s, before the date it refers to" % (what, r["confirmed_on"]))
+                if r.get("final") and (r["observed_on"] != end.isoformat() or r.get("value_kind", "exact") != "exact"):
+                    err("BAD_READING", p, "%s: a final figure is exact and dated the last day of the cycle (%s)" % (what, end))
+                attested(r, p, what)
+            for r in q["readings"]:
+                if r.get("superseded_by") and r["superseded_by"] not in ids:
+                    err("UNKNOWN_REFERENCE", p, "reading %s: superseded_by %r is not a reading here" % (r["id"], r["superseded_by"]))
+
+        live = {}
+        for e in sorted(prof.entitlements.values(), key=lambda e: e["id"]):
+            p = store.path("entitlements", e["id"], name)
+            rule, h = rules.get(e["rule"]), prof.holdings.get(e["account"])
+            if rule is None or rule["kind"] != "earns" or "earn" not in rule:
+                err("UNKNOWN_REFERENCE", p, "rule %r is not an earns rule" % e["rule"])
+                continue
+            if e["entity"] != rule["output"]:
+                err("ENTITY_MISMATCH", p, "entity %s is not what rule %s offers (%s)" % (e["entity"], rule["id"], rule["output"]))
+            if h is None:
+                err("UNKNOWN_ACCOUNT", p, "account %r is not a holding of profile %s. An earned benefit belongs to the person's own account" % (e["account"], name))
+            elif h["entity"] != single_holds(rule["when"]):
+                err("ACCOUNT_MISMATCH", p, "account %s is a %s, but rule %s is about %s" % (e["account"], h["entity"], rule["id"], single_holds(rule["when"])))
+            start, _end = cycle_bounds(rule["earn"]["period"], e["cycle"])
+            lo, hi = e["effective_from"], e["expires_on"]
+            for field in ("effective_from", "expires_on"):
+                if not real(e[field]):
+                    err("BAD_DATES", p, "%s is not a real date" % field)
+            if real(lo) and real(hi):
+                if lo != UNKNOWN and lo < start.isoformat():
+                    err("BAD_DATES", p, "effective_from %s is before qualifying cycle %s begins" % (lo, e["cycle"]))
+                if lo != UNKNOWN and hi != UNKNOWN and hi < lo:
+                    err("BAD_DATES", p, "expires_on is before effective_from")
+                if e.get("ended_on") and lo != UNKNOWN and e["ended_on"] < lo:
+                    err("BAD_DATES", p, "ended_on is before effective_from")
+            attested(e, p, "entitlement")
+            want = rule["earn"].get("allowance")
+            if want and "allowance" not in e:
+                err("MISSING_ALLOWANCE", p, "rule %s grants a consumable allowance; record the amount actually granted" % rule["id"])
+            if "allowance" in e and (not want or e["allowance"]["unit"] != want["unit"] or e["allowance"]["amount"] <= 0):
+                err("BAD_ALLOWANCE", p, "allowance must be positive, in %s, and only for a rule that grants one"
+                    % (want["unit"] if want else "the rule's unit"))
+            ids, total = set(), 0
+            for u in e.get("usage", []):
+                what = "usage %s" % u["id"]
+                if "allowance" not in e:
+                    err("BAD_ALLOWANCE", p, "%s recorded on a benefit that has no allowance" % what)
+                if u["id"] in ids:
+                    err("DUPLICATE_ENTRY", p, "%s appears twice" % what)
+                ids.add(u["id"])
+                if u["amount"] <= 0:
+                    err("BAD_VALUE", p, "%s: amount must be greater than zero" % what)
+                if not real(u["used_on"]):
+                    err("BAD_DATES", p, "%s: used_on is not a real date" % what)
+                elif u["used_on"] != UNKNOWN and u["state"] != "superseded" and real(lo) and real(hi) and (
+                        (lo != UNKNOWN and u["used_on"] < lo) or (hi != UNKNOWN and u["used_on"] > hi)):
+                    err("OUT_OF_TERM", p, "%s: %s is outside the benefit's own dates (%s to %s)" % (what, u["used_on"], lo, hi))
+                attested(u, p, what)
+                total += u["amount"] if u["state"] == "confirmed" else 0
+            if "allowance" in e and total > e["allowance"]["amount"]:
+                err("OVER_CONSUMED", p, "confirmed use %s exceeds the allowance %s" % (total, e["allowance"]["amount"]))
+            for u in e.get("usage", []):
+                if u.get("superseded_by") and u["superseded_by"] not in ids:
+                    err("UNKNOWN_REFERENCE", p, "usage %s: superseded_by %r is not a usage entry here" % (u["id"], u["superseded_by"]))
+            if e["state"] != "superseded":
+                key = (e["rule"], e["account"], e["cycle"])
+                if key in live:
+                    warn("CONFLICTING_ENTITLEMENTS", p, "second live record for the same rule, account and cycle (see %s); "
+                                                        "the engine treats both as unresolved" % live[key])
+                live[key] = e["id"]
 
 
 def errors(store):

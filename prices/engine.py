@@ -30,6 +30,10 @@ NONE = frozenset()
 #   baseline  "network tier T advertises benefit B"   (says nothing about any particular card)
 #   excludes  "card C does not carry benefit B"       (optionally superseded_by a better card benefit)
 NON_DERIVING = ("baseline", "excludes")
+# Rule kinds whose effect depends on a person's own dated records and is computed in earned.py:
+#   earns     "reach a threshold on this card within a period and benefit X is on offer"
+# The generic solver below never fires them; a threshold being met is never, by itself, a benefit held.
+PERSONAL_KINDS = ("earns",)
 
 
 def to_date(s):
@@ -92,7 +96,10 @@ class Result:
         if "metric" in c:
             key = c["metric"]
             m = self._metrics.get(key)
-            if m is None:
+            if m is not None and to_date(m["as_of"]) > self.as_of:
+                # an observation says nothing about dates before it was taken: unknown, never satisfied
+                tok = ("unknown", "metric %s has no observation on or before %s (its reading is dated %s)" % (key, self.as_of, m["as_of"]))
+            elif m is None:
                 tok = ("unknown", "metric %s is not recorded" % key)
             elif m["value"] < c["gte"]:
                 return None
@@ -208,7 +215,7 @@ class Result:
     def basis(self, atom):
         L = self.level_of(atom)
         via = self.via[L][atom][0] if L else ""
-        return "personal" if via.startswith(("holding:", "retain:")) else "derived"
+        return "personal" if via.startswith(("holding:", "retain:", "entitlement:")) else "derived"
 
     def report(self):
         """The four epistemic categories, kept apart."""
@@ -243,6 +250,9 @@ class Result:
                 rep["conditional"].append(row)
             elif st == UNRESOLVED:
                 rep["unresolved"].append(row)
+        if getattr(self, "earned", None) is not None:   # key exists only for people with earned-benefit records
+            from .earned import summary_rows
+            rep["earned_entitlements"] = summary_rows(self.earned)
         return rep
 
 
@@ -265,8 +275,8 @@ def evaluate(store, profile, as_of, include_candidates=False):
                 r.flag("STALE_RULE", "review", rule["id"], "verified rule is past its review_by date %s; re-verify (OP-01)" % rb)
         else:
             levels, toks = (P, U), frozenset([("unknown", "rule %s is unverified" % rule["id"])])
-        if rule["kind"] in NON_DERIVING:
-            continue   # recorded for the applicability matrix (cards.py); never an entitlement
+        if rule["kind"] in NON_DERIVING or rule["kind"] in PERSONAL_KINDS:
+            continue   # baseline/excludes: applicability matrix only (cards.py). earns: personal records only (earned.py)
         rules.append({"id": rule["id"], "kind": rule["kind"], "output": rule["output"], "when": rule["when"],
                       "levels": levels, "tokens": toks, "src": rule})
     if include_candidates:
@@ -274,7 +284,7 @@ def evaluate(store, profile, as_of, include_candidates=False):
             if c["status"] != "proposed":
                 continue
             pr = c["proposed_rule"]
-            if pr["kind"] in NON_DERIVING:
+            if pr["kind"] in NON_DERIVING or pr["kind"] in PERSONAL_KINDS:
                 continue
             rules.append({"id": "candidate:" + c["id"], "kind": pr["kind"], "output": pr["output"], "when": pr["when"],
                           "levels": (U,), "tokens": frozenset([("unknown", "candidate %s is not promoted" % c["id"])]),
@@ -326,6 +336,11 @@ def evaluate(store, profile, as_of, include_candidates=False):
                 for L in (P, U):
                     r._offer(atom, L, tok, hid, [])
                 contested.append((h, src, mode))
+
+    # 2b. earned benefits: base facts from the person's own qualification and entitlement records
+    if prof.qualifications or prof.entitlements:
+        from . import earned
+        earned.inject(r, store, prof, as_of)
 
     # 3. actions are things the person could do: assumable at C and U
     for ent in sorted(store.entities.values(), key=lambda x: x["id"]):

@@ -46,6 +46,10 @@ def boundaries(store, profile, start, until):
         rb = rec.get("verification", {}).get("review_by")
         if rb:
             ds.add(to_date(rb) + one)
+    prof = store.profile(profile)
+    if prof.qualifications or prof.entitlements:
+        from .earned import boundary_dates
+        ds |= boundary_dates(store, profile)
     return sorted(d for d in ds if start < d <= until)
 
 

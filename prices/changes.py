@@ -303,6 +303,190 @@ def op_set_metric(store, cs):
     store.files[store.path("metrics", m["id"], prof.name)] = m
 
 
+# ---------------------------------------------------------------- earned benefits (personal, account- and cycle-scoped)
+def _owner_confirms(cs, prof, rec, what, always=False):
+    """`confirmed` is only ever set from the profile owner's own attestation. Maintainers may record `unconfirmed`."""
+    if rec.get("state") == "confirmed" or always:
+        a = _attested(cs, by=prof.meta["owner"])
+        _need(a["on"] <= cs["date"], "BAD_DATES", "attestation is dated after the changeset")
+        if rec.get("state") == "confirmed":
+            rec["confirmed_by"], rec["confirmed_on"] = a["by"], a["on"]
+    if rec.get("state") != "confirmed":
+        _need(rec.get("state") in ("unconfirmed", "superseded"), "BAD_DATA",
+              "%s: state must be confirmed (with the owner's attestation) or unconfirmed" % what)
+        rec.pop("confirmed_by", None)
+        rec.pop("confirmed_on", None)
+
+
+def _own_account(prof, account):
+    h = prof.holdings.get(account)
+    _need(h is not None, "UNKNOWN_ACCOUNT",
+          "account %r is not a holding in profile %s. Personal progress and earned benefits are recorded only against "
+          "that person's own account; record the card with set_holding first (OP-07)" % (account, prof.name))
+    return h
+
+
+def _when(value, what, cs, lo=None, hi=None, code="OUT_OF_CYCLE"):
+    """A date field that may be the word unknown. Never in the future; optionally inside a range."""
+    from .schema import is_date
+    _need(isinstance(value, str) and (value == "unknown" or is_date(value)), "BAD_DATES",
+          "%s must be a YYYY-MM-DD date or the word unknown (never a guess)" % what)
+    if value != "unknown":
+        _need(value <= cs["date"], "FUTURE_DATE", "%s (%s) is after the changeset date %s" % (what, value, cs["date"]))
+        _need((lo is None or lo <= value) and (hi is None or value <= hi), code,
+              "%s (%s) must fall between %s and %s" % (what, value, lo, hi))
+    return value
+
+
+def _new_reading(cs, prof, qual, reading, period):
+    from .earned import cycle_bounds
+    start, end = [d.isoformat() for d in cycle_bounds(period, qual["cycle"])]
+    r = dict(reading)
+    _need(isinstance(r.get("id"), str), "BAD_DATA", "reading.id missing")
+    _need(all(x["id"] != r["id"] for x in qual["readings"]), "ID_EXISTS", "reading %r already exists in %s" % (r["id"], qual["id"]))
+    _need(isinstance(r.get("value"), (int, float)) and not isinstance(r.get("value"), bool) and r["value"] >= 0, "BAD_VALUE",
+          "reading.value must be a number, zero or more")
+    if r.get("final"):
+        r.setdefault("observed_on", end)
+        _need(r["observed_on"] == end and r.get("value_kind", "exact") == "exact", "BAD_READING",
+              "a final figure is exact and dated the last day of the cycle (%s)" % end)
+        _need(cs["date"] > end, "FINAL_BEFORE_PERIOD_END", "cycle %s does not end until %s; a figure recorded now cannot be final" % (qual["cycle"], end))
+    _need("observed_on" in r, "MISSING_DATA", "reading.observed_on is required: the date the figure refers to, or the word unknown")
+    _when(r["observed_on"], "reading.observed_on", cs, start, end)
+    if r["observed_on"] == "unknown":
+        _need(r.get("value_kind") == "at_least", "BAD_READING",
+              "a reading with no date can only say 'at least this much': set value_kind to at_least")
+    _owner_confirms(cs, prof, r, "reading")
+    same = [x["id"] for x in qual["readings"] if x["state"] != "superseded" and x["observed_on"] == r["observed_on"]
+            and x["value"] == r["value"] and x.get("value_kind", "exact") == r.get("value_kind", "exact")]
+    _need(not same, "DUPLICATE_READING", "reading %s already records %s on %s" % (same[0] if same else "", r["value"], r["observed_on"]))
+    r["changeset"] = cs["id"]
+    qual["readings"].append(r)
+    return r
+
+
+def op_record_progress(store, cs):
+    """Add one dated reading of a person's progress on one of their own accounts in one qualifying cycle."""
+    prof = _profile(store, cs)
+    account, measure, cycle = _data(cs, "account", str), _data(cs, "measure", str), _data(cs, "cycle", str)
+    h = _own_account(prof, account)
+    rules = [r for r in store.rules.values() if r["kind"] == "earns" and r["when"].get("holds") == h["entity"]
+             and r.get("earn", {}).get("measure") == measure]
+    _need(rules, "UNKNOWN_MEASURE", "no earns rule measures %r on %s. Progress is recorded only for a sourced rule" % (measure, h["entity"]))
+    _need(len(cycle) == 4 and cycle.isdigit(), "BAD_DATA", "cycle must be a four-digit qualifying year, e.g. 2026")
+    qual = next((q for q in prof.qualifications.values() if (q["account"], q["measure"], q["cycle"]) == (account, measure, cycle)), None)
+    if qual is None:
+        qual = {"id": "q-%s-%s-%s" % (account, measure, cycle), "account": account, "measure": measure, "cycle": cycle, "readings": []}
+    _new_reading(cs, prof, qual, _data(cs, "reading", dict), rules[0]["earn"]["period"])
+    store.files[store.path("qualifications", qual["id"], prof.name)] = qual
+
+
+def op_record_entitlement(store, cs):
+    """Record that an earned benefit is actually on the person's account, with its own dates. Not implied by progress."""
+    prof = _profile(store, cs)
+    e = dict(_data(cs, "entitlement", dict))
+    _need(isinstance(e.get("id"), str), "BAD_DATA", "entitlement.id missing")
+    _need(e["id"] not in prof.entitlements, "ID_EXISTS", "entitlement %r already exists; use revise_entitlement to change it" % e["id"])
+    rule = store.rules.get(e.get("rule", ""))
+    _need(rule is not None and rule["kind"] == "earns", "UNKNOWN_RULE", "entitlement.rule must name an earns rule")
+    h = _own_account(prof, e.get("account", ""))
+    _need(h["entity"] == rule["when"].get("holds"), "ACCOUNT_MISMATCH",
+          "account %s is a %s; rule %s is about %s" % (h["id"], h["entity"], rule["id"], rule["when"].get("holds")))
+    _need(e.setdefault("entity", rule["output"]) == rule["output"], "ENTITY_MISMATCH", "rule %s offers %s" % (rule["id"], rule["output"]))
+    _need(isinstance(e.get("cycle"), str) and len(e["cycle"]) == 4 and e["cycle"].isdigit(), "BAD_DATA", "cycle must be a four-digit qualifying year")
+    for field in ("effective_from", "expires_on"):
+        _need(field in e, "MISSING_DATA", "entitlement.%s is required. If it is not known, write the word unknown; do not leave it out "
+                                          "and do not copy the rule's general term" % field)
+    _need(not e.get("usage"), "BAD_DATA", "record use separately with record_usage")
+    same = [o["id"] for o in prof.entitlements.values() if o["state"] != "superseded"
+            and (o["rule"], o["account"], o["cycle"]) == (e["rule"], e["account"], e["cycle"])]
+    _need(not same, "DUPLICATE_INSTANCE", "%s already records this benefit for this account and cycle; use revise_entitlement" % (same[0] if same else ""))
+    _owner_confirms(cs, prof, e, "entitlement")
+    store.files[store.path("entitlements", e["id"], prof.name)] = e
+
+
+ENTITLEMENT_REVISABLE = ("effective_from", "expires_on", "ended_on", "end_reason", "allowance", "basis", "notes", "state")
+
+
+def op_revise_entitlement(store, cs):
+    """Correct or end an earned benefit record. The earlier version is kept in data/audit/previous/."""
+    prof = _profile(store, cs)
+    _need("target" in cs, "MISSING_TARGET", "target (entitlement id) is required")
+    e = prof.entitlements.get(cs["target"])
+    _need(e is not None, "UNKNOWN_TARGET", "no entitlement %r in profile %s" % (cs["target"], prof.name))
+    changes = _data(cs, "set", dict)
+    _need(changes, "MISSING_DATA", "data.set is empty")
+    was_confirmed = e["state"] == "confirmed"
+    for k, v in changes.items():
+        _need(k in ENTITLEMENT_REVISABLE, "FIELD_NOT_REVISABLE",
+              "%r cannot be revised (allowed: %s). The rule, account and cycle of a record never change: "
+              "withdraw it (state: superseded) and record a new one." % (k, ", ".join(ENTITLEMENT_REVISABLE)))
+        if v is None:
+            e.pop(k, None)
+        else:
+            e[k] = v
+    _owner_confirms(cs, prof, e, "entitlement", always=was_confirmed)
+    if was_confirmed and e["state"] == "confirmed":
+        e["confirmed_on"] = cs["attestation"]["on"]     # the owner has re-confirmed the record as it now stands
+
+
+def _new_usage(cs, prof, e, usage):
+    u = dict(usage)
+    _need("allowance" in e, "NO_ALLOWANCE", "%s has no consumable allowance; use cannot be recorded against it" % e["id"])
+    _need(e["state"] != "superseded", "BAD_STATE", "entitlement %s was withdrawn" % e["id"])
+    _need(isinstance(u.get("id"), str), "BAD_DATA", "usage.id missing")
+    _need(all(x["id"] != u["id"] for x in e.get("usage", [])), "ID_EXISTS", "usage %r already exists on %s" % (u["id"], e["id"]))
+    _need(isinstance(u.get("amount"), (int, float)) and not isinstance(u.get("amount"), bool) and u["amount"] > 0, "BAD_VALUE",
+          "usage.amount must be a number greater than zero")
+    _need("used_on" in u, "MISSING_DATA", "usage.used_on is required: the date of use, or the word unknown")
+    _when(u["used_on"], "usage.used_on", cs)
+    _owner_confirms(cs, prof, u, "usage")
+    live = [x for x in e.get("usage", []) if x["state"] != "superseded"]
+    same = [x["id"] for x in live if (x["amount"], x["used_on"], x.get("basis", "")) == (u["amount"], u["used_on"], u.get("basis", ""))]
+    _need(not same, "DUPLICATE_USAGE", "usage %s already records %s on %s. If this is a second, separate use, say so in 'basis'"
+          % (same[0] if same else "", u["amount"], u["used_on"]))
+    total = sum(x["amount"] for x in live if x["state"] == "confirmed") + (u["amount"] if u["state"] == "confirmed" else 0)
+    _need(total <= e["allowance"]["amount"], "USAGE_EXCEEDS_ALLOWANCE",
+          "confirmed use would total %s against an allowance of %s. Check the amounts, or correct the allowance first"
+          % (total, e["allowance"]["amount"]))
+    u["changeset"] = cs["id"]
+    e.setdefault("usage", []).append(u)
+    return u
+
+
+def op_record_usage(store, cs):
+    """Record one use of a consumable benefit. Allowance, used and remaining stay separate; remaining is computed."""
+    prof = _profile(store, cs)
+    _need("target" in cs, "MISSING_TARGET", "target (entitlement id) is required")
+    e = prof.entitlements.get(cs["target"])
+    _need(e is not None, "UNKNOWN_TARGET", "no entitlement %r in profile %s" % (cs["target"], prof.name))
+    _new_usage(cs, prof, e, _data(cs, "usage", dict))
+
+
+def op_correct_entry(store, cs):
+    """Withdraw one reading or one usage entry, optionally replacing it. The old entry stays, marked superseded."""
+    prof = _profile(store, cs)
+    kind, rec_id, entry_id = _data(cs, "record", str), _data(cs, "id", str), _data(cs, "entry", str)
+    _need(kind in ("qualification", "entitlement"), "BAD_DATA", "data.record must be qualification or entitlement")
+    rec = (prof.qualifications if kind == "qualification" else prof.entitlements).get(rec_id)
+    _need(rec is not None, "UNKNOWN_TARGET", "no %s %r in profile %s" % (kind, rec_id, prof.name))
+    entries = rec["readings"] if kind == "qualification" else rec.get("usage", [])
+    old = next((x for x in entries if x["id"] == entry_id), None)
+    _need(old is not None, "UNKNOWN_TARGET", "no entry %r in %s" % (entry_id, rec_id))
+    _need(old["state"] != "superseded", "BAD_STATE", "entry %s was already superseded" % entry_id)
+    if old["state"] == "confirmed":
+        _attested(cs, by=prof.meta["owner"])    # undoing an owner-confirmed fact needs the owner
+    old["state"] = "superseded"
+    new = cs.get("data", {}).get("replacement")
+    if new is not None:
+        if kind == "qualification":
+            rule = next(r for r in store.rules.values() if r["kind"] == "earns" and r.get("earn", {}).get("measure") == rec["measure"])
+            added = _new_reading(cs, prof, rec, new, rule["earn"]["period"])
+        else:
+            added = _new_usage(cs, prof, rec, new)
+        old["superseded_by"] = added["id"]
+
+
 def op_record_discovery_run(store, cs):
     run = _data(cs, "run", dict)
     errs = Schema().validate(run, "discovery_run")
