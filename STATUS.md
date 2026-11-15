@@ -67,7 +67,20 @@ Full record: `docs/commissions/results/2026-11-15-fable-argon-intake-bilt-electi
 
 Full record: `docs/commissions/results/2026-11-15-fable-eng-01-recurring-credits-RESULTS.md`.
 
-327 automated tests pass. Run: `python3 -m unittest discover -s tests`.
+### Bilt election correction, ENG-02B (2026-11-15) — demonstrated on invented cardholders only
+
+| Test | Result | Evidence observed |
+|---|---|---|
+| Q Corrected Bilt election model | **Pass** | `tests/test_q_bilt_election_correction.py`, 31 tests: the committed definitions run on a scratch copy with the five candidates promoted there, 20 invented cardholders, acceptance cases 1 to 8 with boundary days; anniversary windows; linked options in general; definition checks |
+| ENG-02 tests preserved | **Pass, one assertion moved** | `tests/test_n_elections.py`, 36 tests. One date changed from 2027-06-01 to 2027-08-02: the published Card Anniversary Date of that invented account is not 2027-06-01 |
+| Safeguards actually guarded | **Pass** | `scripts/mutation_check_elections.py`: 24 of 24 caught (13 from ENG-02, 11 new) |
+| No change for anyone else | **Pass** | `scripts/compare_with_baseline.py` against the commit before ENG-02B: 49 commands byte-identical; in `data/` only the six election definitions and their audit records differ; `profiles/` and tables identical |
+| Candidate quarantine | **Pass** | 113 proposed candidates, none promoted, none edited |
+| Published terms confirmed by the content owner | **Not yet** | Engineering read the terms on 2026-11-15; Argon has not confirmed the six definitions. No named reviewer has checked them line by line |
+
+Full record: `docs/commissions/results/2026-11-15-fable-eng-02b-bilt-election-correction-RESULTS.md`.
+
+358 automated tests pass. Run: `python3 -m unittest discover -s tests`.
 
 ## Capability status
 

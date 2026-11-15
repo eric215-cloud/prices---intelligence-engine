@@ -1,8 +1,10 @@
 """Acceptance Test F: export the project, unpack it somewhere clean, and reproduce setup and tests there.
 
-    python3 scripts/verify_export.py [output.zip]
+    python3 scripts/verify_export.py [output.zip] [--skip-mutation-checks]
 
 Uses only the exported files (no git history, no caches). Exit 0 only if everything passes.
+--skip-mutation-checks leaves out the three mutation checks (about six minutes, some sixty runs of the tests).
+Use it only when scripts/verify_clean_checkout.py has just run them on the same commit; the skipped lines say so.
 """
 import os
 import subprocess
@@ -11,10 +13,15 @@ import tempfile
 import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-out = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else os.path.join(tempfile.mkdtemp(), "prices-export.zip")
+SKIP = "--skip-mutation-checks" in sys.argv
+args = [a for a in sys.argv[1:] if a != "--skip-mutation-checks"]
+out = os.path.abspath(args[0]) if args else os.path.join(tempfile.mkdtemp(), "prices-export.zip")
 
 
 def run(cmd, cwd):
+    if SKIP and "mutation_check" in " ".join(cmd):
+        print("skip %s   | not run here (--skip-mutation-checks)" % " ".join(cmd[1:]))
+        return True
     env = {"PATH": os.environ.get("PATH", ""), "HOME": tempfile.mkdtemp()}   # clean environment
     p = subprocess.run(cmd, cwd=cwd, env=env, capture_output=True, text=True)
     tail = (p.stdout + p.stderr).strip().splitlines()[-1:] or [""]
@@ -51,5 +58,5 @@ ok &= run([sys.executable, "scripts/mutation_check_credits.py"], proj)
 ok &= run([sys.executable, "scripts/demo_elections.py"], proj)
 ok &= run([sys.executable, "scripts/mutation_check_elections.py"], proj)
 print("zip: %s (%d bytes)" % (out, os.path.getsize(out)))
-print("TEST F:", "PASS" if ok else "FAIL")
+print("TEST F:", ("PASS" if ok else "FAIL") + (" (mutation checks skipped)" if SKIP else ""))
 sys.exit(0 if ok else 1)

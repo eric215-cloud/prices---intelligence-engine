@@ -400,8 +400,8 @@ def _linked(group, options, ch, picks, live, day, linked):
                                        "none is applied" % (est[0], state[est[0]][1], other[0]["entity"], other[0]["id"]))]}
         for h in other:
             flags.append(("ELECTION_SUPERSEDED", "info", h["id"],
-                          "%s was a choice for the period before the transition anniversary; %s now applies because %s is in "
-                          "effect. End this record at the transition" % (h["entity"], est[0], state[est[0]][1])))
+                          "%s was the cardholder's own choice and no longer counts; %s now applies because %s is in effect. "
+                          "End this record on the day before that change" % (h["entity"], est[0], state[est[0]][1])))
         _st, up, d = state[est[0]]
         return {"established": est[0], "possible": [], "via": "election-link:" + up, "support": list(d.get("support", [])),
                 "flags": flags, "reason": "applies with %s (%s)" % (up, d["reason"]), "card": ch["id"], "waits_on": sorted(waits)}

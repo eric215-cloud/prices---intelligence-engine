@@ -226,11 +226,33 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 ## D-47  Period ends are surfaced in review and timeline, on the period's last day
 **Decision.** `review` and `timeline` list each allowance period ending in the window for credits that apply (or may apply) to the person, with the published amount and what happens to an unused amount. The key is present only when there is something to list, so reports for people without credit terms are byte-identical to before.
 
+## D-48  The Bilt Legacy Election is one linked arrangement (ENG-02B)
+**Decision.** A third group, `bilt-palladium.arrangement`, holds the one real choice (`legacy-election` or `refreshed-arrangement`). The four ENG-02 options keep their ids and governed rules and `follow` it. Before the transition anniversary the housing options are the cardholder's own choice and the legacy annual benefits apply automatically; afterwards only the arrangement decides.
+**Alternatives considered.** (a) One group of two options governing all five rules: cannot express "Housing-only before the anniversary with the legacy benefits". (b) Retire the four options and add new ones: changes ids that tests, documents and the credits report refer to, for no gain. (c) Conditions written into the rules: the tables own those rules (D-35).
+**Why.** It is what the published terms say (docs/ELECTIONS.md section 8), and it is the smallest change: a store without `follows` behaves exactly as before.
+
+## D-49  The refreshed arrangement is recorded, not inferred, for accounts opened before 2027
+**Decision.** Accounts opened on or after 2027-01-01 get the refreshed arrangement from opening with no record. For older accounts past their anniversary, the owner records it; with nothing recorded both arrangements are UNRESOLVED.
+**Why.** The terms make it mandatory absent a Legacy Election, but PRICES cannot see that absence. A cardholder who made a Legacy Election and has not recorded it would otherwise be shown the $600 and lose Flexible Bilt Cash on paper. Silence is not evidence (D-36).
+
+## D-50  Card anniversary as a window; `anniversary_on` on the card holding
+**Decision.** Where an option says `anniversary_cycle_days`, the anniversary is counted from the first billing cycle after opening. It is exact only when the holding records `anniversary_on`; otherwise it is a window and dates inside it are unknown. Bilt's value is 62.
+**Alternatives considered.** Keep the opening-date anniversary (wrong by up to a year for accounts opened late in a year); treat every date after `opened_on` + 1 year as unknown unless `anniversary_on` is recorded (honest but unusable).
+**Why.** 62 days is not a published figure; it is two billing cycles, chosen so the window cannot be too narrow. It is stored on the definitions, where Argon can change it, not in code. One ENG-02 assertion that placed an anniversary on the opening date's own day was moved accordingly (results file).
+
+## D-51  The four revised definitions are attested by "Commissioning build"
+**Decision.** Revising an `election` block needs a promotion reviewer (D-39). The four revisions carry the attestation of "Commissioning build", stating that commission ENG-02B orders the correction and that no named reviewer has checked the definitions line by line.
+**Why.** Fable is not Eric or Bradley and must not sign as them. The alternative, leaving the live definitions wrong until someone else applies the changesets, would not meet the commission. Eric or Bradley can countersign or revert (`revert_changeset`).
+
+## D-52  Bilt Cash is not given a `credit` block
+**Decision.** No ENG-01 credit terms were added to the Bilt Cash candidates. Election eligibility is decided; grant dates, per-grant expiry and the wallet are not computed (docs/ELECTIONS.md section 8.6).
+**Why.** ENG-01 periods have one balance per period and an anniversary counted from `opened_on`. Describing Bilt Cash that way would look supported and be wrong.
+
 ## Limits of the Argon intake and election work (2026-11-15), stated plainly
 
 - The 113 Argon candidates are integrated exactly as packaged and none is promoted. Engineering did not review their content.
 - Elections are recorded per person; two accounts of one card are reported, not resolved.
-- The Bilt option definitions are a transcription; whether the legacy credits and the Flex housing option form one election or two is Argon's question to answer (modelled as two).
+- The Bilt option definitions were first modelled as two independent elections. ENG-02B corrected that from the published terms: one linked arrangement (D-48 to D-52).
 - No lower-capability model has run OP-12.
 - Full list: `docs/ELECTIONS.md` section 7 and the commission results file.
 

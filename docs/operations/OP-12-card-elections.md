@@ -12,6 +12,21 @@
 | The **account opening date** (gives the anniversary) | `opened_on` on the person's card holding | the owner |
 | The person's **election** of one option, from a date | a holding of that option entity | the owner (confirmed) or anyone (unconfirmed) |
 
+## 0. Bilt Palladium: what to record (corrected by ENG-02B)
+
+The Bilt choices are **linked**. Record only these, and only what the owner tells you:
+
+| The owner says | Record | Notes |
+|---|---|---|
+| The card anniversary shown in the Bilt app | `anniversary_on` on the card holding (with `opened_on`) | Bilt counts the anniversary from the first billing cycle after opening, so `opened_on` alone leaves a window of unknown dates |
+| "My housing option is Housing-only / Flexible Bilt Cash, since ..." (**before** the first card anniversary on or after 2027-01-01) | a holding of `election.bilt-palladium.housing-tiered-points` or `...housing-flex-bilt-cash` | A switch takes effect on the first day of the next billing cycle: use the day the owner gives |
+| "I made the Legacy Election on ..." | a holding of `election.bilt-palladium.legacy-election` | One record. It carries Flexible Bilt Cash, the $200 Bilt Cash and the $400 hotel credit. Must start before that anniversary |
+| "I did not make a Legacy Election" (account opened before 2027, anniversary passed) | a holding of `election.bilt-palladium.refreshed-arrangement`, `valid_from` = the transition anniversary | Carries Housing-only and the $600. Never record it because the Legacy Election record is merely missing |
+| "I left the Legacy Election; it took effect on ..." | `end_holding` on the legacy-election holding (`ended_on` = the day before), then `refreshed-arrangement` from that day | Permanent. The $600 starts at the next card anniversary |
+| Account opened in 2027 or later | nothing | Refreshed from opening, automatically |
+
+Never record `election.bilt-palladium.annual-credits-legacy` or `...annual-credits-600`: the annual benefits are not a choice of their own (`ELECTION_NOT_SELECTABLE`). After the transition anniversary, do not record a housing option either; end the old one on the day before the anniversary.
+
 ## 1. Inputs and context
 - The profile name and the person's holding of the card (`python3 -m prices status --profile <p>`).
 - The option the owner says is in effect, **and since when**. If the owner does not know since when, leave `valid_from` out; the program treats the election as unknown before the day the owner confirmed it.
@@ -66,8 +81,10 @@ Withdraw: same as the last one with `"data": {"withdrawn": true}` instead of `en
 | `CONFLICTING_ELECTIONS` | Two options in effect on the same date | Ask the owner; end or withdraw the wrong one |
 | `UNCONFIRMED_ELECTION` | Recorded but not confirmed | Get the owner's confirmation |
 | `ELECTION_START_NOT_RECORDED` | No `valid_from`; before the owner confirmed it, unknown | Ask since when, if it matters |
-| `ANNIVERSARY_NOT_RECORDED` | The answer depends on the card anniversary and `opened_on` is missing | Ask the opening date; add `opened_on` |
+| `ANNIVERSARY_NOT_RECORDED` | The answer depends on the card anniversary, and `opened_on` is missing or (Bilt) does not place it | Ask the opening date and the card anniversary the issuer shows; add `opened_on` and `anniversary_on` |
 | `ELECTION_NOT_PERMITTED` | The record contradicts the option's published terms (e.g. Flex for an account opened in 2027, or $600 before this account's 2027 anniversary) | Re-check dates with the owner; escalate if the account really shows it |
+| `ELECTION_NOT_SELECTABLE` | A record of an option that is never chosen on its own (Bilt annual benefits) | Withdraw it; record the Legacy Election or the refreshed arrangement instead |
+| `ELECTION_SUPERSEDED` (info) | A housing choice left on file after the arrangement took over | End it on the day before the change |
 | `ELECTION_TERMS_UNVERIFIED` (info) | Stands on the owner's word; a term could not be checked (usually no `opened_on`) | Add `opened_on` when known |
 | `MULTIPLE_CARD_ACCOUNTS` | Two holdings of the same card in effect | Escalate: elections are recorded per person |
 | `ELECTION_WITHOUT_CARD` | An election but no card held | Record the card, or end the election |

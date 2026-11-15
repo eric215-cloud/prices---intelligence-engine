@@ -1,12 +1,16 @@
 """Show that people and data with no earned-benefit records get byte-identical output from an older commit and from this checkout.
 
-    python3 scripts/compare_with_baseline.py [baseline-commit]        (default: 8039477, the commit before ENG-01)
+    python3 scripts/compare_with_baseline.py [baseline-commit]        (default: bb95d8b, the commit before ENG-02B)
 
 The default baseline moves with each commission, so the comparison isolates what the latest work changed:
-6eb9ec9 before earned benefits, cdce9e1 before elections (ENG-02), 8039477 before recurring credits (ENG-01).
+6eb9ec9 before earned benefits, cdce9e1 before elections (ENG-02), 8039477 before recurring credits (ENG-01), bb95d8b before the Bilt election correction (ENG-02B).
 ENG-01 added one table, credits.csv. Wherever tables are kept (live, and in the two older fixtures) that file is new
 and the tables MANIFEST.json lists it; those two files are left out of the file-set comparison and checked
 separately: every such credits.csv must be the header line only.
+ENG-02B corrected the six Bilt election definitions through the pipeline and moved ONE assertion in
+tests/test_n_elections.py. Those are compared exactly: section 1 lists every data file that differs from the
+baseline and fails unless the list is the six definitions and their audit records, and the test file must be
+the baseline's file with that one assertion replaced and nothing else.
 
 Needs git (it unpacks the baseline commit into a temp directory with `git archive`); nothing else.
 Runs the same list of read-only commands with the OLD code on the OLD files and with the NEW code on
@@ -23,9 +27,16 @@ import tarfile
 import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE = sys.argv[1] if len(sys.argv) > 1 else "8039477"
+BASE = sys.argv[1] if len(sys.argv) > 1 else "bb95d8b"
 DATES = ("2026-11-14", "2027-03-15", "2028-01-05")
 NEW_TABLE_FILES = ("credits.csv", "MANIFEST.json")      # see the note above
+ENG02B_DATA = ("data/audit/log.jsonl", "data/audit/changesets/cs-20261115-eng02b-", "data/audit/previous/cs-20261115-eng02b-",
+               "data/kb/entities/election.bilt-palladium.")          # the only data paths ENG-02B may add or change
+ENG02B_TEST = ("tests/test_n_elections.py",
+               '''            self.assertEqual(set(got("2027-06-01").values()), {UNRESOLVED})          # this cardholder's 2027 anniversary, nothing recorded''',
+               '''            # ENG-02B: the published Card Anniversary Date is counted from the first billing cycle after opening, so for an
+            # account opened 2025-06-01 it falls between 2027-06-02 and 2027-08-02 (it is not 2027-06-01, as ENG-02 assumed).
+            self.assertEqual(set(got("2027-08-02").values()), {UNRESOLVED})          # this cardholder's 2027 anniversary has come, nothing recorded''')
 EMPTY_CREDITS = ("tables/credits.csv", "fixtures/synthetic-cards/tables/credits.csv", "fixtures/synthetic-earned/tables/credits.csv",
                  "fixtures/synthetic-cards-input/credits.csv")
 UNCHANGED = ("data", "profiles", "tables", "fixtures/synthetic-cards", "fixtures/synthetic-earned",
@@ -72,6 +83,8 @@ def tree_digest(tree, rel):
             if n in NEW_TABLE_FILES and (os.path.basename(d) == "tables" or d.endswith("synthetic-cards-input")):
                 continue
             path = os.path.join(d, n)
+            if os.path.relpath(path, tree).replace(os.sep, "/").startswith(ENG02B_DATA):
+                continue                   # listed and checked one by one below
             h.update(os.path.relpath(path, tree).encode())
             with open(path, "rb") as f:
                 h.update(hashlib.sha256(f.read()).digest())
@@ -92,9 +105,36 @@ print("baseline %s unpacked to %s\n" % (BASE, old))
 bad = 0
 print("1. Files that must be the same in both")
 for rel in UNCHANGED:
+    if rel == ENG02B_TEST[0]:
+        with open(os.path.join(old, rel), encoding="utf-8") as f_old, open(os.path.join(ROOT, rel), encoding="utf-8") as f_new:
+            was, now = f_old.read(), f_new.read()
+        same = was.count(ENG02B_TEST[1]) == 1 and was.replace(ENG02B_TEST[1], ENG02B_TEST[2]) == now
+        bad += 0 if same else 1
+        print("   %-9s %s (the baseline's file with one assertion moved to the published anniversary; nothing else)" % ("same" if same else "DIFFERENT", rel))
+        continue
     same = tree_digest(old, rel) == tree_digest(ROOT, rel)
     bad += 0 if same else 1
     print("   %-9s %s" % ("same" if same else "DIFFERENT", rel))
+
+def files(tree, rel):
+    out = {}
+    for d, _subdirs, names in os.walk(os.path.join(tree, rel)):
+        for n in names:
+            path = os.path.join(d, n)
+            with open(path, "rb") as f:
+                out[os.path.relpath(path, tree).replace(os.sep, "/")] = f.read()
+    return out
+
+
+was, now = files(old, "data"), files(ROOT, "data")
+changed = sorted(k for k in set(was) | set(now) if was.get(k) != now.get(k))
+expected = [k for k in changed if k.startswith(ENG02B_DATA) and k in now]
+entities = [k for k in changed if k.startswith("data/kb/entities/")]
+ok = changed == expected and len(entities) == 6 and len(changed) == 6 + 12 + 1
+bad += 0 if ok else 1
+print("   %-9s data/ differs in %d file(s): %d election definitions, their %d audit records and the audit log%s"
+      % ("ok" if ok else "DIFFERENT", len(changed), len(entities), len(changed) - len(entities) - 1,
+         "" if ok else "; unexpected: " + ", ".join(sorted(set(changed) - set(expected))[:5])))
 
 for rel in EMPTY_CREDITS:
     with open(os.path.join(ROOT, rel), encoding="utf-8") as f:

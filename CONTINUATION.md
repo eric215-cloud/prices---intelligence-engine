@@ -1,6 +1,6 @@
 # PRICES — continuation document
 
-Update this file at the end of every work session. Last updated 2026-11-15 by Claude Fable 5.2 after the ENG-01 recurring-credits commission (branch `dev/eng-01-recurring-credits`, from `dev/argon-content-intake` at 8039477; `main` unchanged).
+Update this file at the end of every work session. Last updated 2026-11-15 by Claude Fable 5.2 after the ENG-02B Bilt election correction (branch `dev/eng-02b-bilt-election-correction`, from `dev/eng-01-recurring-credits` at bb95d8b; `main` unchanged).
 
 ## Coordinator continuity
 
@@ -10,6 +10,8 @@ For project leadership, architecture decisions, model responsibilities, office-m
 A working, tested foundation: eligibility engine, validation, changeset pipeline, discovery planners, goal reports, maintainer procedures, successor-test harness. 10 researched rules. Two synthetic profiles. Eric's profile with two confirmed statuses. Details: `STATUS.md`. Design: `docs/ARCHITECTURE.md`.
 
 Added 2026-11-14: card architecture (six role references per card), network-tier baselines and card exclusions that derive nothing, an applicability report, and CSV tables in `tables/` that are a view of the store and a validated authoring input. Demonstrated on invented cards only (`fixtures/`). No real card is loaded. Read `docs/RELATIONAL_TABLES.md`; results in `docs/commissions/results/2026-11-14-fable-relational-foundation-RESULTS.md`.
+
+Added 2026-11-15 (fifth commission, ENG-02B): the Bilt Palladium elections were corrected from the published terms. The Legacy Election is one linked arrangement (Flexible Bilt Cash, $200 Bilt Cash, $400 hotel credit); the refreshed arrangement (Housing-only, $600) applies from opening to accounts opened in 2027 or later; leaving the Legacy Election is permanent; the card anniversary is counted from the first billing cycle after opening (`anniversary_on` on the card holding). Read `docs/ELECTIONS.md` section 8 and `docs/operations/OP-12-card-elections.md` section 0 first.
 
 Added 2026-11-15 (fourth commission, ENG-01): structured recurring credits. A `credit` block on a card-benefit rule holds the published terms; the allowance period for any date is computed (calendar year, half, quarter, month, card anniversary, multi-year); a person's balance exists only as an owner-confirmed record for one period. A published allowance is never a personal balance. Demonstrated on invented data only (`fixtures/synthetic-credits/`); no real credit has structured terms and Argon's candidates were not edited. Read `docs/RECURRING_CREDITS.md`, then `docs/operations/OP-13-recurring-credits.md`. Results: `docs/commissions/results/2026-11-15-fable-eng-01-recurring-credits-RESULTS.md`.
 
@@ -21,7 +23,7 @@ Added 2026-11-14 (second commission): earned benefits. A public `earns` rule, a 
 Needs Python 3.9+ only. From the project root:
 
 ```
-python3 -m unittest discover -s tests      # expect: Ran 327 tests ... OK
+python3 -m unittest discover -s tests      # expect: Ran 358 tests ... OK
 python3 -m prices lint                     # expect: lint: 0 error(s), 1 warning(s)  (Eric's Aeroplan 25K has no expiry date yet)
 python3 -m prices status --profile synthetic-demo --as-of 2026-11-12
 python3 -m prices tables status            # expect: "no" twice
@@ -29,7 +31,7 @@ python3 -m prices --root fixtures/synthetic-cards cards --profile synthetic-alex
 python3 -m prices --root fixtures/synthetic-earned earned --profile synthetic-alex --as-of 2027-03-10
 python3 scripts/demo_earned.py             # expect: DEMO COMPLETE  (earned benefits, before and after, on a throwaway copy)
 python3 scripts/mutation_check_earned.py   # expect: 17 of 17 mutations caught
-python3 scripts/compare_with_baseline.py   # expect: BASELINE COMPARISON: PASS  (needs git; compares with 8039477, the commit before ENG-01)
+python3 scripts/compare_with_baseline.py   # expect: BASELINE COMPARISON: PASS  (needs git; compares with bb95d8b, the commit before ENG-02B)
 python3 scripts/verify_argon_intake.py     # expect: ARGON INTAKE: PASS  (needs git)
 python3 scripts/demo_elections.py          # expect: DEMO COMPLETE  (Bilt elections on a throwaway copy)
 python3 scripts/mutation_check_elections.py  # expect: 13 of 13 mutations caught
@@ -68,6 +70,8 @@ Acceptance tests A, B, C, E, F, H, I pass. D passed for one discovery chain. G p
 5. Research those tasks (procedure in `docs/DISCOVERY.md`). This grows the knowledge base around what Eric actually holds, which keeps maintenance small.
 
 ## Engineering commissions suggested next
+After ENG-02B (see its results file of 2026-11-15): Argon confirms the six Bilt election definitions against the published terms and decides the open points listed in `docs/ELECTIONS.md` section 8.5; a named reviewer countersigns the four revised definitions; per-grant Bilt Cash accounting is a separate piece of work (section 8.6) and should be commissioned before any Bilt Cash amount is reported as a balance. Eric has said he made the Legacy Election: recording it (OP-12 section 0, with `opened_on` and `anniversary_on`) is a profile task for the coordinator, not done here.
+
 After ENG-01 (see the results file of 2026-11-15 for ENG-01): Argon enters credit terms for the candidates that fit; the structures that do not fit are listed in `docs/RECURRING_CREDITS.md` section 6, each with what it would need. ENG-03 and ENG-04 were deliberately not started.
 
 After the Argon intake (see the results file of 2026-11-15): Argon confirms the Bilt election definitions; a reviewer then decides on promotion candidate by candidate; ENG-01, ENG-03 and ENG-04 were deliberately not started.

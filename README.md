@@ -12,7 +12,7 @@ It keeps sourced rules about loyalty programs, one person's actual holdings, and
 ## Start here
 
 ```
-python3 -m unittest discover -s tests          # 327 tests, about twenty seconds
+python3 -m unittest discover -s tests          # 358 tests, about half a minute
 python3 -m prices lint                         # must print: 0 error(s)
 python3 -m prices status --profile synthetic-demo --as-of 2026-11-12
 python3 -m prices goal "Find promising ways for me to fly business class to Japan" --profile synthetic-demo --as-of 2026-11-12
