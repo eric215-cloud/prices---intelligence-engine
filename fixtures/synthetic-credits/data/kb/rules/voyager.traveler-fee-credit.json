@@ -1,0 +1,27 @@
+{
+  "credit": {
+    "amount": 120,
+    "anchor": "last_use",
+    "cycle": "multi_year",
+    "unit": "USD",
+    "years": 4
+  },
+  "evidence": [
+    "ev-syn-voyager-credit-terms"
+  ],
+  "id": "voyager.traveler-fee-credit",
+  "kind": "grants",
+  "output": "benefit.voyager.traveler-fee-credit",
+  "restrictions": [
+    "The four years run from the date the credit was last applied"
+  ],
+  "summary": "One statement credit of up to 120 every four years for a trusted-traveler application fee.",
+  "verification": {
+    "last_verified": "2026-11-15",
+    "review_by": "2027-11-15",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.northwind-voyager"
+  }
+}

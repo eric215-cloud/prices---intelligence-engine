@@ -1,0 +1,9 @@
+id,=card,=benefit,=benefit_name,=state,amount,unit,cycle,years,anchor,max_per_transaction,min_stay_nights,min_transaction,rollover,rollover_max,note,_action,_evidence
+voyager.curated-hotel-credit,card.northwind-voyager,benefit.voyager.curated-hotel-credit,Northwind Voyager curated hotel credit (synthetic),verified,500,USD,calendar_year,,,250,2,,none,,,,
+voyager.dining-credit,card.northwind-voyager,benefit.voyager.dining-credit,Northwind Voyager dining credit (synthetic),verified,150,USD,calendar_half,,,,,,none,,,,
+voyager.lifestyle-credit,card.northwind-voyager,benefit.voyager.lifestyle-credit,Northwind Voyager lifestyle credit (synthetic),verified,200,USD,calendar_year,,,,,,,,,,
+voyager.ride-credit,card.northwind-voyager,benefit.voyager.ride-credit,Northwind Voyager ride credit (synthetic),verified,10,USD,calendar_month,,,,,,none,,,,
+voyager.streaming-credit,card.northwind-voyager,benefit.voyager.streaming-credit,Northwind Voyager streaming credit (synthetic),verified,20,USD,calendar_quarter,,,,,,allowed,20,,,
+voyager.travel-credit,card.northwind-voyager,benefit.voyager.travel-credit,Northwind Voyager annual travel credit,verified,300,USD,anniversary_year,,,,,,,,,,
+voyager.traveler-fee-credit,card.northwind-voyager,benefit.voyager.traveler-fee-credit,Northwind Voyager trusted-traveler fee credit (synthetic),verified,120,USD,multi_year,4,last_use,,,,,,,,
+voyager.wellness-credit,card.northwind-voyager,benefit.voyager.wellness-credit,Northwind Voyager wellness credit (synthetic),verified,25,USD,calendar_month,,,,,,none,,,,

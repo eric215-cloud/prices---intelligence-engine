@@ -1,0 +1,26 @@
+{
+  "credit": {
+    "amount": 150,
+    "cycle": "calendar_half",
+    "rollover": "none",
+    "unit": "USD"
+  },
+  "evidence": [
+    "ev-syn-voyager-credit-terms"
+  ],
+  "id": "voyager.dining-credit",
+  "kind": "grants",
+  "output": "benefit.voyager.dining-credit",
+  "restrictions": [
+    "The two halves are separate; an unused amount does not carry over"
+  ],
+  "summary": "Up to 150 in dining statement credits from January to June and up to 150 from July to December.",
+  "verification": {
+    "last_verified": "2026-11-15",
+    "review_by": "2027-11-15",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.northwind-voyager"
+  }
+}

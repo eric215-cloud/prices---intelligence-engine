@@ -1,0 +1,18 @@
+{
+  "evidence": [
+    "ev-syn-voyager-guide"
+  ],
+  "id": "voyager.rental-cover-superseded",
+  "kind": "excludes",
+  "output": "benefit.orbit-summit.rental-cover",
+  "summary": "The network's secondary rental cover does not apply; the card provides its own primary cover instead.",
+  "superseded_by": "benefit.voyager.primary-rental-cover",
+  "verification": {
+    "last_verified": "2026-11-14",
+    "review_by": "2027-05-14",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.northwind-voyager"
+  }
+}

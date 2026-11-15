@@ -1,0 +1,14 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "id": "org.tidewater-bank",
+      "kind": "organization",
+      "name": "Tidewater Bank (synthetic)"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-b2c9a69a-06-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: parties row org.tidewater-bank"
+}

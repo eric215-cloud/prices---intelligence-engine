@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20270306-credit-21-record-entitlement",
+  "records": {
+    "profiles/synthetic-alex/entitlements/e-dining-2027-h1.json": {
+      "after": "656156da7979adc0",
+      "before": null
+    }
+  }
+}

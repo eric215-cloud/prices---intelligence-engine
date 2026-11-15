@@ -1,0 +1,13 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-14-add-entity",
+  "records": {
+    "data/kb/entities/card.northwind-voyager.json": {
+      "after": "1cee0d7a8015f7a8",
+      "before": null
+    },
+    "data/kb/evidence/ev-syn-voyager-terms.json": {
+      "after": "cfafdb936d046186",
+      "before": null
+    }
+  }
+}

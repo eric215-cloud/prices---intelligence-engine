@@ -1,0 +1,21 @@
+{
+  "attestation": {
+    "by": "Blake (synthetic)",
+    "on": "2026-11-14",
+    "statement": "Invented holding for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "holding": {
+      "entity": "card.halcyon-kestrel",
+      "id": "h-card-halcyon-kestrel",
+      "state": "confirmed",
+      "valid_from": "2026-01-01"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-fix-22-set-holding",
+  "op": "set_holding",
+  "profile": "synthetic-blake",
+  "reason": "Synthetic holding"
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20270211-credit-19-record-entitlement",
+  "records": {
+    "profiles/synthetic-alex/entitlements/e-hotel-2027.json": {
+      "after": "83b0ccc9f00032c1",
+      "before": null
+    }
+  }
+}

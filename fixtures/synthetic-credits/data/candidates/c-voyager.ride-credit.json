@@ -1,0 +1,49 @@
+{
+  "created_on": "2026-11-15",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.northwind-voyager"
+      ],
+      "id": "ev-syn-voyager-credit-terms",
+      "notes": "Invented for testing.",
+      "publisher": "Northwind Bank (synthetic)",
+      "retrieved_on": "2026-11-15",
+      "source_type": "synthetic",
+      "summary": "The card's own credit terms: 300 travel credit per cardmember year, resetting on the account anniversary; curated hotel credit 500 per calendar year, 250 per booking, two-night minimum; dining credit 150 per half year; ride credit 10 per month through September 30, 2027; trusted-traveler fee credit 120 every four years from the last use; streaming credit 20 per quarter with carry-over up to 20; and a choice between a 200 yearly lifestyle credit and a 25 monthly wellness credit.",
+      "title": "Northwind Voyager statement credit terms",
+      "url": "https://example.invalid/northwind/voyager-credit-terms"
+    }
+  ],
+  "id": "c-voyager.ride-credit",
+  "open_questions": [],
+  "proposed_rule": {
+    "credit": {
+      "amount": 10,
+      "cycle": "calendar_month",
+      "rollover": "none",
+      "unit": "USD"
+    },
+    "id": "voyager.ride-credit",
+    "kind": "grants",
+    "output": "benefit.voyager.ride-credit",
+    "restrictions": [
+      "Unused monthly credit expires at the end of the month"
+    ],
+    "summary": "10 in ride credit each calendar month through September 30, 2027.",
+    "valid_to": "2027-09-30",
+    "when": {
+      "holds": "card.northwind-voyager"
+    }
+  },
+  "review": {
+    "decided_by": "Synthetic Reviewer",
+    "decided_on": "2026-11-15",
+    "reason": "Synthetic recurring-credit fixture",
+    "rule": "voyager.ride-credit"
+  },
+  "search_path": [
+    "tables import (card_benefits.csv)"
+  ],
+  "status": "promoted"
+}

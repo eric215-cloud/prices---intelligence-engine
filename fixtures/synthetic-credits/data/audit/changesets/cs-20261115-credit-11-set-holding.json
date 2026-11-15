@@ -1,0 +1,22 @@
+{
+  "attestation": {
+    "by": "Erin (synthetic)",
+    "on": "2026-11-15",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "holding": {
+      "entity": "card.northwind-voyager",
+      "id": "h-card-northwind-voyager",
+      "opened_on": "2024-11-02",
+      "state": "confirmed",
+      "valid_from": "2024-11-02"
+    }
+  },
+  "date": "2026-11-15",
+  "id": "cs-20261115-credit-11-set-holding",
+  "op": "set_holding",
+  "profile": "synthetic-erin",
+  "reason": "Synthetic recurring-credit fixture"
+}

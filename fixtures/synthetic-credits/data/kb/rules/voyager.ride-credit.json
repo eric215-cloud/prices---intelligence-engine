@@ -1,0 +1,27 @@
+{
+  "credit": {
+    "amount": 10,
+    "cycle": "calendar_month",
+    "rollover": "none",
+    "unit": "USD"
+  },
+  "evidence": [
+    "ev-syn-voyager-credit-terms"
+  ],
+  "id": "voyager.ride-credit",
+  "kind": "grants",
+  "output": "benefit.voyager.ride-credit",
+  "restrictions": [
+    "Unused monthly credit expires at the end of the month"
+  ],
+  "summary": "10 in ride credit each calendar month through September 30, 2027.",
+  "valid_to": "2027-09-30",
+  "verification": {
+    "last_verified": "2026-11-15",
+    "review_by": "2027-11-15",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.northwind-voyager"
+  }
+}

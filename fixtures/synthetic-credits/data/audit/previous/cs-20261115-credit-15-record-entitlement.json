@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-credit-15-record-entitlement",
+  "records": {
+    "profiles/synthetic-alex/entitlements/e-traveler-fee-2025.json": {
+      "after": "c2f911f6d83027f1",
+      "before": null
+    }
+  }
+}

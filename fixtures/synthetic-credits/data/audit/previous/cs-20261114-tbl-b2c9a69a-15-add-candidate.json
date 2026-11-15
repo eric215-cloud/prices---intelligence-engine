@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-15-add-candidate",
+  "records": {
+    "data/candidates/c-baseline.orbit-summit.lounge-day-pass.json": {
+      "after": "f7605226ea09b99c",
+      "before": null
+    }
+  }
+}

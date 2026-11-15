@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-12-add-entity",
+  "records": {
+    "data/kb/entities/benefit.voyager.travel-credit.json": {
+      "after": "b5b2ef011243daec",
+      "before": null
+    }
+  }
+}

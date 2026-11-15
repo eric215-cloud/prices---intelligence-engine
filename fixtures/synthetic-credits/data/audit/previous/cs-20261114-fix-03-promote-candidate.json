@@ -1,0 +1,49 @@
+{
+  "changeset": "cs-20261114-fix-03-promote-candidate",
+  "records": {
+    "data/candidates/c-baseline.orbit-summit.rental-cover.json": {
+      "after": "c779cc9ce39ed7fd",
+      "before": {
+        "created_on": "2026-11-14",
+        "evidence": [
+          {
+            "applies_to": [
+              "tier.orbit-summit"
+            ],
+            "id": "ev-syn-orbit-summit-benefits",
+            "notes": "Invented for testing.",
+            "publisher": "Orbit Payments (synthetic)",
+            "retrieved_on": "2026-11-14",
+            "source_type": "synthetic",
+            "summary": "Network marketing page. Lists rental car cover, phone protection and a lounge day pass for Orbit Summit cards, and says benefits vary by issuer and card.",
+            "title": "Orbit Summit benefits overview",
+            "url": "https://example.invalid/orbit/summit-benefits"
+          }
+        ],
+        "id": "c-baseline.orbit-summit.rental-cover",
+        "open_questions": [],
+        "proposed_rule": {
+          "id": "baseline.orbit-summit.rental-cover",
+          "kind": "baseline",
+          "output": "benefit.orbit-summit.rental-cover",
+          "restrictions": [
+            "Secondary to other insurance",
+            "Rentals up to 15 days"
+          ],
+          "summary": "Orbit advertises secondary rental car cover up to 50,000 for Summit cards.",
+          "when": {
+            "holds": "tier.orbit-summit"
+          }
+        },
+        "search_path": [
+          "tables import (tier_baselines.csv)"
+        ],
+        "status": "proposed"
+      }
+    },
+    "data/kb/rules/baseline.orbit-summit.rental-cover.json": {
+      "after": "dd5932ff6da2f574",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "evidence_policy": {
+    "primary_types": [
+      "official",
+      "synthetic"
+    ],
+    "secondary_min": 2,
+    "secondary_types": [
+      "reputable_secondary"
+    ]
+  },
+  "goal_research": [],
+  "promotion_reviewers": [
+    "Synthetic Reviewer"
+  ],
+  "questions": {},
+  "seeded_signatures": [],
+  "tags": {},
+  "watchlist": []
+}

@@ -1,0 +1,7 @@
+profile,owner,synthetic,entity,name,kind,state,valid_from,valid_to,acquired_via,quantity
+synthetic-alex,Alex (synthetic),yes,election.voyager.lifestyle-credit,Northwind Voyager annual perk choice: lifestyle credit (synthetic),election,confirmed,2026-01-01,,,
+synthetic-alex,Alex (synthetic),yes,card.northwind-voyager,Northwind Voyager (synthetic),card,confirmed,2026-01-01,,,
+synthetic-blake,Blake (synthetic),yes,card.halcyon-kestrel,Halcyon Kestrel (synthetic),card,confirmed,2026-01-01,,,
+synthetic-erin,Erin (synthetic),yes,card.northwind-voyager,Northwind Voyager (synthetic),card,confirmed,2024-11-02,,,
+synthetic-finn,Finn (synthetic),yes,election.voyager.wellness-credit,Northwind Voyager annual perk choice: wellness credit (synthetic),election,confirmed,2026-05-01,,,
+synthetic-finn,Finn (synthetic),yes,card.northwind-voyager,Northwind Voyager (synthetic),card,confirmed,2026-05-01,,,

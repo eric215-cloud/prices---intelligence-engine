@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-credit-09-add-entity",
+  "records": {
+    "data/kb/entities/election.voyager.wellness-credit.json": {
+      "after": "fec4061b6d08d623",
+      "before": null
+    }
+  }
+}

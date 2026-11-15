@@ -1,0 +1,13 @@
+{
+  "applies_to": [
+    "card.halcyon-kestrel"
+  ],
+  "id": "ev-syn-kestrel-guide",
+  "notes": "Invented for testing.",
+  "publisher": "Tidewater Bank (synthetic)",
+  "retrieved_on": "2026-11-14",
+  "source_type": "synthetic",
+  "summary": "The card's own guide. States that Orbit Summit phone protection is not offered on this card. Silent on rental cover and on the lounge pass.",
+  "title": "Halcyon Kestrel Guide to Benefits",
+  "url": "https://example.invalid/tidewater/kestrel-guide-to-benefits"
+}

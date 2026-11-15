@@ -1,0 +1,49 @@
+{
+  "changeset": "cs-20261114-fix-01-promote-candidate",
+  "records": {
+    "data/candidates/c-baseline.orbit-summit.lounge-day-pass.json": {
+      "after": "2b5a6c49948efc59",
+      "before": {
+        "created_on": "2026-11-14",
+        "evidence": [
+          {
+            "applies_to": [
+              "tier.orbit-summit"
+            ],
+            "id": "ev-syn-orbit-summit-benefits",
+            "notes": "Invented for testing.",
+            "publisher": "Orbit Payments (synthetic)",
+            "retrieved_on": "2026-11-14",
+            "source_type": "synthetic",
+            "summary": "Network marketing page. Lists rental car cover, phone protection and a lounge day pass for Orbit Summit cards, and says benefits vary by issuer and card.",
+            "title": "Orbit Summit benefits overview",
+            "url": "https://example.invalid/orbit/summit-benefits"
+          }
+        ],
+        "id": "c-baseline.orbit-summit.lounge-day-pass",
+        "open_questions": [],
+        "proposed_rule": {
+          "id": "baseline.orbit-summit.lounge-day-pass",
+          "kind": "baseline",
+          "output": "benefit.orbit-summit.lounge-day-pass",
+          "summary": "Orbit advertises one airport lounge day pass a year for Summit cards.",
+          "when": {
+            "holds": "tier.orbit-summit"
+          }
+        },
+        "search_path": [
+          "tables import (tier_baselines.csv)"
+        ],
+        "status": "proposed"
+      }
+    },
+    "data/kb/evidence/ev-syn-orbit-summit-benefits.json": {
+      "after": "6933a69a20e269cf",
+      "before": null
+    },
+    "data/kb/rules/baseline.orbit-summit.lounge-day-pass.json": {
+      "after": "ee951b516a1e3f8b",
+      "before": null
+    }
+  }
+}

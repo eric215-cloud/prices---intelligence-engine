@@ -1,0 +1,16 @@
+{
+  "attestation": {
+    "by": "Synthetic Reviewer",
+    "on": "2026-11-14",
+    "statement": "Synthetic review: the cited synthetic source supports the row."
+  },
+  "author": "Synthetic Reviewer",
+  "data": {
+    "review_by": "2027-05-14"
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-fix-02-promote-candidate",
+  "op": "promote_candidate",
+  "reason": "Fixture promotion",
+  "target": "c-baseline.orbit-summit.phone-protection"
+}

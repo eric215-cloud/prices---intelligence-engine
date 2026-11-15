@@ -1,0 +1,48 @@
+{
+  "changeset": "cs-20261114-fix-02-promote-candidate",
+  "records": {
+    "data/candidates/c-baseline.orbit-summit.phone-protection.json": {
+      "after": "3b8fbcc0a178e4bb",
+      "before": {
+        "created_on": "2026-11-14",
+        "evidence": [
+          {
+            "applies_to": [
+              "tier.orbit-summit"
+            ],
+            "id": "ev-syn-orbit-summit-benefits",
+            "notes": "Invented for testing.",
+            "publisher": "Orbit Payments (synthetic)",
+            "retrieved_on": "2026-11-14",
+            "source_type": "synthetic",
+            "summary": "Network marketing page. Lists rental car cover, phone protection and a lounge day pass for Orbit Summit cards, and says benefits vary by issuer and card.",
+            "title": "Orbit Summit benefits overview",
+            "url": "https://example.invalid/orbit/summit-benefits"
+          }
+        ],
+        "id": "c-baseline.orbit-summit.phone-protection",
+        "open_questions": [],
+        "proposed_rule": {
+          "id": "baseline.orbit-summit.phone-protection",
+          "kind": "baseline",
+          "output": "benefit.orbit-summit.phone-protection",
+          "restrictions": [
+            "Two claims per year"
+          ],
+          "summary": "Orbit advertises phone protection up to 800 per claim for Summit cards.",
+          "when": {
+            "holds": "tier.orbit-summit"
+          }
+        },
+        "search_path": [
+          "tables import (tier_baselines.csv)"
+        ],
+        "status": "proposed"
+      }
+    },
+    "data/kb/rules/baseline.orbit-summit.phone-protection.json": {
+      "after": "e62a88a3737a8e5a",
+      "before": null
+    }
+  }
+}

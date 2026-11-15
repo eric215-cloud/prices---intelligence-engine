@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-tbl-0c0455e5-01-add-entity",
+  "records": {
+    "data/kb/entities/benefit.voyager.curated-hotel-credit.json": {
+      "after": "b3cb71f04f7cb00b",
+      "before": null
+    }
+  }
+}

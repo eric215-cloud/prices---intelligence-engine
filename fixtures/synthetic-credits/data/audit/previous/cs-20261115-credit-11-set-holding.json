@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-credit-11-set-holding",
+  "records": {
+    "profiles/synthetic-erin/holdings/h-card-northwind-voyager.json": {
+      "after": "dcc5e349aed5d849",
+      "before": null
+    }
+  }
+}

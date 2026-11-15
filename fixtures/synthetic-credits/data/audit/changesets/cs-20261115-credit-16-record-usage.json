@@ -1,0 +1,23 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2026-11-15",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "usage": {
+      "amount": 120,
+      "basis": "Application fee",
+      "id": "u-2025-09-10",
+      "state": "confirmed",
+      "used_on": "2025-09-10"
+    }
+  },
+  "date": "2026-11-15",
+  "id": "cs-20261115-credit-16-record-usage",
+  "op": "record_usage",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic recurring-credit fixture",
+  "target": "e-traveler-fee-2025"
+}

@@ -1,0 +1,29 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2026-11-15",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entitlement": {
+      "account": "h-card-northwind-voyager",
+      "allowance": {
+        "amount": 120,
+        "unit": "USD"
+      },
+      "basis": "Statement credit for the application fee, September 2025",
+      "cycle": "2025",
+      "effective_from": "2025-09-10",
+      "expires_on": "2029-09-09",
+      "id": "e-traveler-fee-2025",
+      "rule": "voyager.traveler-fee-credit",
+      "state": "confirmed"
+    }
+  },
+  "date": "2026-11-15",
+  "id": "cs-20261115-credit-15-record-entitlement",
+  "op": "record_entitlement",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic recurring-credit fixture"
+}

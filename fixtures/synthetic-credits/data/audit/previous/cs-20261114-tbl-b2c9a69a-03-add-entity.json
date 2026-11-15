@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-03-add-entity",
+  "records": {
+    "data/kb/entities/org.meridian-capital.json": {
+      "after": "d164d6589907fa4c",
+      "before": null
+    }
+  }
+}

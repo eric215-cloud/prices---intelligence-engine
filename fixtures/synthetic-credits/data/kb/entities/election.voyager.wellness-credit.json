@@ -1,0 +1,13 @@
+{
+  "election": {
+    "card": "card.northwind-voyager",
+    "governs": [
+      "voyager.wellness-credit"
+    ],
+    "group": "voyager.annual-perk",
+    "source_note": "Invented: cardholders choose either the lifestyle credit or the wellness credit."
+  },
+  "id": "election.voyager.wellness-credit",
+  "kind": "election",
+  "name": "Northwind Voyager annual perk choice: wellness credit (synthetic)"
+}

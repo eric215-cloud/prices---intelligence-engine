@@ -1,0 +1,14 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "id": "benefit.voyager.curated-hotel-credit",
+      "kind": "benefit",
+      "name": "Northwind Voyager curated hotel credit (synthetic)"
+    }
+  },
+  "date": "2026-11-15",
+  "id": "cs-20261115-tbl-0c0455e5-01-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.voyager.curated-hotel-credit"
+}

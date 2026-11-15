@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261216-credit-17-record-entitlement",
+  "records": {
+    "profiles/synthetic-erin/entitlements/e-travel-2026.json": {
+      "after": "2b3d00eca5e5c48b",
+      "before": null
+    }
+  }
+}

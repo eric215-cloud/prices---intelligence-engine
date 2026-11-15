@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-credit-14-set-holding",
+  "records": {
+    "profiles/synthetic-finn/holdings/el-annual-perk.json": {
+      "after": "e2f3521815fd175f",
+      "before": null
+    }
+  }
+}

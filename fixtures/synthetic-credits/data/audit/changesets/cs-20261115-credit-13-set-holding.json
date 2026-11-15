@@ -1,0 +1,21 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2026-11-15",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "holding": {
+      "entity": "election.voyager.lifestyle-credit",
+      "id": "el-annual-perk",
+      "state": "confirmed",
+      "valid_from": "2026-01-01"
+    }
+  },
+  "date": "2026-11-15",
+  "id": "cs-20261115-credit-13-set-holding",
+  "op": "set_holding",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic recurring-credit fixture"
+}

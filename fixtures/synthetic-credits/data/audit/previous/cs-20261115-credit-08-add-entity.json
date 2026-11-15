@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-credit-08-add-entity",
+  "records": {
+    "data/kb/entities/election.voyager.lifestyle-credit.json": {
+      "after": "bb5e238ff36449ff",
+      "before": null
+    }
+  }
+}

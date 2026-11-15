@@ -1,0 +1,16 @@
+{
+  "changeset": "cs-20261115-credit-10-set-holding",
+  "records": {
+    "profiles/synthetic-alex/holdings/h-card-northwind-voyager.json": {
+      "after": "56966874d2d21142",
+      "before": {
+        "confirmed_by": "Alex (synthetic)",
+        "confirmed_on": "2026-11-14",
+        "entity": "card.northwind-voyager",
+        "id": "h-card-northwind-voyager",
+        "state": "confirmed",
+        "valid_from": "2026-01-01"
+      }
+    }
+  }
+}

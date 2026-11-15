@@ -1,0 +1,23 @@
+{
+  "attestation": {
+    "by": "Erin (synthetic)",
+    "on": "2026-12-16",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "usage": {
+      "amount": 120,
+      "basis": "Rail tickets",
+      "id": "u-2026-12-15",
+      "state": "confirmed",
+      "used_on": "2026-12-15"
+    }
+  },
+  "date": "2026-12-16",
+  "id": "cs-20261216-credit-18-record-usage",
+  "op": "record_usage",
+  "profile": "synthetic-erin",
+  "reason": "Synthetic recurring-credit fixture",
+  "target": "e-travel-2026"
+}

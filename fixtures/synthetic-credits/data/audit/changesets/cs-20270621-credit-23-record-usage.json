@@ -1,0 +1,18 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "usage": {
+      "amount": 180,
+      "basis": "Entered by a maintainer from an email; not yet confirmed by the owner",
+      "id": "u-2027-06-20",
+      "state": "unconfirmed",
+      "used_on": "2027-06-20"
+    }
+  },
+  "date": "2027-06-21",
+  "id": "cs-20270621-credit-23-record-usage",
+  "op": "record_usage",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic recurring-credit fixture",
+  "target": "e-hotel-2027"
+}

@@ -1,0 +1,14 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "id": "org.northwind-bank",
+      "kind": "organization",
+      "name": "Northwind Bank (synthetic)"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-b2c9a69a-04-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: parties row org.northwind-bank"
+}

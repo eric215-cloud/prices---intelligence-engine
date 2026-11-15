@@ -1,0 +1,29 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2027-03-06",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entitlement": {
+      "account": "h-card-northwind-voyager",
+      "allowance": {
+        "amount": 150,
+        "unit": "USD"
+      },
+      "basis": "Credit tracker on the account page",
+      "cycle": "2027-H1",
+      "effective_from": "2027-01-01",
+      "expires_on": "2027-06-30",
+      "id": "e-dining-2027-h1",
+      "rule": "voyager.dining-credit",
+      "state": "confirmed"
+    }
+  },
+  "date": "2027-03-06",
+  "id": "cs-20270306-credit-21-record-entitlement",
+  "op": "record_entitlement",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic recurring-credit fixture"
+}

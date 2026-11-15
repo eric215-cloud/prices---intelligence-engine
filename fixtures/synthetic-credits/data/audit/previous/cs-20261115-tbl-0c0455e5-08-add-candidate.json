@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-tbl-0c0455e5-08-add-candidate",
+  "records": {
+    "data/candidates/c-voyager.curated-hotel-credit.json": {
+      "after": "d1911922402508f9",
+      "before": null
+    }
+  }
+}

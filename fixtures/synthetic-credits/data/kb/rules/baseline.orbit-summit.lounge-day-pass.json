@@ -1,0 +1,17 @@
+{
+  "evidence": [
+    "ev-syn-orbit-summit-benefits"
+  ],
+  "id": "baseline.orbit-summit.lounge-day-pass",
+  "kind": "baseline",
+  "output": "benefit.orbit-summit.lounge-day-pass",
+  "summary": "Orbit advertises one airport lounge day pass a year for Summit cards.",
+  "verification": {
+    "last_verified": "2026-11-14",
+    "review_by": "2027-05-14",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "tier.orbit-summit"
+  }
+}

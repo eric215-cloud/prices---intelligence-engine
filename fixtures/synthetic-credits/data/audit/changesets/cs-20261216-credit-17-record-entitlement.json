@@ -1,0 +1,29 @@
+{
+  "attestation": {
+    "by": "Erin (synthetic)",
+    "on": "2026-12-16",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entitlement": {
+      "account": "h-card-northwind-voyager",
+      "allowance": {
+        "amount": 300,
+        "unit": "USD"
+      },
+      "basis": "Credit tracker on the account page",
+      "cycle": "2026",
+      "effective_from": "2026-11-02",
+      "expires_on": "2027-11-01",
+      "id": "e-travel-2026",
+      "rule": "voyager.travel-credit",
+      "state": "confirmed"
+    }
+  },
+  "date": "2026-12-16",
+  "id": "cs-20261216-credit-17-record-entitlement",
+  "op": "record_entitlement",
+  "profile": "synthetic-erin",
+  "reason": "Synthetic recurring-credit fixture"
+}

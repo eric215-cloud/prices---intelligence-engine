@@ -1,0 +1,25 @@
+{
+  "changeset": "cs-20270211-credit-20-record-usage",
+  "records": {
+    "profiles/synthetic-alex/entitlements/e-hotel-2027.json": {
+      "after": "33dd03650af35a7c",
+      "before": {
+        "account": "h-card-northwind-voyager",
+        "allowance": {
+          "amount": 500,
+          "unit": "USD"
+        },
+        "basis": "Credit tracker on the account page",
+        "confirmed_by": "Alex (synthetic)",
+        "confirmed_on": "2027-02-11",
+        "cycle": "2027",
+        "effective_from": "2027-01-01",
+        "entity": "benefit.voyager.curated-hotel-credit",
+        "expires_on": "2027-12-31",
+        "id": "e-hotel-2027",
+        "rule": "voyager.curated-hotel-credit",
+        "state": "confirmed"
+      }
+    }
+  }
+}

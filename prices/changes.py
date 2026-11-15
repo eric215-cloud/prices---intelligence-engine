@@ -163,8 +163,7 @@ def op_set_credit_terms(store, cs):
         _need(isinstance(data["credit"], dict), "BAD_DATA", "data.credit must be an object")
         _need(r.get("credit") != data["credit"], "NO_CHANGE", "%s already has exactly these credit terms" % cs["target"])
         r["credit"] = dict(data["credit"])
-    if where == "rule" and r["verification"]["status"] == "verified":
-        r["verification"]["last_verified"] = cs["date"]
+    # last_verified is left alone: recording the credit terms is not a re-verification of the whole rule (that is confirm_rule, OP-01)
 
 
 def op_flag_rule(store, cs):

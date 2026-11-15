@@ -1,0 +1,25 @@
+{
+  "credit": {
+    "amount": 200,
+    "cycle": "calendar_year",
+    "unit": "USD"
+  },
+  "evidence": [
+    "ev-syn-voyager-credit-terms"
+  ],
+  "id": "voyager.lifestyle-credit",
+  "kind": "grants",
+  "output": "benefit.voyager.lifestyle-credit",
+  "restrictions": [
+    "Cardholders choose either the lifestyle credit or the wellness credit, not both"
+  ],
+  "summary": "200 lifestyle credit each calendar year, for cardholders who chose the lifestyle option.",
+  "verification": {
+    "last_verified": "2026-11-15",
+    "review_by": "2027-11-15",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.northwind-voyager"
+  }
+}

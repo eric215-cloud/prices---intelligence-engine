@@ -1,0 +1,24 @@
+{
+  "credit": {
+    "amount": 20,
+    "cycle": "calendar_quarter",
+    "rollover": "allowed",
+    "rollover_max": 20,
+    "unit": "USD"
+  },
+  "evidence": [
+    "ev-syn-voyager-credit-terms"
+  ],
+  "id": "voyager.streaming-credit",
+  "kind": "grants",
+  "output": "benefit.voyager.streaming-credit",
+  "summary": "20 in streaming credit each calendar quarter; an unused amount carries into the next quarter, up to 20.",
+  "verification": {
+    "last_verified": "2026-11-15",
+    "review_by": "2027-11-15",
+    "status": "verified"
+  },
+  "when": {
+    "holds": "card.northwind-voyager"
+  }
+}

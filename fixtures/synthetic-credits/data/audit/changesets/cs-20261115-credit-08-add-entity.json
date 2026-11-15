@@ -1,0 +1,22 @@
+{
+  "author": "fixture author (synthetic)",
+  "data": {
+    "entity": {
+      "election": {
+        "card": "card.northwind-voyager",
+        "governs": [
+          "voyager.lifestyle-credit"
+        ],
+        "group": "voyager.annual-perk",
+        "source_note": "Invented: cardholders choose either the lifestyle credit or the wellness credit."
+      },
+      "id": "election.voyager.lifestyle-credit",
+      "kind": "election",
+      "name": "Northwind Voyager annual perk choice: lifestyle credit (synthetic)"
+    }
+  },
+  "date": "2026-11-15",
+  "id": "cs-20261115-credit-08-add-entity",
+  "op": "add_entity",
+  "reason": "Synthetic recurring-credit fixture"
+}

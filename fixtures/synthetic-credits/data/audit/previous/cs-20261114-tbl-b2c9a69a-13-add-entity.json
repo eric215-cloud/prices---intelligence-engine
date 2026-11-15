@@ -1,0 +1,13 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-13-add-entity",
+  "records": {
+    "data/kb/entities/card.halcyon-kestrel.json": {
+      "after": "df284186e7dbd5b0",
+      "before": null
+    },
+    "data/kb/evidence/ev-syn-kestrel-terms.json": {
+      "after": "e00b963404302803",
+      "before": null
+    }
+  }
+}

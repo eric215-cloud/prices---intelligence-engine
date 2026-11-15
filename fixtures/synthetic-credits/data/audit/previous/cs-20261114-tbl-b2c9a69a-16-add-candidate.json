@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-16-add-candidate",
+  "records": {
+    "data/candidates/c-baseline.orbit-summit.phone-protection.json": {
+      "after": "93da82ef2e7f67f2",
+      "before": null
+    }
+  }
+}

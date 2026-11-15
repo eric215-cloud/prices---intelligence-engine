@@ -1,0 +1,23 @@
+{
+  "attestation": {
+    "by": "Alex (synthetic)",
+    "on": "2027-03-06",
+    "statement": "Invented statement for the fixture."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "usage": {
+      "amount": 150,
+      "basis": "Dinner",
+      "id": "u-2027-03-05",
+      "state": "confirmed",
+      "used_on": "2027-03-05"
+    }
+  },
+  "date": "2027-03-06",
+  "id": "cs-20270306-credit-22-record-usage",
+  "op": "record_usage",
+  "profile": "synthetic-alex",
+  "reason": "Synthetic recurring-credit fixture",
+  "target": "e-dining-2027-h1"
+}

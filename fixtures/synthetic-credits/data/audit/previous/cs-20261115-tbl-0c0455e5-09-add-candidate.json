@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-tbl-0c0455e5-09-add-candidate",
+  "records": {
+    "data/candidates/c-voyager.dining-credit.json": {
+      "after": "a9c05eec80bf9e8a",
+      "before": null
+    }
+  }
+}

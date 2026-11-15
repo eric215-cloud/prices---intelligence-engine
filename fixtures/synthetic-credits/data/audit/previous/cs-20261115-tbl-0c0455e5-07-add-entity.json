@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-tbl-0c0455e5-07-add-entity",
+  "records": {
+    "data/kb/entities/benefit.voyager.wellness-credit.json": {
+      "after": "7db8e5b4eb45a8f0",
+      "before": null
+    }
+  }
+}

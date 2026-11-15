@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-10-add-entity",
+  "records": {
+    "data/kb/entities/benefit.orbit-summit.rental-cover.json": {
+      "after": "7cf485ebab8f6586",
+      "before": null
+    }
+  }
+}

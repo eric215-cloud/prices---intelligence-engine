@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-11-add-entity",
+  "records": {
+    "data/kb/entities/benefit.voyager.primary-rental-cover.json": {
+      "after": "3f14d937b7e1bd88",
+      "before": null
+    }
+  }
+}

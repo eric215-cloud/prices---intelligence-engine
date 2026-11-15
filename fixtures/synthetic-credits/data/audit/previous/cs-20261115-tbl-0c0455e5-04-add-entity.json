@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-tbl-0c0455e5-04-add-entity",
+  "records": {
+    "data/kb/entities/benefit.voyager.ride-credit.json": {
+      "after": "1b12cd352d72dcf9",
+      "before": null
+    }
+  }
+}

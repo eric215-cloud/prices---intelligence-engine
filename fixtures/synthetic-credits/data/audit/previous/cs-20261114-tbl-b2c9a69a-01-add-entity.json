@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-b2c9a69a-01-add-entity",
+  "records": {
+    "data/kb/entities/org.halcyon-air.json": {
+      "after": "6d8207b01097bcb2",
+      "before": null
+    }
+  }
+}

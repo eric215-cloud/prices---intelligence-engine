@@ -1,0 +1,16 @@
+{
+  "attestation": {
+    "by": "Synthetic Reviewer",
+    "on": "2026-11-15",
+    "statement": "Synthetic review: the cited synthetic source supports the row and its credit terms."
+  },
+  "author": "fixture author (synthetic)",
+  "data": {
+    "review_by": "2027-11-15"
+  },
+  "date": "2026-11-15",
+  "id": "cs-20261115-credit-03-promote-candidate",
+  "op": "promote_candidate",
+  "reason": "Synthetic recurring-credit fixture",
+  "target": "c-voyager.ride-credit"
+}

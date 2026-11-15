@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-credit-13-set-holding",
+  "records": {
+    "profiles/synthetic-alex/holdings/el-annual-perk.json": {
+      "after": "27b2d5de3a7b7878",
+      "before": null
+    }
+  }
+}

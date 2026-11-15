@@ -1,0 +1,25 @@
+{
+  "changeset": "cs-20270306-credit-22-record-usage",
+  "records": {
+    "profiles/synthetic-alex/entitlements/e-dining-2027-h1.json": {
+      "after": "dccfff72e2e7cfa7",
+      "before": {
+        "account": "h-card-northwind-voyager",
+        "allowance": {
+          "amount": 150,
+          "unit": "USD"
+        },
+        "basis": "Credit tracker on the account page",
+        "confirmed_by": "Alex (synthetic)",
+        "confirmed_on": "2027-03-06",
+        "cycle": "2027-H1",
+        "effective_from": "2027-01-01",
+        "entity": "benefit.voyager.dining-credit",
+        "expires_on": "2027-06-30",
+        "id": "e-dining-2027-h1",
+        "rule": "voyager.dining-credit",
+        "state": "confirmed"
+      }
+    }
+  }
+}

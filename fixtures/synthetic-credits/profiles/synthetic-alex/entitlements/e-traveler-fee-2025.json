@@ -1,0 +1,29 @@
+{
+  "account": "h-card-northwind-voyager",
+  "allowance": {
+    "amount": 120,
+    "unit": "USD"
+  },
+  "basis": "Statement credit for the application fee, September 2025",
+  "confirmed_by": "Alex (synthetic)",
+  "confirmed_on": "2026-11-15",
+  "cycle": "2025",
+  "effective_from": "2025-09-10",
+  "entity": "benefit.voyager.traveler-fee-credit",
+  "expires_on": "2029-09-09",
+  "id": "e-traveler-fee-2025",
+  "rule": "voyager.traveler-fee-credit",
+  "state": "confirmed",
+  "usage": [
+    {
+      "amount": 120,
+      "basis": "Application fee",
+      "changeset": "cs-20261115-credit-16-record-usage",
+      "confirmed_by": "Alex (synthetic)",
+      "confirmed_on": "2026-11-15",
+      "id": "u-2025-09-10",
+      "state": "confirmed",
+      "used_on": "2025-09-10"
+    }
+  ]
+}
