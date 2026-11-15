@@ -284,7 +284,7 @@ def lint(store):
                 err("BAD_DATES", p, "valid_to is before valid_from")
             if h["state"] == "confirmed" and ents.get(h["entity"], {}).get("kind") == "status" and not h.get("valid_to"):
                 warn("STATUS_WITHOUT_EXPIRY", p, "status holding has no valid_to; expiry cannot be tracked")
-            if h["state"] != "ended":
+            if h["state"] not in ("ended", "withdrawn"):
                 other = seen.get(h["entity"])
                 if other and other["state"] != h["state"]:
                     warn("CONFLICTING_HOLDINGS", p, "disagrees with %s about %s" % (other["id"], h["entity"]))
@@ -555,6 +555,8 @@ def _lint_elections(store, err, warn):
                 elif h.get("valid_from") and h["valid_from"] < h["opened_on"]:
                     err("BAD_DATES", p, "valid_from %s is before the account was opened (%s)" % (h["valid_from"], h["opened_on"]))
             if kind != "election":
+                continue
+            if h["state"] == "withdrawn":
                 continue
             g = option_group.get(h["entity"])
             by_group.setdefault(g, []).append(h)

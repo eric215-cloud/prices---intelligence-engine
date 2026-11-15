@@ -54,6 +54,7 @@ Use the task's date as the changeset `date`. If the task gives no date, use toda
 | You finished a discovery research task | OP-08 | `record_discovery_run` |
 | A temporary promotion or a confirmed availability check | OP-09 | `add_observation`, `prune_observations` |
 | A card's benefit, role or fee changed; a benefit applies or does not apply to a card | OP-10 | edit `tables/*.csv`, then `tables import` |
+| A cardholder's choice between mutually exclusive card options (e.g. Bilt housing rewards, Bilt annual credits); a card account's opening date; a wrong election | OP-12 | `set_holding`, `end_holding` (on the election option; `withdrawn: true` for a mistake) |
 | A person's progress toward a spending or activity threshold; an earned benefit landing on their account; use of an earned credit; a correction to any of these | OP-11 | `record_progress`, `record_entitlement`, `record_usage`, `correct_entry`, `revise_entitlement` |
 
 **Offered is not earned, and earned is not held.** A card offering a benefit for reaching a threshold tells you nothing about any person. A person reaching the threshold is *eligible*. Only an entitlement record confirmed by the owner means the benefit is *on the account*. Never record one because of the other, and never fill in a date nobody gave you: write the word `unknown` (OP-11).

@@ -178,7 +178,7 @@ def decide(prof, group, options, day):
     card = options[0]["election"]["card"]
     ids = {o["id"]: o for o in options}
     cards = [h for h in prof.holdings.values() if h["entity"] == card and h["state"] != "ended" and in_effect(h, day)]
-    picks = [h for h in prof.holdings.values() if h["entity"] in ids]
+    picks = [h for h in prof.holdings.values() if h["entity"] in ids and h["state"] != "withdrawn"]
     live = [(h, presence(h, day)) for h in sorted(picks, key=lambda h: h["id"])]
     live = [(h, p) for h, p in live if p is not None]
     flags = []
@@ -284,7 +284,7 @@ def boundary_dates(store, profile):
     ids = {o["id"] for opts in gs.values() for o in opts}
     cards = {opts[0]["election"]["card"] for opts in gs.values()}
     for h in prof.holdings.values():
-        if h["entity"] in ids:
+        if h["entity"] in ids and h["state"] != "withdrawn":
             for k, plus in (("valid_from", 0), ("valid_to", 1), ("confirmed_on", 0)):
                 d = to_date(h.get(k))
                 if d:

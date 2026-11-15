@@ -1,6 +1,6 @@
 # PRICES — continuation document
 
-Update this file at the end of every work session. Last updated 2026-11-14 by Claude Fable 5.2 after the earned-entitlements commission (branch `dev/fable-integration`; `main` unchanged).
+Update this file at the end of every work session. Last updated 2026-11-15 by Claude Opus 5.5 after the Argon content intake and Bilt election commission (branch `dev/argon-content-intake`, from `dev/fable-integration` at 52d026f; `main` unchanged).
 
 ## Coordinator continuity
 
@@ -11,13 +11,15 @@ A working, tested foundation: eligibility engine, validation, changeset pipeline
 
 Added 2026-11-14: card architecture (six role references per card), network-tier baselines and card exclusions that derive nothing, an applicability report, and CSV tables in `tables/` that are a view of the store and a validated authoring input. Demonstrated on invented cards only (`fixtures/`). No real card is loaded. Read `docs/RELATIONAL_TABLES.md`; results in `docs/commissions/results/2026-11-14-fable-relational-foundation-RESULTS.md`.
 
+Added 2026-11-15 (third commission): Argon's Bilt Palladium and Chase Sapphire Reserve content, candidate-only (113 proposed candidates, none promoted), integrated by replaying Argon's changesets; and cardholder elections (ENG-02) so mutually exclusive Bilt options can never both apply. Read `docs/ELECTIONS.md`, then `docs/operations/OP-12-card-elections.md`. Results: `docs/commissions/results/2026-11-15-fable-argon-intake-bilt-elections-RESULTS.md`.
+
 Added 2026-11-14 (second commission): earned benefits. A public `earns` rule, a person's dated progress per account and qualifying year, and the benefit as it actually sits on the account are separate records; reaching a threshold gives eligibility, never possession. Demonstrated on invented data only (`fixtures/synthetic-earned/`). No real earn rule or personal earned fact is loaded. Read `docs/EARNED_ENTITLEMENTS.md`, then `docs/operations/OP-11-earned-benefits.md`. Results: `docs/commissions/results/2026-11-14-fable-earned-entitlements-RESULTS.md`.
 
 ## How to run it
 Needs Python 3.9+ only. From the project root:
 
 ```
-python3 -m unittest discover -s tests      # expect: Ran 218 tests ... OK
+python3 -m unittest discover -s tests      # expect: Ran 254 tests ... OK
 python3 -m prices lint                     # expect: lint: 0 error(s), 1 warning(s)  (Eric's Aeroplan 25K has no expiry date yet)
 python3 -m prices status --profile synthetic-demo --as-of 2026-11-12
 python3 -m prices tables status            # expect: "no" twice
@@ -25,7 +27,10 @@ python3 -m prices --root fixtures/synthetic-cards cards --profile synthetic-alex
 python3 -m prices --root fixtures/synthetic-earned earned --profile synthetic-alex --as-of 2027-03-10
 python3 scripts/demo_earned.py             # expect: DEMO COMPLETE  (earned benefits, before and after, on a throwaway copy)
 python3 scripts/mutation_check_earned.py   # expect: 17 of 17 mutations caught
-python3 scripts/compare_with_baseline.py   # expect: BASELINE COMPARISON: PASS  (needs git)
+python3 scripts/compare_with_baseline.py   # expect: BASELINE COMPARISON: PASS  (needs git; compares with the intake commit cdce9e1)
+python3 scripts/verify_argon_intake.py     # expect: ARGON INTAKE: PASS  (needs git)
+python3 scripts/demo_elections.py          # expect: DEMO COMPLETE  (Bilt elections on a throwaway copy)
+python3 scripts/mutation_check_elections.py  # expect: 13 of 13 mutations caught
 python3 scripts/verify_export.py           # expect: TEST F: PASS
 python3 scripts/verify_clean_checkout.py   # expect: CLEAN CHECKOUT: PASS  (tests the committed state only)
 ```
@@ -33,7 +38,7 @@ python3 scripts/verify_clean_checkout.py   # expect: CLEAN CHECKOUT: PASS  (test
 If the tests or lint fail on a fresh copy, stop and fix that before anything else.
 
 ## What has been tested
-Acceptance tests A, B, C, E, F, H, I pass. D passed for one discovery chain. G passed for one run of Claude Haiku 5.5. J (card applicability) and K (tables) pass on invented data. L and M (earned benefits) pass on invented data. The maintenance procedures OP-10 (tables) and OP-11 (earned benefits) have not been run by a lower-capability model. See the tables in `STATUS.md`.
+Acceptance tests A, B, C, E, F, H, I pass. D passed for one discovery chain. G passed for one run of Claude Haiku 5.5. J (card applicability) and K (tables) pass on invented data. L and M (earned benefits) pass on invented data. N (cardholder elections) passes on invented people and the real Bilt definitions. The maintenance procedures OP-10 (tables), OP-11 (earned benefits) and OP-12 (card elections) have not been run by a lower-capability model. See the tables in `STATUS.md`.
 
 ## What remains unresolved
 - Two owner-confirmed holdings are now recorded for Eric: Marriott Titanium and Aeroplan 25K (activated through Marriott on November 11). Other cards, statuses, memberships and balances are not yet imported.
@@ -58,6 +63,8 @@ Acceptance tests A, B, C, E, F, H, I pass. D passed for one discovery chain. G p
 5. Research those tasks (procedure in `docs/DISCOVERY.md`). This grows the knowledge base around what Eric actually holds, which keeps maintenance small.
 
 ## Engineering commissions suggested next
+After the Argon intake (see the results file of 2026-11-15): Argon confirms the Bilt election definitions; a reviewer then decides on promotion candidate by candidate; ENG-01, ENG-03 and ENG-04 were deliberately not started.
+
 After earned benefits (see the last section of the earned-entitlements results file): (1) a lower-model test of OP-11 on the synthetic fixture, alongside the OP-10 test still outstanding; (2) the period types Argon's real rules need (cardmember year, rolling 12 months), each as its own tested step; (3) the household-sharing decision, which earned companion and guest benefits will run into first; (4) a read-only table view of earn rules if Argon wants them in the tables.
 
 From the relational foundation, still open: see section 8 of that results file. In short: (1) a lower-model test of OP-10 on the synthetic fixture; (2) the real card roster as products only, through the tables, as candidates; (3) a household-sharing decision; (4) read-only table views for programs and bridges; (5) source snapshots; (6) reconcile the Session 1 discovery commission. Not yet: earn-stack arithmetic.
@@ -72,6 +79,7 @@ From the relational foundation, still open: see section 8 of that results file. 
 ## Rules for whoever continues
 - Records change only through `python3 -m prices apply`, or through `python3 -m prices tables import` for card tables (OP-10). Never by hand.
 - Offered is not earned and earned is not held. Never record a personal achievement, activation, balance or date that the owner did not give; write `unknown` where a date is not known (OP-11).
+- No election, no option. Never record a cardholder's election, or a card's opening date, that the owner did not give (OP-12).
 - Do not weaken a test to make it pass.
 - Commit after each working step: `git add -A && git commit -m "..."`.
 - Keep this file and `STATUS.md` truthful.

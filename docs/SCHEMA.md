@@ -9,7 +9,7 @@ Ids are lowercase letters, digits, `.`, `_`, `-`. A record's `id` equals its fil
 | Field | Required | Notes |
 |---|---|---|
 | `id`, `name` | yes | Convention: `program.thing`, e.g. `marriott.titanium` |
-| `kind` | yes | `program`, `card`, `currency`, `status`, `benefit`, `action`, `capability`, `organization`, `network_tier` |
+| `kind` | yes | `program`, `card`, `currency`, `status`, `benefit`, `action`, `capability`, `organization`, `network_tier`, `election` |
 | `program` | no | Id of the parent program entity |
 | `tags` | no | Must exist in `vocab.json` `tags`. Used by goal queries |
 | `how` | no | For `action`: what the person must do |
@@ -17,8 +17,9 @@ Ids are lowercase letters, digits, `.`, `_`, `-`. A record's `id` equals its fil
 | `card` | no | For `card` only: who plays each role. Keys `cobrand_partner`, `program_manager`, `issuer`, `capital_provider`, `network` (organization ids) and `network_tier` (a `network_tier` id); optional `annual_fee_usd`. Missing key = not recorded; `null` = recorded as none. **Descriptive only: the engine derives nothing from it** |
 | `network` | no | For `network_tier` only: the organization that runs the network |
 | `sources` | no | Evidence ids for the entity's primary documents. Added to, never removed from |
+| `election` | `election` only, mandatory | One option of a cardholder election group: `group`, `card`, `governs` (rule or candidate-rule ids that apply only under this option), optional `opened_before`, `default_before_anniversary`, `starts_at_anniversary`, `elect_before_anniversary` (each a date D: "the first card anniversary on or after D"), `source_note`. Revising it needs a reviewer. See `docs/ELECTIONS.md` |
 
-`action` = something the person can do (enroll, link, register, complete nights). `capability` = something useful the person can do with what they have (e.g. book a given award). `organization` and `network_tier` cannot be held by a person and cannot appear in a deriving rule.
+`election` = one option the cardholder chooses between; a person holds it to record their election (OP-12). `action` = something the person can do (enroll, link, register, complete nights). `capability` = something useful the person can do with what they have (e.g. book a given award). `organization` and `network_tier` cannot be held by a person and cannot appear in a deriving rule.
 
 ## Rule — `data/kb/rules/<id>.json`
 
@@ -72,8 +73,9 @@ Exactly one of:
 | Field | Required | Notes |
 |---|---|---|
 | `id`, `entity` | yes | |
-| `state` | yes | `confirmed` (needs `confirmed_on`, `confirmed_by` = owner), `unconfirmed`, `ended` |
+| `state` | yes | `confirmed` (needs `confirmed_on`, `confirmed_by` = owner), `unconfirmed`, `ended`, `withdrawn` (entered by mistake: kept, never in effect; `withdrawn_on` set by `end_holding` with `withdrawn: true`) |
 | `valid_from`, `valid_to` | no | `valid_to` is the expiry. Give it for every status |
+| `opened_on` | no | Cards only: the account opening date. Card anniversaries (election terms) are computed from it, never from `valid_from` |
 | `acquired_via`, `acquired_on` | no | Rule id through which it was obtained; activates retention checks |
 | `quantity` | no | Balance, for currencies |
 
@@ -167,4 +169,5 @@ Generated view of the store and authoring input. Columns, ownership and rules: `
 | `SOURCE_LAPSED_FIXED_TERM` | Status safe until expiry but cannot be renewed the same way | Plan renewal |
 | `ACQUISITION_RULE_MISSING` | `acquired_via` points nowhere | Escalate |
 | `NEGATIVE_CYCLE` | Rule excluded for circular exclusion | Escalate |
+| `ELECTION_NOT_RECORDED`, `CONFLICTING_ELECTIONS`, `UNCONFIRMED_ELECTION`, `ELECTION_START_NOT_RECORDED`, `ANNIVERSARY_NOT_RECORDED`, `ELECTION_NOT_PERMITTED`, `ELECTION_TERMS_UNVERIFIED`, `MULTIPLE_CARD_ACCOUNTS`, `ELECTION_WITHOUT_CARD` | Cardholder elections; none of the group's options is applied (except `ELECTION_TERMS_UNVERIFIED`, info). Meanings: OP-12 section 5 | OP-12 with the owner |
 | `QUALIFICATION_NOT_RECORDED`, `CONFLICTING_QUALIFICATION`, `CONFLICTING_PROGRESS`, `CONFLICTING_ENTITLEMENTS`, `QUALIFICATION_OUTCOME_NOT_RECORDED`, `UNCONFIRMED_ENTITLEMENT`, `ENTITLEMENT_UNRESOLVED`, `CREDIT_USE_UNCONFIRMED`, `EXPIRED_ENTITLEMENT`, `CREDIT_LAPSED_UNUSED`, `ACCOUNT_NOT_HELD`, `TERM_DIFFERS_FROM_RULE`, `ALLOWANCE_DIFFERS_FROM_RULE` | Earned benefits. Meanings: `docs/EARNED_ENTITLEMENTS.md` section 5 | OP-11 with the owner; escalate conflicts |

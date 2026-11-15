@@ -43,6 +43,8 @@ ok &= run(["diff", "-r", "-q", os.path.join(clean, "fixture-earned-rebuild"), os
 ok &= run([sys.executable, "-m", "prices", "--root", "fixtures/synthetic-earned", "earned", "--profile", "synthetic-alex", "--as-of", "2027-03-10"], proj)
 ok &= run([sys.executable, "scripts/demo_earned.py"], proj)
 ok &= run([sys.executable, "scripts/mutation_check_earned.py"], proj)
+ok &= run([sys.executable, "scripts/demo_elections.py"], proj)
+ok &= run([sys.executable, "scripts/mutation_check_elections.py"], proj)
 print("zip: %s (%d bytes)" % (out, os.path.getsize(out)))
 print("TEST F:", "PASS" if ok else "FAIL")
 sys.exit(0 if ok else 1)

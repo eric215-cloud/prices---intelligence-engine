@@ -299,7 +299,7 @@ def evaluate(store, profile, as_of, include_candidates=False):
     # 2. personal qualifications -> base facts (and retention rules for acquired holdings)
     by_entity = {}
     for h in sorted(prof.holdings.values(), key=lambda x: x["id"]):
-        if h["state"] == "ended":
+        if h["state"] in ("ended", "withdrawn"):
             continue
         if store.entities.get(h["entity"], {}).get("kind") == "election":
             continue   # elections are decided per group in step 2c, never one holding at a time

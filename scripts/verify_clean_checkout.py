@@ -43,6 +43,10 @@ ok &= run([sys.executable, "-m", "prices", "--root", "fixtures/synthetic-earned"
 ok &= run([sys.executable, "scripts/demo_earned.py"], dst)
 ok &= run([sys.executable, "scripts/mutation_check_earned.py"], dst)
 ok &= run([sys.executable, "scripts/compare_with_baseline.py"], dst, dict(ENV, GIT_CONFIG_NOSYSTEM="1"))
+# Argon intake and cardholder elections
+ok &= run([sys.executable, "scripts/verify_argon_intake.py"], dst, dict(ENV, GIT_CONFIG_NOSYSTEM="1"))
+ok &= run([sys.executable, "scripts/demo_elections.py"], dst)
+ok &= run([sys.executable, "scripts/mutation_check_elections.py"], dst)
 ok &= run(["git", "status", "--porcelain"], dst, dict(os.environ))   # the run must not have modified the checkout
 left = subprocess.run(["git", "status", "--porcelain"], cwd=dst, capture_output=True, text=True).stdout.strip()
 if left:

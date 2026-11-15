@@ -31,6 +31,7 @@ Records are JSON files. A deterministic engine reads rules and one person's hold
 | `discovery.py` | ~210 | Coverage ledger and research-task planners; novelty check |
 | `goals.py` | ~155 | Objective -> tagged targets -> five-section report |
 | `cards.py` | ~120 | Card roles and the applicability report (confirmed / excluded / unproven). Derives nothing |
+| `elections.py` | ~300 | Cardholder elections: which option of each group is in effect for a person on a date; gates the rules an option governs. Stores nothing |
 | `earned.py` | ~445 | Earned benefits: achievement from dated readings, state of each entitlement record, credit arithmetic. Computes the engine's base facts for them and the `earned` report from one function, so the two cannot disagree. Stores nothing |
 | `tables.py` | ~485 | CSV tables: export from the store; compile edits into changesets |
 | `cli.py` | ~535 | Commands |
@@ -103,6 +104,10 @@ Added 2026-11-14; full description in `docs/RELATIONAL_TABLES.md`.
 - Two rule kinds never derive: `baseline` (what a network tier advertises) and `excludes` (what a card does not carry). The engine skips them; `cards.py` reads them to report, per card and benefit, `CONFIRMED`, `EXCLUDED`, `SUPERSEDED`, `PENDING_REVIEW` or `UNPROVEN`.
 - A tier benefit reaches a holder only through an ordinary verified `grants` rule for that card, with evidence labelled as being about that card. Lint blocks every route by which a tier could confer something.
 - `tables/` holds CSV views of these records. Edits are compiled into changesets and applied all-or-nothing. The store remains the system of record.
+
+## Cardholder elections
+
+Entities of kind `election` name the mutually exclusive options of a card and the rules each one governs. During rule loading the engine adds "and the person elected this option" to every governed rule or candidate; in step 2c `elections.py` decides, per group and date, which option is in effect (a person's election is a holding of the option) and supplies the base facts. Nothing is inferred from silence: an unknown, conflicting or unverifiable election leaves every possible option UNRESOLVED. A store with no election entities never reaches this code. Full description: `docs/ELECTIONS.md`.
 
 ## Earned benefits
 

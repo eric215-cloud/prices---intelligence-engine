@@ -12,7 +12,7 @@ It keeps sourced rules about loyalty programs, one person's actual holdings, and
 ## Start here
 
 ```
-python3 -m unittest discover -s tests          # 218 tests, about ten seconds
+python3 -m unittest discover -s tests          # 254 tests, about ten seconds
 python3 -m prices lint                         # must print: 0 error(s)
 python3 -m prices status --profile synthetic-demo --as-of 2026-11-12
 python3 -m prices goal "Find promising ways for me to fly business class to Japan" --profile synthetic-demo --as-of 2026-11-12
@@ -44,6 +44,7 @@ Run every command from this directory (the one containing `prices/`, `data/` and
 | `tests/` | Automated tests, including acceptance tests A–I, the card/table tests J–K and the earned-benefit tests L–M |
 | `tables/` | CSV view of cards, benefits and sources; also the input to `tables import`. The store in `data/` remains the system of record |
 | `docs/RELATIONAL_TABLES.md` | Card roles, network-tier baselines, applicability, and the table rules |
+| `docs/ELECTIONS.md` | Mutually exclusive cardholder options (Bilt housing rewards, Bilt annual credits): how an election is recorded and why nothing is assumed without one |
 | `docs/EARNED_ENTITLEMENTS.md` | Benefits earned by reaching a threshold: public rule, personal achievement, current entitlement, and time |
 | `fixtures/` | Invented cards, people and spending used to test the card tables and earned benefits. Not real data |
 | `successor_test/` | Harness for testing whether a smaller model can maintain the system |
@@ -59,6 +60,7 @@ Run every command from this directory (the one containing `prices/`, `data/` and
 | Get research tasks | `python3 -m prices discover forward --profile <p>` |
 | Change any record | Write a changeset, then `python3 -m prices apply <file>` (see the maintainer guide) |
 | See card roles and which benefits really apply to each card | `python3 -m prices cards [--profile <p>]` |
+| Record which of a card's mutually exclusive options a person chose | `docs/operations/OP-12-card-elections.md`; see it in `python3 -m prices status --profile <p>` ("Card elections") |
 | See what a person has earned by reaching a threshold: progress, eligibility, what is actually on the account, dates, credit remaining | `python3 -m prices earned --profile <p>` (`docs/operations/OP-11-earned-benefits.md`) |
 | Edit cards and card benefits in a spreadsheet | `python3 -m prices tables export`, edit `tables/*.csv`, `python3 -m prices tables import --author NAME --date YYYY-MM-DD` (`docs/operations/OP-10-tables.md`) |
 | Export the whole project | `python3 -m prices export --out prices-export.zip` |

@@ -25,6 +25,7 @@ MUTS = [
  ("undated election counted before confirmation", "prices/elections.py", 'return "in" if seen is not None and day >= seen else "maybe"', 'return "in"'),
  ("two card accounts ignored", "prices/elections.py", '    if len(cards) > 1:', '    if False:'),
  ("election holdings counted one by one", "prices/engine.py", '        if store.entities.get(h["entity"], {}).get("kind") == "election":\n            continue', '        if False:\n            continue'),
+ ("withdrawn election still counted", "prices/elections.py", 'picks = [h for h in prof.holdings.values() if h["entity"] in ids and h["state"] != "withdrawn"]', 'picks = [h for h in prof.holdings.values() if h["entity"] in ids]'),
  ("election definitions revisable without a reviewer", "prices/changes.py", '            _reviewer(store, _attested(cs))\n    _add_evidence(store, cs)', '            pass\n    _add_evidence(store, cs)'),
 ]
 bad = 0

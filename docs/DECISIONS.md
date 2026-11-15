@@ -161,6 +161,30 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 - Tabs for underwriting rules, loyalty programs, portals and cross-program bridges were not built. Programs and bridges already work in the engine through changesets; their conditions (`all`, `any`, `not`, retention terms) do not flatten into one row without losing meaning.
 - A round-trip importer/exporter exists, but only in the safe form: the export is always regenerated from the store, and an import is refused when stale.
 
+## D-34  Argon's content is integrated by replay, and the audit history is only ever added to (2026-11-15)
+**Decision.** The intake applied Argon's 246 packaged changesets through the ordinary pipeline on the engineering base instead of copying the package's files. Every changeset re-applied with identical results and store digests, and the result equals the package byte for byte, except that the package omitted two base audit records (`cs-20261112-101-set-holding`, `cs-20261112-102-set-holding`, Eric's holdings, by Bradley). Those are kept.
+**Why.** Replay proves the content passes the current validator and pipeline, not just that files were copied; and an integration must never delete audit history. `scripts/verify_argon_intake.py` repeats the whole check from the committed archive.
+
+## D-35  Elections are named outside the rules, by option entities that govern rules
+**Decision.** An option is an entity of kind `election` (`group`, `card`, `governs`, optional terms). The engine adds "and the person elected this option" to each governed rule or candidate at evaluation time. The rules are not edited.
+**Alternatives considered.** (a) Write `{"all": [holds card, holds option]}` into each rule: the Bilt rules are `card_benefits` rows whose condition the tables own (`{"holds": card}`, read back on export), and the content is Argon's. (b) `{"not": {"holds": other}}`: infers an election from silence. (c) Group metadata on rules: same table problem as (a).
+**Why.** Works unchanged for table rows, hand-written rules and candidates, before and after promotion. A store with no election entities is unaffected (49 commands byte-identical against the intake commit).
+
+## D-36  A person's election is a holding of the option; nothing is inferred from silence
+**Decision.** The election is a holding (existing `set_holding` / `end_holding`, owner attestation, dates, audit). With no election recorded, every option that could apply is UNRESOLVED, never established, unless an option's published terms make it the default on that date. Conflicts, unconfirmed or undated records, records the terms forbid, an unknown anniversary and two card accounts all leave the group UNRESOLVED with a named flag.
+**Alternative considered.** CONDITIONAL ("needs election"), as ENG-02's acceptance criterion words it. Rejected for the unrecorded case: CONDITIONAL in this engine means "a step the person could take", but an election has usually already been made on the account; what is missing is the fact. UNRESOLVED with "CONFIRM: election … not recorded" says that. Neither is ever established, which is what the criterion protects.
+
+## D-37  The 2027 transition is computed from the account's own opening date
+**Decision.** Option terms name a date D meaning "the first card anniversary on or after D", computed from an optional `opened_on` on the card holding. Before 2027 the anniversary is certainly later, so `opened_on` is only needed from 2027-01-01. It is never inferred from `valid_from`; holding the card before D does prove it was opened before D. A February 29 opening gives a February 28 - March 1 window that is treated as unknown.
+**Why.** The commission: "respects the cardholder's actual anniversary". Calendar-date switching would be wrong for every cardholder whose anniversary is not January 1.
+
+## D-38  A holding entered by mistake can be withdrawn
+**Decision.** `end_holding` with `"data": {"withdrawn": true}` sets state `withdrawn`: kept on file, never in effect on any date. Owner attestation if the record was confirmed; a maintainer may withdraw an unconfirmed one.
+**Why.** Resolving a contradictory election needs it: ending a mistaken record from a date leaves it in effect before that date. The same rule as `correct_entry` for earned-benefit entries (D-31). No existing holding is affected.
+
+## D-39  Election definitions are content; revising one needs a reviewer
+**Decision.** Adding an option entity needs no reviewer: gating can only narrow what a rule grants. Revising an `election` block (which rules it governs, its dates) needs a promotion reviewer, because removing a rule from `governs` would un-gate it. The four Bilt definitions are an engineering transcription of Argon's own restrictions text and ENG-02, for Argon to confirm.
+
 ## Limits of the earned-benefit work (2026-11-14), stated plainly
 
 - Calendar-year periods only. Other cycle types are refused, not approximated.
@@ -169,3 +193,11 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 - Not bitemporal (D-27).
 - No lower-capability model has run the new procedure (OP-11). The procedure has been exercised only by its author and by automated tests.
 - Full list: `docs/EARNED_ENTITLEMENTS.md` section 8.
+
+## Limits of the Argon intake and election work (2026-11-15), stated plainly
+
+- The 113 Argon candidates are integrated exactly as packaged and none is promoted. Engineering did not review their content.
+- Elections are recorded per person; two accounts of one card are reported, not resolved.
+- The Bilt option definitions are a transcription; whether the legacy credits and the Flex housing option form one election or two is Argon's question to answer (modelled as two).
+- No lower-capability model has run OP-12.
+- Full list: `docs/ELECTIONS.md` section 7 and the commission results file.

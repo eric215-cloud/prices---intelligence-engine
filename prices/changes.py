@@ -293,7 +293,14 @@ def op_end_holding(store, cs):
     _need("target" in cs, "MISSING_TARGET", "target (holding id) is required")
     h = prof.holdings.get(cs["target"])
     _need(h is not None, "UNKNOWN_TARGET", "no holding %r in profile %s" % (cs["target"], prof.name))
-    _need(h["state"] != "ended", "BAD_STATE", "holding already ended")
+    _need(h["state"] not in ("ended", "withdrawn"), "BAD_STATE", "holding already %s" % h["state"])
+    if cs.get("data", {}).get("withdrawn") is True:
+        # entered by mistake: kept on file, never in effect on any date. A confirmed record needs its owner to say so;
+        # a record nobody confirmed may be withdrawn by a maintainer.
+        if h["state"] == "confirmed":
+            _attested(cs, by=prof.meta["owner"])
+        h["state"], h["withdrawn_on"] = "withdrawn", cs["date"]
+        return
     _attested(cs, by=prof.meta["owner"])
     h["state"], h["valid_to"] = "ended", _data(cs, "ended_on", str)
 

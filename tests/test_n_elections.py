@@ -393,6 +393,23 @@ class TestPipeline(unittest.TestCase):
         self.assertTrue(out["review_needed"])
         self.assertEqual(have(Store.load(self.tmp), "2026-11-15", "tiered", "flex"), (UNRESOLVED, UNRESOLVED))
 
+    def test_withdrawing_a_mistaken_election(self):
+        changes.apply(self.tmp, self.cs("set_holding", data={"holding": {"id": "e1", "entity": "el.tiered", "state": "confirmed", "valid_from": "2025-06-01"}}))
+        changes.apply(self.tmp, self.cs("set_holding", by=None, data={"holding": {"id": "e2", "entity": "el.flex", "state": "unconfirmed", "valid_from": "2026-10-01"}}))
+        self.assertEqual(have(Store.load(self.tmp), "2026-11-15", "tiered", "flex"), (UNRESOLVED, UNRESOLVED))
+        out = changes.apply(self.tmp, self.cs("end_holding", by=None, target="e2", data={"withdrawn": True}))   # nobody confirmed it: a maintainer may withdraw
+        self.assertTrue(out["ok"], out["errors"])
+        s = Store.load(self.tmp)
+        self.assertEqual(s.profile("t").holdings["e2"]["state"], "withdrawn")                                    # kept on file
+        for day in ("2026-10-01", "2026-11-15", "2027-06-01"):
+            self.assertEqual(have(s, day, "tiered", "flex"), (ESTABLISHED, NOT_AVAILABLE), day)                 # never in effect on any date
+        self.assertNotIn("CONFLICTING_ELECTIONS", codes(lint(s)))
+        out = changes.apply(self.tmp, self.cs("end_holding", by="maintainer", target="e1", data={"withdrawn": True}))
+        self.assertFalse(out["ok"])                                                                             # a confirmed election: only its owner
+        self.assertTrue(any("OWNER_ATTESTATION_REQUIRED" in e for e in out["errors"]))
+        out = changes.apply(self.tmp, self.cs("end_holding", target="e2", data={"withdrawn": True}))
+        self.assertTrue(any("BAD_STATE" in e for e in out["errors"]))
+
     def test_revising_an_election_definition_needs_a_reviewer(self):
         out = changes.apply(self.tmp, self.cs("revise_entity", by="maintainer", target="el.flex",
                                               data={"set": {"election": {"group": "housing", "card": CARD, "governs": ["r.flex"]}}}))

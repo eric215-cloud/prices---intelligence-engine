@@ -1,6 +1,6 @@
 # PRICES status report — 2026-11-14
 
-Foundation built 2026-11-12 by Claude Fable 5.2 (commissioning build). Relational foundation and earned benefits added 2026-11-14 on branch `dev/fable-integration` (not yet merged to `main`). This report separates what was observed from what is claimed.
+Foundation built 2026-11-12 by Claude Fable 5.2 (commissioning build). Relational foundation and earned benefits added 2026-11-14 on branch `dev/fable-integration`; Argon's Bilt Palladium and Chase Sapphire Reserve content (candidate-only) and cardholder elections added 2026-11-15 on branch `dev/argon-content-intake` (neither merged to `main`). This report separates what was observed from what is claimed.
 
 ## Acceptance demonstrations
 
@@ -41,32 +41,46 @@ Full record: `docs/commissions/results/2026-11-14-fable-relational-foundation-RE
 
 Full record: `docs/commissions/results/2026-11-14-fable-earned-entitlements-RESULTS.md`.
 
-218 automated tests pass. Run: `python3 -m unittest discover -s tests`.
+### Argon content intake and cardholder elections (2026-11-15)
+
+| Test | Result | Evidence observed |
+|---|---|---|
+| Intake integrity | **Pass** | `scripts/verify_argon_intake.py`: manifest hashes match; all 246 Argon changesets re-apply through the pipeline with identical digests; store equals the package except two base audit records the package omitted (kept) |
+| Boundaries | **Pass** | 10 active rules and `profiles/` byte-identical to the base; 113 proposed candidates, none promoted |
+| N Cardholder elections | **Pass** | `tests/test_n_elections.py`, 36 tests: unknown, confirmed, conflicting, changing and withdrawn elections; the 2027 transition at each cardholder's own anniversary, unknown and February 29 anniversaries; the real Bilt definitions on a scratch copy with the candidates promoted there |
+| Guarantees actually guarded | **Pass** | `scripts/mutation_check_elections.py`: 13 of 13 caught |
+| No change for anyone else | **Pass** | `scripts/compare_with_baseline.py` against the intake commit: 49 commands byte-identical, 21 file sets unchanged, audit log append-only |
+| Maintenance procedure OP-12 | **Run by the building model and by tests only** | `scripts/demo_elections.py`. Lower-model execution: **untested** |
+
+Full record: `docs/commissions/results/2026-11-15-fable-argon-intake-bilt-elections-RESULTS.md`.
+
+254 automated tests pass. Run: `python3 -m unittest discover -s tests`.
 
 ## Capability status
 
 ### Complete
 - Portable project: Python standard library only, JSON files, git history, zip export.
 - Eligibility engine with four statuses, inspectable derivations, acquisition/retention semantics, time, flags.
-- Whole-store validation and the changeset pipeline with 22 bounded operations, all-or-nothing batches, impact reports, audit log and before-snapshots of every replaced record.
+- Whole-store validation and the changeset pipeline with 22 bounded operations (`end_holding` can now also withdraw a mistaken holding), all-or-nothing batches, impact reports, audit log and before-snapshots of every replaced record.
 - Discovery planners (forward, backward, bridge, exploratory), coverage ledger, candidate quarantine, novelty check.
 - Goal reports in five separated sections.
-- Maintainer guide, eleven operation cards, schema, decision record, successor-test harness.
+- Maintainer guide, twelve operation cards, schema, decision record, successor-test harness.
 - Card architecture: a card's six parties (co-brand partner, program manager, issuer, capital provider, network, network tier) recorded as descriptive roles the engine never reads.
 - Applicability: network-tier baselines and card exclusions recorded as sourced statements that derive nothing; a tier benefit applies to a card only on verified, card-specific evidence. Report: `python3 -m prices cards`.
 - CSV tables (`tables/`): generated view plus validated, all-or-nothing authoring input. The JSON store remains the system of record.
 - Earned benefits: a public `earns` rule, a person's dated progress per account and year, and the benefit as it actually sits on the account are three separate records. Reaching a threshold gives eligibility only; possession needs an owner-confirmed account record with its own dates. Credits keep allowance, used and remaining apart. Report: `python3 -m prices earned --profile <p>`. Design: `docs/EARNED_ENTITLEMENTS.md`.
 - A `metric` observed after the query date is no longer used for that date (it reads as unknown).
+- Cardholder elections: mutually exclusive card options are named by `election` entities that govern rules; a person's choice is an owner-confirmed holding of one option; nothing is applied without a recorded election except a published default; the Bilt 2027 transition follows each account's own anniversary. Design: `docs/ELECTIONS.md`.
 
 ### Partial
-- **Knowledge base: 10 rules, 23 entities, 16 evidence records.** Enough to exercise the software. It does not describe the loyalty landscape.
+- **Knowledge base: 10 active rules, 162 entities, 24 evidence records, 113 proposed candidates.** The 2026-11-15 intake added Argon's Bilt Palladium and Chase Sapphire Reserve content (cards, programs, currencies, statuses, 26 Bilt and 14 Chase transfer candidates, 5 Chase `earns` candidates, card-benefit candidates) and four Bilt election definitions. All new rules are proposed candidates: none can establish anything until a reviewer promotes it.
 - **Evidence quality varies.** 4 rules rest on an official source; 6 rest on two independent secondary sources. Two official pages (Hyatt offer, JAL Crystal) were read only through search-engine excerpts because the sites refuse automated fetching; this is noted on those evidence records.
 - **Every rule was promoted by the build itself**, which is on the reviewer list. No person has checked them.
 - **Economics.** Goal reports carry sourced notes on cost, time and risk. Numeric point prices are absent because sources conflicted. Value-per-point arithmetic exists and is tested but has no live data to run on.
 - **Goal matching is keyword-to-tag.** Goals outside the small tag vocabulary return "no tag matched" until a reviewer adds tags.
 - **Bridge and exploratory discovery** are implemented and unit-tested but were not exercised with real research.
 - **Reviewer and owner controls are procedural.** The program checks the name on an attestation; it cannot check who typed it.
-- **Card data: none real.** The card machinery holds only invented fixtures (`fixtures/`). The live knowledge base has no card, organization, tier or card benefit.
+- **Card data: candidate-only.** Bilt Palladium and Chase Sapphire Reserve, with their organizations and network tiers, are in the knowledge base and tables as entities and proposed candidates. Transfer ratios are deliberately absent (Argon `Q-BILT-004`, `Q-CSR-001`). Engineering did not review this content.
 - **Card-specific evidence is a label** (`applies_to`) typed by whoever records the source. Reviewer promotion is the control.
 - **Tables cover cards, parties, benefits, sources, tier baselines and card benefits.** Programs, status tiers, bridges, portals and underwriting rules have no table; they are maintained through changesets as before.
 - **Card benefits are not in goal reports** (no goal tags reach them through the tables).
@@ -83,6 +97,7 @@ Full record: `docs/commissions/results/2026-11-14-fable-earned-entitlements-RESU
 - Maintenance by models weaker than Claude Haiku 5.5, and repeated runs for reliability.
 - **OP-10 (table maintenance) by any model other than the builder.**
 - **OP-11 (earned benefits) by any model other than the builder.**
+- **OP-12 (card elections) by any model other than the builder.**
 - Google Sheets as the editor for the CSV files. Only plain CSV, including a BOM + CRLF variant, was exercised.
 - Discovery research performed by a weaker model.
 - Behaviour at scale (hundreds of rules). Evaluation is simple iteration; expected fine, not measured.
@@ -110,5 +125,6 @@ None are built in. No subscription, hosting or API is required to run, test, que
 5. Review `dev/fable-integration` and decide whether to merge it to `main`.
 6. Confirm the expiry date of Eric's Aeroplan 25K. Without it the holding cannot be tracked, and after Marriott Titanium's recorded expiry (2027-01-31) the engine will report it as unresolved.
 7. Decide how household sharing should be represented before loading benefits whose value depends on it.
-8. Decide (Argon, content) which real earned-benefit rules to author first, and which period types they need. Anything other than a calendar year needs an engineering step before it can be loaded.
-9. Before any real earned benefit is recorded for Eric or Todd: the owner supplies each figure, date and balance. None has been entered or inferred.
+8. Argon to confirm the four Bilt election definitions, in particular whether the legacy credits and the Flex housing option are one election or two (modelled as two), and what applies to accounts opened in 2027 before their first anniversary.
+9. Decide (Argon, content) which real earned-benefit rules to author first, and which period types they need. Anything other than a calendar year needs an engineering step before it can be loaded.
+10. Before any real earned benefit or election is recorded for Eric or Todd: the owner supplies each figure, date and balance. None has been entered or inferred.
