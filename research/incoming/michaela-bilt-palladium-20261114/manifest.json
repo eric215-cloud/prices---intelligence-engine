@@ -1,0 +1,27 @@
+{
+  "project": "Michaela — Foundational PRICES Card Research",
+  "commissioned_by": "Bradley",
+  "as_of": "2026-11-14",
+  "status": "BILT_VALIDATED_CSR_NOT_STARTED",
+  "cards": [
+    "CARD-BILT-PALLADIUM"
+  ],
+  "source_count": 6,
+  "architecture_records": 7,
+  "benefit_records": 12,
+  "bridge_records": 26,
+  "unresolved_records": 5,
+  "record_files": [
+    "sources.jsonl",
+    "card_architecture.jsonl",
+    "benefits.jsonl",
+    "program_bridges.jsonl",
+    "unresolved_questions.jsonl"
+  ],
+  "interpretation": "Card product, account entitlements, and general loyalty-program bridges remain separately typed; absence of account evidence does not negate public eligibility.",
+  "limitations": [
+    "Bilt partner-by-partner transfer ratios not independently verified",
+    "Business-role capital provider unknown",
+    "Conditional benefit transition in 2027"
+  ]
+}
