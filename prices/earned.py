@@ -334,33 +334,43 @@ def _benefit(store, prof, h, held, acct_note, rule, label, q, insts, as_of, flag
         flag("CONFLICTING_ENTITLEMENTS", "review", rule["id"],
              "%d records for %s, account %s, cycle %s: %s" % (len(live), out_ent, h["id"], label, ", ".join(e["id"] for e in live)))
 
-    # An award that needs activation is only "eligible" until the day its record says it took effect.
-    waiting = bool(rows) and all(r["state"] == NOT_YET_EFFECTIVE for r in rows) and earn["activation"] == "required" \
-        and ach["state"] == ACHIEVED and covers
-    if rows and not waiting:
+    # Eligibility, judged from the progress on file alone. It is a separate fact from any account record.
+    if not covers:
+        elig, detail = NOT_OFFERED, ("the rule is retired" if status == "retired" else
+                                     "the offer (valid %s to %s) does not cover qualifying cycle %s"
+                                     % (rule.get("valid_from") or "open", rule.get("valid_to") or "open", label))
+    elif ach["state"] in (UNCERTAIN, CONFLICT):
+        elig, detail = UNRESOLVED, ach["detail"]
+    elif ach["state"] != ACHIEVED:
+        elig, detail = NOT_EARNED, ach["detail"]
+    elif exp is not None and as_of > exp:
+        elig, detail = LAPSED_UNCLAIMED, "threshold reached, nothing was ever recorded on the account, and the rule's term ended %s" % exp
+    elif earn["activation"] == "required":
+        elig, detail = ACTIVATION_REQUIRED, "eligible; the separate activation step is not recorded as done"
+    else:
+        elig, detail = EARNED_NOT_CONFIRMED, "eligible; not yet confirmed as present on the account"
+    eligible = elig in (ACTIVATION_REQUIRED, EARNED_NOT_CONFIRMED)
+
+    # What to call it. A record that has not taken effect yet does not make anything held.
+    not_started = bool(rows) and all(r["state"] == NOT_YET_EFFECTIVE for r in rows)
+    if not rows:
+        state = elig
+    elif not_started and elig == ACTIVATION_REQUIRED:
+        state, detail = elig, ("eligible; the separate activation step had not been done on this date (a record shows it taking effect %s)"
+                               % rows[0]["effective_from"])
+    else:
         best = sorted(rows, key=lambda r: [ACTIVE, UNRESOLVED, EXHAUSTED, NOT_YET_EFFECTIVE, ENDED, EXPIRED].index(r["state"]))[0]
         state, detail = best["state"], "; ".join(best["reasons"])
-    elif not covers:
-        state, detail = NOT_OFFERED, ("the rule is retired" if status == "retired" else
-                                      "the offer (valid %s to %s) does not cover qualifying cycle %s"
-                                      % (rule.get("valid_from") or "open", rule.get("valid_to") or "open", label))
-    elif ach["state"] in (UNCERTAIN, CONFLICT):
-        state, detail = UNRESOLVED, ach["detail"]
-    elif ach["state"] != ACHIEVED:
-        state, detail = NOT_EARNED, ach["detail"]
-    elif exp is not None and as_of > exp:
-        state, detail = LAPSED_UNCLAIMED, "threshold reached, nothing was ever recorded on the account, and the rule's term ended %s" % exp
-    else:
-        state = ACTIVATION_REQUIRED if earn["activation"] == "required" else EARNED_NOT_CONFIRMED
-        detail = ("eligible; the separate activation step had not been done on this date (a record shows it taking effect %s)"
-                  % rows[0]["effective_from"] if waiting else
-                  "eligible; the separate activation step is not recorded as done" if earn["activation"] == "required" else
-                  "eligible; not yet confirmed as present on the account")
+        if not_started and eligible:
+            detail = "eligible; the account record shows it taking effect %s" % rows[0]["effective_from"]
 
-    # eligibility (never possession): only while nothing is recorded for this rule, account and cycle
-    if (not rows or waiting) and covers and state in (UNRESOLVED, ACTIVATION_REQUIRED, EARNED_NOT_CONFIRMED):
+    # Engine facts for eligibility (never possession).
+    #   nothing in effect yet (no record, or only records dated later): can_get, and "have" only as a path that still needs a step
+    #   a record in effect:                                              can_get only - the person qualified; possession comes from the record
+    in_effect_now = any(r["state"] in (ACTIVE, UNRESOLVED) for r in rows)
+    if (elig == UNRESOLVED and (not rows or not_started)) or (eligible and (not rows or not_started or in_effect_now)):
         unknowns = []
-        if state == UNRESOLVED:
+        if elig == UNRESOLVED:
             unknowns.append("qualification %s for cycle %s is not established: %s" % (q["id"], label, ach["state"]))
         if status != "verified":
             unknowns.append("rule %s is unverified" % rule["id"])
@@ -372,7 +382,8 @@ def _benefit(store, prof, h, held, acct_note, rule, label, q, insts, as_of, flag
                               ([("action", earn["activation_action"])] if earn.get("activation_action") else []))
             sup = ["qualification:" + q["id"]]
             facts.append(("can_get:" + out_ent, LEVELS if not toks else (P, U), toks, rule["id"], sup))
-            facts.append(("have:" + out_ent, (C, U) if not toks else (U,), toks | steps, rule["id"], ["can_get:" + out_ent]))
+            if not in_effect_now:
+                facts.append(("have:" + out_ent, (C, U) if not toks else (U,), toks | steps, rule["id"], ["can_get:" + out_ent]))
     return {"rule": rule["id"], "entity": out_ent, "name": ents.get(out_ent, {}).get("name", out_ent), "public": public,
             "achievement": ach, "entitlement": {"state": state, "detail": detail, "usable": state == ACTIVE},
             "instances": rows, "withdrawn": [e["id"] for e in mine if e["state"] == "superseded"]}

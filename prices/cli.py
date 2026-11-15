@@ -214,7 +214,11 @@ def cmd_earned(args):
                 b["engine_source"] = res.via[lvl]["have:" + b["entity"]][0] if lvl else None
                 b["chain"] = {"rule_evidence": [store.evidence[e] for e in b["public"]["evidence"] if e in store.evidence],
                               "readings": [r for r in c["readings"] if r["id"] in b["achievement"]["basis"]]}
-    sv["flags"] = res.flags
+    # flags that belong to this report: the earned-benefit ones, and general ones raised on the rules shown here
+    shown = {b["rule"] for a in sv["accounts"] for c in a["cycles"] for b in c["benefits"]}
+    own = [f for f in res.flags if f in sv["flags"] or f["subject"] in shown]
+    sv["other_flags"] = len(res.flags) - len(own)
+    sv["flags"] = own
 
     def text(o):
         n = earned.num
@@ -281,9 +285,11 @@ def cmd_earned(args):
                         print("                    withdrawn records (kept as history): %s" % ", ".join(b["withdrawn"]))
                     print("      WHOLE PERSON  %s on this date across all of this person's accounts and qualifying years%s" % (
                         b["engine_status"], " (from %s)" % (b["engine_source"].replace(":", " ") if b["engine_source"].startswith("entitlement:") else "rule " + b["engine_source"]) if b["engine_source"] else ""))
-        print("\nFLAGS (%d)" % len(o["flags"]))
+        print("\nFLAGS on earned benefits (%d)" % len(o["flags"]))
         for f in o["flags"]:
             print("   [%s] %s %s: %s" % (f["severity"], f["code"], f["subject"], f["detail"]))
+        if o["other_flags"]:
+            print("   (%d other flag(s) not about earned benefits: python3 -m prices status --profile %s)" % (o["other_flags"], o["profile"]))
         print("\nOnly ENTITLEMENT = ACTIVE means the benefit can be used on this date. ACHIEVED means eligible, not held.")
     _emit(args, sv, text)
     return 0

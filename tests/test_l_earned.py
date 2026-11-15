@@ -137,7 +137,9 @@ class TestOfferAchievementEntitlement(unittest.TestCase):
         s = world([qual("2026", ACHIEVED_2026)], [inst("e-status", "earn-status", "status.x", "2026", "2026-11-08", "2028-02-29"),
                                                   inst("e-fare", "earn-fare", "fare", "2026", "2026-11-08", "2027-12-31")])
         self.assertEqual(lint(s), [])
-        for d, status, fare in (("2026-11-07", NOT_AVAILABLE, NOT_AVAILABLE), ("2026-11-08", ESTABLISHED, ESTABLISHED),
+        for d, status, fare in (("2026-10-30", UNRESOLVED, UNRESOLVED),             # crossed some time after June 30: not known yet
+                                ("2026-11-07", CONDITIONAL, CONDITIONAL),           # eligible since October 31; the account records start November 8
+                                ("2026-11-08", ESTABLISHED, ESTABLISHED),
                                 ("2027-12-31", ESTABLISHED, ESTABLISHED), ("2028-01-01", ESTABLISHED, NOT_AVAILABLE),
                                 ("2028-02-29", ESTABLISHED, NOT_AVAILABLE), ("2028-03-01", NOT_AVAILABLE, NOT_AVAILABLE)):
             r = evaluate(s, "t", d)

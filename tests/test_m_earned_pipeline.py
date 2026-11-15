@@ -190,9 +190,10 @@ class TestAcceptanceScenario(Base):
         steps = [
             # day          status          fare           award          credit          have: status, fare, award, credit
             ("2026-06-15", ("BELOW", N), ("BELOW", N), ("BELOW", N), ("BELOW", N), (NOT_AVAILABLE,) * 4),
-            ("2026-07-15", ("UNCERTAIN", N), ("UNCERTAIN", N), ("UNCERTAIN", N), ("UNCERTAIN", N), (NOT_AVAILABLE,) * 4),
+            # between the June figure (below) and the October figure (above) the crossing day is not known: unresolved, never assumed
+            ("2026-07-15", ("UNCERTAIN", N), ("UNCERTAIN", N), ("UNCERTAIN", N), ("UNCERTAIN", N), (UNRESOLVED,) * 4),
             # threshold reached by October 31: eligible. Nothing is held until the account record says so (November 8).
-            ("2026-11-05", (A, N), (A, N), (A, AR), (A, N), (NOT_AVAILABLE, NOT_AVAILABLE, CONDITIONAL, NOT_AVAILABLE)),
+            ("2026-11-05", (A, N), (A, N), (A, AR), (A, N), (CONDITIONAL,) * 4),
             ("2026-11-08", (A, NE), (A, NE), (A, AR), (A, NE), (ESTABLISHED, ESTABLISHED, CONDITIONAL, ESTABLISHED)),
             # the award needed its own step; it is held only from the day that step is recorded as done
             ("2027-01-14", (A, NE), (A, NE), (A, AR), (A, NE), (ESTABLISHED, ESTABLISHED, CONDITIONAL, ESTABLISHED)),
@@ -269,7 +270,11 @@ class TestAcceptanceScenario(Base):
     def test_timeline_shows_each_personal_boundary(self):
         events = {e["date"]: e for e in timeline(self.store(), ALEX, "2026-06-01", "2029-06-01")}
         moved = lambda day: {c["atom"]: (c["before"], c["after"]) for c in events[day]["changes"]}      # noqa: E731
-        self.assertEqual(moved("2026-11-08")["have:" + STATUS], (NOT_AVAILABLE, ESTABLISHED))
+        self.assertEqual(moved("2026-07-01")["can_get:" + STATUS], (NOT_AVAILABLE, UNRESOLVED))     # the day after the last "below" figure
+        self.assertEqual(moved("2026-10-31")["can_get:" + STATUS], (UNRESOLVED, ESTABLISHED))       # eligible
+        self.assertEqual(moved("2026-10-31")["have:" + STATUS], (UNRESOLVED, CONDITIONAL))          # ...and not yet held
+        self.assertEqual(moved("2026-11-08")["have:" + STATUS], (CONDITIONAL, ESTABLISHED))         # held
+        self.assertNotIn("can_get:" + STATUS, moved("2026-11-08"))                                  # eligibility did not "go away"
         self.assertEqual(moved("2027-01-15")["have:" + AWARD], (CONDITIONAL, ESTABLISHED))
         self.assertEqual(moved("2028-01-01")["have:" + FARE], (ESTABLISHED, NOT_AVAILABLE))
         self.assertNotIn("have:" + STATUS, moved("2028-01-01"))
@@ -478,7 +483,7 @@ class TestCorrectionsAndHistory(Base):
                          ("superseded", "r-2026-10b", 76900))                     # still on file, no longer counted
         pic, have, flags = self.picture(ALEX, "2026-11-05", "2026")
         self.assertEqual(pic["award"][0], "UNCERTAIN")                           # 74,900 in October, 91,250 at year end: crossed some time between
-        self.assertEqual(have["award"], NOT_AVAILABLE)                           # so the award is no longer shown as ready to activate
+        self.assertEqual(have["award"], UNRESOLVED)                              # so the award is no longer shown as ready to activate
         pic, have, flags = self.picture(ALEX, "2026-12-20", "2026")
         self.assertEqual((pic["status"], have["status"]), (("UNCERTAIN", "ACTIVE"), ESTABLISHED))   # the account record stands on the owner's word...
         self.assertIn("QUALIFICATION_NOT_RECORDED", flags)                       # ...and the gap behind it is shown
