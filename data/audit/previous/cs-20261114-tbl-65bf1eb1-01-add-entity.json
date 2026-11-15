@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-01-add-entity",
+  "records": {
+    "data/kb/entities/org.bilt.json": {
+      "after": "7f18b42cd016cfec",
+      "before": null
+    }
+  }
+}

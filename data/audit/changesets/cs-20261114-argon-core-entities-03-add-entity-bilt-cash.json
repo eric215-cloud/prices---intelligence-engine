@@ -1,0 +1,16 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "bilt.cash",
+      "kind": "currency",
+      "name": "Bilt Cash",
+      "notes": "Dollar-denominated Bilt Cash balance subject to annual rollover/expiration rules (SRC-BILT-CASH).",
+      "program": "bilt.program"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-core-entities-03-add-entity-bilt-cash",
+  "op": "add_entity",
+  "reason": "Register loyalty programs, currencies, elite statuses, lounge capabilities, and activation actions for Bilt Palladium and Chase Sapphire Reserve integration. (bilt.cash)"
+}

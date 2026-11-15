@@ -1,0 +1,14 @@
+{
+  "applies_to": [
+    "card.chase-sapphire-reserve",
+    "org.jpmorgan-chase"
+  ],
+  "id": "src-csr-benefits",
+  "notes": "Michaela source SRC-CSR-BENEFITS.",
+  "publisher": "JPMorgan Chase Bank, N.A.",
+  "retrieved_on": "2026-11-14",
+  "source_type": "official",
+  "summary": "Official Chase Sapphire Reserve personal cardholder benefits overview corroborating annual credits, travel/lifestyle partnerships, lounge network access, and $75,000 spend tier benefits.",
+  "title": "Chase Sapphire Reserve Benefits (Personal)",
+  "url": "https://www.chase.com/sapphire-cards/personal/reserve"
+}

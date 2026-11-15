@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "org.cardless",
+      "kind": "organization",
+      "name": "Cardless, Inc.",
+      "notes": "Explicitly named card servicer / functional program manager in the Bilt Rewards Card Offer Terms (ARCH-BILT-03)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-02-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: parties row org.cardless"
+}

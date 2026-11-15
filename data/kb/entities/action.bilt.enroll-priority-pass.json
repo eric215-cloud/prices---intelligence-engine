@@ -1,0 +1,6 @@
+{
+  "id": "action.bilt.enroll-priority-pass",
+  "kind": "action",
+  "name": "Enroll in Physical/App Priority Pass Membership via Bilt App",
+  "notes": "Required enrollment step for physical Priority Pass card and Priority Pass app login on Bilt Palladium (BEN-BILT-005 / SRC-BILT-OFFER)."
+}

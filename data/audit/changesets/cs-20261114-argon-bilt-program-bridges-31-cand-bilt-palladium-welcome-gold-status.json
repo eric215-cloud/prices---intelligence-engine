@@ -1,0 +1,78 @@
+{
+  "author": "Argon",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-14",
+      "evidence": [
+        {
+          "applies_to": [
+            "card.bilt-palladium",
+            "org.bilt",
+            "org.cardless",
+            "org.column-na",
+            "org.mastercard",
+            "tier.mastercard-world-legend"
+          ],
+          "id": "src-bilt-offer",
+          "notes": "Michaela source SRC-BILT-OFFER (updated 2026-10-27; pp. 1-8, 20-25).",
+          "publisher": "Bilt",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Governing card offer terms establishing Column N.A. as issuer/creditor, Cardless Inc. as servicer, World Legend Mastercard network/tier, $495 annual fee, 2X everyday points, housing rewards options (tiered vs. pre-2027 Flex Bilt Cash), 2027 $200+$400 to $600 Bilt Cash transition, Priority Pass rules, and Point Accelerator.",
+          "title": "Bilt Rewards Card Offer Terms",
+          "url": "https://www.bilt.com/terms/bilt-card-offer-terms"
+        },
+        {
+          "applies_to": [
+            "card.bilt-palladium",
+            "org.bilt",
+            "org.column-na",
+            "tier.mastercard-world-legend"
+          ],
+          "id": "src-bilt-product",
+          "notes": "Michaela source SRC-BILT-PRODUCT.",
+          "publisher": "Bilt",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Official Bilt Palladium marketing and product specification page confirming $495 annual fee, public welcome offer, Priority Pass valuation, portal/Lyft/Neighborhood Dining stacks, and footer issuer/network disclosures.",
+          "title": "Bilt Palladium Card Product Page",
+          "url": "https://www.bilt.com/card/palladium"
+        }
+      ],
+      "id": "cand-bilt-palladium-welcome-gold-status",
+      "open_questions": [
+        "Verify whether Eric qualified for the public Bilt Palladium welcome offer or transitioned from an existing Bilt account (Q-BILT-005)."
+      ],
+      "proposed_rule": {
+        "id": "bilt-palladium.welcome-gold-status",
+        "kind": "grants",
+        "output": "bilt.gold",
+        "restrictions": [
+          "New primary card applicants only who meet the $4,000/90-day non-housing spend requirement",
+          "Never assumed for existing cardholders without verified account documentation"
+        ],
+        "summary": "Achieving the Bilt Palladium public welcome offer ($4,000 non-housing everyday spend in first 90 days) grants Bilt Gold status through January 15 of the second following calendar year (BEN-BILT-011).",
+        "when": {
+          "all": [
+            {
+              "holds": "card.bilt-palladium"
+            },
+            {
+              "holds": "benefit.bilt-palladium.public-welcome-offer"
+            }
+          ]
+        }
+      },
+      "search_path": [
+        "card.bilt-palladium",
+        "benefit.bilt-palladium.public-welcome-offer",
+        "bilt.gold"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-bilt-program-bridges-31-cand-bilt-palladium-welcome-gold-status",
+  "op": "add_candidate",
+  "reason": "Add Bilt Palladium currency/lounge relationship rules and all 26 Bilt Rewards transfer partner candidates (BRIDGE-BILT-001 through BRIDGE-BILT-026). (cand-bilt-palladium-welcome-gold-status)"
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-27-cand-bilt-transfer-hyatt",
+  "records": {
+    "data/candidates/cand-bilt-transfer-hyatt.json": {
+      "after": "172c3cf8bdcd0e9e",
+      "before": null
+    }
+  }
+}

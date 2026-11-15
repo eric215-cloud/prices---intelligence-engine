@@ -1,0 +1,6 @@
+{
+  "id": "amtrak.points",
+  "kind": "currency",
+  "name": "Amtrak Guest Rewards Points",
+  "program": "amtrak.program"
+}

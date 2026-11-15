@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-03-add-entity",
+  "records": {
+    "data/kb/entities/org.column-na.json": {
+      "after": "608abd99bda4a6d9",
+      "before": null
+    }
+  }
+}

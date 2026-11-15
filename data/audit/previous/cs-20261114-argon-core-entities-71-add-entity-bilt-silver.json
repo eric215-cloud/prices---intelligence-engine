@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-71-add-entity-bilt-silver",
+  "records": {
+    "data/kb/entities/bilt.silver.json": {
+      "after": "1717fa81925c65b3",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-05-cand-csr-acquire-ihg-platinum",
+  "records": {
+    "data/candidates/cand-csr-acquire-ihg-platinum.json": {
+      "after": "8b01b782409247a5",
+      "before": null
+    }
+  }
+}

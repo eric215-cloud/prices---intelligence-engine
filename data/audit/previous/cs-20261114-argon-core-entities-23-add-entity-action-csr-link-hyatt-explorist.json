@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-23-add-entity-action-csr-link-hyatt-explorist",
+  "records": {
+    "data/kb/entities/action.csr.link-hyatt-explorist.json": {
+      "after": "29cea6fe779dc0c9",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-82-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.priority-pass-lounge.json": {
+      "after": "fb74b71c06ac89ec",
+      "before": null
+    }
+  }
+}

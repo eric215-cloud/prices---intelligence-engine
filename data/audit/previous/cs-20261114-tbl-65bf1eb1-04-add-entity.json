@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-04-add-entity",
+  "records": {
+    "data/kb/entities/org.jpmorgan-chase.json": {
+      "after": "2ee8556ca8940c7d",
+      "before": null
+    }
+  }
+}

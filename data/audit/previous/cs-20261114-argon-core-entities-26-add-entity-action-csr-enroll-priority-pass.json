@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-26-add-entity-action-csr-enroll-priority-pass",
+  "records": {
+    "data/kb/entities/action.csr.enroll-priority-pass.json": {
+      "after": "e012fe857ed2f616",
+      "before": null
+    }
+  }
+}

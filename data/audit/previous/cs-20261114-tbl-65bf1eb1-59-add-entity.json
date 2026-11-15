@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-59-add-entity",
+  "records": {
+    "data/kb/entities/benefit.visa-inf.secondary-auto-cdw.json": {
+      "after": "f7c266a85db9e185",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-36-add-entity-lifemiles-miles",
+  "records": {
+    "data/kb/entities/lifemiles.miles.json": {
+      "after": "d99aec5e45dcbab7",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.transfer-partner-access",
+      "kind": "benefit",
+      "name": "Chase Ultimate Rewards Point Transfer Access (14 Airline & Hotel Partners)",
+      "notes": "BEN-CSR-009: Card-enabled Ultimate Rewards point transfer capability to 10 airline and 4 hotel partners (modeled individually as 14 transfer candidate rules)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-51-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.transfer-partner-access"
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-56-add-entity",
+  "records": {
+    "data/kb/entities/benefit.mc-wl.id-theft-protection.json": {
+      "after": "fdac134fb56cbc68",
+      "before": null
+    }
+  }
+}

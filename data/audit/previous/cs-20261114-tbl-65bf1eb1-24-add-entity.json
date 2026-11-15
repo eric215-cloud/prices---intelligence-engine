@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-24-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.purchase-assurance-extended-warranty.json": {
+      "after": "f62db5038b32ecbc",
+      "before": null
+    }
+  }
+}

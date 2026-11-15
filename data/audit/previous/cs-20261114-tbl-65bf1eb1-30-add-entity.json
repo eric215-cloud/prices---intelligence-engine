@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-30-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.apple-tv-apple-music.json": {
+      "after": "8be8185eaca4bd30",
+      "before": null
+    }
+  }
+}

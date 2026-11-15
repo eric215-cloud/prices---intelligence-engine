@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-56-add-entity-united-miles",
+  "records": {
+    "data/kb/entities/united.miles.json": {
+      "after": "07a2799f285fc934",
+      "before": null
+    }
+  }
+}

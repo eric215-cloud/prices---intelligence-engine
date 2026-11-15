@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-79-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.neighborhood-dining-stack.json": {
+      "after": "67b1939760f9bdd1",
+      "before": null
+    }
+  }
+}

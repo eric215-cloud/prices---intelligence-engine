@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-31-cand-bilt-palladium-welcome-gold-status",
+  "records": {
+    "data/candidates/cand-bilt-palladium-welcome-gold-status.json": {
+      "after": "e99306b818ab2a34",
+      "before": null
+    }
+  }
+}

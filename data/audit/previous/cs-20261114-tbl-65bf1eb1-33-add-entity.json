@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-33-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.doordash-dashpass-and-promos.json": {
+      "after": "f1f92d3db8cde73b",
+      "before": null
+    }
+  }
+}

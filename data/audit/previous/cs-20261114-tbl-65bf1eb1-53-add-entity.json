@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-53-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.trip-delay-reimbursement.json": {
+      "after": "bb9c7f9feac0677f",
+      "before": null
+    }
+  }
+}

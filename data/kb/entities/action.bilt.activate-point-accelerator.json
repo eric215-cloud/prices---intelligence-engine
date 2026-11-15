@@ -1,0 +1,6 @@
+{
+  "id": "action.bilt.activate-point-accelerator",
+  "kind": "action",
+  "name": "Redeem $200 Bilt Cash in Bilt Wallet to Activate Point Accelerator",
+  "notes": "Manual activation action in Bilt Wallet granting +1X Bilt Point/$1 on next $5,000 everyday spend (BEN-BILT-010 / SRC-BILT-OFFER)."
+}

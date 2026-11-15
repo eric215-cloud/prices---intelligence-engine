@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-12-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.base-2x-everyday.json": {
+      "after": "b1a2604778561d66",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.annual-bilt-cash-600-post2027",
+      "kind": "benefit",
+      "name": "Bilt Palladium $600 Annual Bilt Cash Credit (Post-2027 Default Regime)",
+      "notes": "BEN-BILT-003B: $600 annual Bilt Cash credit deposited on card anniversary starting at first anniversary in 2027 or later when legacy structure is not elected."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-10-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.annual-bilt-cash-600-post2027"
+}

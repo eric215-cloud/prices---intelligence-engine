@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.base-2x-everyday",
+      "kind": "benefit",
+      "name": "Bilt Palladium Base 2X Bilt Points on Everyday Purchases",
+      "notes": "BEN-BILT-001: 2X Bilt Points per $1 on eligible non-housing everyday purchases."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-12-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.base-2x-everyday"
+}

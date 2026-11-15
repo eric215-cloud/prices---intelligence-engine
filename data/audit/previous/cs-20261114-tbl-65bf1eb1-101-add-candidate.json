@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-101-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.points-boost-portal-redemption.json": {
+      "after": "bb19237f09918d83",
+      "before": null
+    }
+  }
+}

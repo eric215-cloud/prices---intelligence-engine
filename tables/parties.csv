@@ -1,1 +1,9 @@
 id,kind,name,network,notes
+org.bilt,organization,"Bilt Rewards (Bilt Technologies, Inc.)",,Brand and loyalty program administrator for the Bilt Palladium Card and Bilt Rewards / Bilt Cash programs (ARCH-BILT-02).
+org.cardless,organization,"Cardless, Inc.",,Explicitly named card servicer / functional program manager in the Bilt Rewards Card Offer Terms (ARCH-BILT-03).
+org.column-na,organization,"Column N.A., Member FDIC",,Explicitly named issuing bank and Card Account creditor for the Bilt Palladium Card under Bilt 2.0 (ARCH-BILT-04).
+org.jpmorgan-chase,organization,"JPMorgan Chase Bank, N.A.",,"Issuing bank and Ultimate Rewards program administrator for the U.S. personal Chase Sapphire Reserve (ARCH-CSR-03, ARCH-CSR-04)."
+org.mastercard,organization,Mastercard International Incorporated,,Payment network for the Bilt Palladium World Legend Mastercard (ARCH-BILT-06).
+org.visa,organization,Visa U.S.A. Inc.,,Payment network for the U.S. personal Chase Sapphire Reserve (ARCH-CSR-06).
+tier.mastercard-world-legend,network_tier,World Legend Mastercard,org.mastercard,Mastercard luxury benefit tier carried by the Bilt Palladium Card (ARCH-BILT-07).
+tier.visa-infinite,network_tier,Visa Infinite,org.visa,Visa premium consumer benefit tier carried by the U.S. personal Chase Sapphire Reserve (ARCH-CSR-07).

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-50-add-entity-qatar-avios",
+  "records": {
+    "data/kb/entities/qatar.avios.json": {
+      "after": "81bd551c163411c7",
+      "before": null
+    }
+  }
+}

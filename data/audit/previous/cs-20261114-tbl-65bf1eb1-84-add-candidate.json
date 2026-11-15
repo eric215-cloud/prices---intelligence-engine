@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-84-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.purchase-assurance-extended-warranty.json": {
+      "after": "4da39cbe3cd8218b",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-45-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.reserve-travel-designers.json": {
+      "after": "0da2084e6d108441",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "id": "priority_pass.select",
+  "kind": "status",
+  "name": "Priority Pass Select Membership",
+  "notes": "Complimentary lounge membership tier (+2 guests) granted via eligible premium cards.",
+  "program": "priority_pass.program"
+}

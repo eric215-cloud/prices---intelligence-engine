@@ -1,0 +1,6 @@
+{
+  "id": "accor.points",
+  "kind": "currency",
+  "name": "ALL Accor Reward Points",
+  "program": "accor.program"
+}

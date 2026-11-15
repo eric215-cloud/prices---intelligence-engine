@@ -1,0 +1,6 @@
+{
+  "id": "chase.ur",
+  "kind": "currency",
+  "name": "Chase Ultimate Rewards Points",
+  "program": "chase.ur.program"
+}

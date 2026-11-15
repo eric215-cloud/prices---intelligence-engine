@@ -1,0 +1,6 @@
+{
+  "id": "benefit.csr.transfer-partner-access",
+  "kind": "benefit",
+  "name": "Chase Ultimate Rewards Point Transfer Access (14 Airline & Hotel Partners)",
+  "notes": "BEN-CSR-009: Card-enabled Ultimate Rewards point transfer capability to 10 airline and 4 hotel partners (modeled individually as 14 transfer candidate rules)."
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-04-cand-csr-grants-air-canada-lounge-access",
+  "records": {
+    "data/candidates/cand-csr-grants-air-canada-lounge-access.json": {
+      "after": "68340b690ba12ccb",
+      "before": null
+    }
+  }
+}

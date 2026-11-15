@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-05-cand-bilt-transfer-aeroplan",
+  "records": {
+    "data/candidates/cand-bilt-transfer-aeroplan.json": {
+      "after": "5e9c34de56ee8910",
+      "before": null
+    }
+  }
+}

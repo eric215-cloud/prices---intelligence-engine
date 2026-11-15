@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.annual-travel-credit-300",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve $300 Annual Travel Statement Credit (Anniversary Cycle)",
+      "notes": "BEN-CSR-002: Automatic $300 statement credit each account anniversary year on broad travel purchases."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-29-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.annual-travel-credit-300"
+}

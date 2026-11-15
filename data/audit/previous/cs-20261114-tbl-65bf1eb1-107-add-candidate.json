@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-107-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.sapphire-lounge-by-the-club.json": {
+      "after": "6539a6070857eea4",
+      "before": null
+    }
+  }
+}

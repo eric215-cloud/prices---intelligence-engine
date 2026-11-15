@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-32-add-entity-atmos-points",
+  "records": {
+    "data/kb/entities/atmos.points.json": {
+      "after": "c0b6d74fc2ea8334",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "author": "Argon",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-14",
+      "evidence": [
+        {
+          "applies_to": [
+            "card.bilt-palladium",
+            "org.bilt",
+            "org.cardless",
+            "org.column-na",
+            "org.mastercard",
+            "tier.mastercard-world-legend"
+          ],
+          "id": "src-bilt-offer",
+          "notes": "Michaela source SRC-BILT-OFFER (updated 2026-10-27; pp. 1-8, 20-25).",
+          "publisher": "Bilt",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Governing card offer terms establishing Column N.A. as issuer/creditor, Cardless Inc. as servicer, World Legend Mastercard network/tier, $495 annual fee, 2X everyday points, housing rewards options (tiered vs. pre-2027 Flex Bilt Cash), 2027 $200+$400 to $600 Bilt Cash transition, Priority Pass rules, and Point Accelerator.",
+          "title": "Bilt Rewards Card Offer Terms",
+          "url": "https://www.bilt.com/terms/bilt-card-offer-terms"
+        },
+        {
+          "applies_to": [
+            "card.bilt-palladium",
+            "org.bilt"
+          ],
+          "id": "src-bilt-cash",
+          "notes": "Michaela source SRC-BILT-CASH (updated 2026-10-27; §§ 1.3-1.6, 3.2-3.6).",
+          "publisher": "Bilt",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Official Bilt Cash program terms governing Bilt Cash earning (4% under Flex), $3 per 100 housing points redemption rate, $100 annual rollover cap with 12-month expiration for card-earned Bilt Cash, and $200 Point Accelerator mechanics.",
+          "title": "Bilt Cash Program Terms of Use",
+          "url": "https://www.bilt.com/terms/bilt-cash"
+        }
+      ],
+      "id": "cand-bilt-palladium-grants-bilt-cash-access",
+      "open_questions": [],
+      "proposed_rule": {
+        "id": "bilt-palladium.grants-bilt-cash",
+        "kind": "grants",
+        "output": "bilt.cash",
+        "summary": "Holding the Bilt Palladium Card grants annual Bilt Cash credits ($200 legacy or $600 post-2027 default) and optional 4% Bilt Cash earning under the pre-2027 Flexible Bilt Cash election.",
+        "when": {
+          "holds": "card.bilt-palladium"
+        }
+      },
+      "search_path": [
+        "card.bilt-palladium",
+        "bilt.cash"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-bilt-program-bridges-02-cand-bilt-palladium-grants-bilt-cash-access",
+  "op": "add_candidate",
+  "reason": "Add Bilt Palladium currency/lounge relationship rules and all 26 Bilt Rewards transfer partner candidates (BRIDGE-BILT-001 through BRIDGE-BILT-026). (cand-bilt-palladium-grants-bilt-cash-access)"
+}

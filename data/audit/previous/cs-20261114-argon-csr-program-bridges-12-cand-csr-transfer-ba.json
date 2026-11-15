@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-12-cand-csr-transfer-ba",
+  "records": {
+    "data/candidates/cand-csr-transfer-ba.json": {
+      "after": "5b3c8aae4b914dfa",
+      "before": null
+    }
+  }
+}

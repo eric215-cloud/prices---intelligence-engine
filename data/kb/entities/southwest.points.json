@@ -1,0 +1,6 @@
+{
+  "id": "southwest.points",
+  "kind": "currency",
+  "name": "Southwest Rapid Rewards Points",
+  "program": "southwest.program"
+}

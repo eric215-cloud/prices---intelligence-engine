@@ -1,0 +1,6 @@
+{
+  "id": "action.csr.enroll-priority-pass",
+  "kind": "action",
+  "name": "Enroll in Priority Pass Select via Chase Benefits",
+  "notes": "Required one-time enrollment for CSR Priority Pass Select & Sapphire Lounge access."
+}

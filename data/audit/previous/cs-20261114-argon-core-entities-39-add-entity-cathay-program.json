@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-39-add-entity-cathay-program",
+  "records": {
+    "data/kb/entities/cathay.program.json": {
+      "after": "514a3cec9d9cfa7d",
+      "before": null
+    }
+  }
+}

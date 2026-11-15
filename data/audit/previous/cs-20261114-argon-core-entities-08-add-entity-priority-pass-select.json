@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-08-add-entity-priority-pass-select",
+  "records": {
+    "data/kb/entities/priority_pass.select.json": {
+      "after": "996558e6076790e1",
+      "before": null
+    }
+  }
+}

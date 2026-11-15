@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-46-add-entity-iberia-avios",
+  "records": {
+    "data/kb/entities/iberia.avios.json": {
+      "after": "fb57e70cfc72e3e9",
+      "before": null
+    }
+  }
+}

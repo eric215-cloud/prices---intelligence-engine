@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-02-add-entity",
+  "records": {
+    "data/kb/entities/org.cardless.json": {
+      "after": "eb2dee6537eec4b4",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "id": "atmos.points",
+  "kind": "currency",
+  "name": "Atmos Rewards Points",
+  "program": "atmos.program"
+}

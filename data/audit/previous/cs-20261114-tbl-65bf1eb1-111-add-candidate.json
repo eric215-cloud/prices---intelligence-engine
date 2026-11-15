@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-111-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.the-edit-hotel-credit-500.json": {
+      "after": "bcaffd287540c9ad",
+      "before": null
+    }
+  }
+}

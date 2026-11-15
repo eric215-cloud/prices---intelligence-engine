@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-37-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.lyft-5x-multiplier.json": {
+      "after": "1f777b7b292a1691",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-67-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.annual-bilt-cash-200-legacy.json": {
+      "after": "7df3ed968d3b777a",
+      "before": null
+    }
+  }
+}

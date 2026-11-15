@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-66-add-entity-hilton-points",
+  "records": {
+    "data/kb/entities/hilton.points.json": {
+      "after": "a7d700b7d88f92d6",
+      "before": null
+    }
+  }
+}

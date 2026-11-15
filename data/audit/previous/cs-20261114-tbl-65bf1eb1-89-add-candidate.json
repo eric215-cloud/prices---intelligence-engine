@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-89-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.annual-travel-credit-300.json": {
+      "after": "3f6520b16e13c94f",
+      "before": null
+    }
+  }
+}

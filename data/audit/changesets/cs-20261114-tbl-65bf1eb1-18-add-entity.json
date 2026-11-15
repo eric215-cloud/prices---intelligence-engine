@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.masterrental-cdw",
+      "kind": "benefit",
+      "name": "Bilt Palladium MasterRental Auto Collision Damage Coverage",
+      "notes": "BEN-BILT-012A: Card-specific MasterRental auto rental collision damage coverage per Bilt Palladium Guide to Benefits."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-18-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.masterrental-cdw"
+}

@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "turkish.miles",
+      "kind": "currency",
+      "name": "Turkish Airlines Miles&Smiles Miles",
+      "program": "turkish.program"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-core-entities-54-add-entity-turkish-miles",
+  "op": "add_entity",
+  "reason": "Register loyalty programs, currencies, elite statuses, lounge capabilities, and activation actions for Bilt Palladium and Chase Sapphire Reserve integration. (turkish.miles)"
+}

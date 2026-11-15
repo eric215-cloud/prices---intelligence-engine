@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-19-cand-bilt-transfer-tap",
+  "records": {
+    "data/candidates/cand-bilt-transfer-tap.json": {
+      "after": "46d08a10f3d21ef6",
+      "before": null
+    }
+  }
+}

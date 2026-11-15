@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-92-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.category-earning-structure.json": {
+      "after": "803d5cd1da13c224",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase",
+        "org.visa",
+        "tier.visa-infinite"
+      ],
+      "id": "src-csr-offer",
+      "notes": "Michaela source SRC-CSR-OFFER.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Primary U.S. personal Chase Sapphire Reserve offer page and benefit disclosures ($795 annual fee, 8x/4x/3x/1x earning, $300 travel credit, $500 The Edit credit, $250 2026 Select Hotel credit, $300 Exclusive Tables, IHG Platinum, five $75,000 calendar-year spend unlocks, Apple/DoorDash/Lyft/StubHub/Peloton/Global Entry credits).",
+      "title": "Chase Sapphire Reserve Credit Card: Offer Details and Benefit Terms",
+      "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve"
+    },
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase"
+      ],
+      "id": "src-csr-rewards",
+      "notes": "Michaela source SRC-CSR-REWARDS.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Legal Ultimate Rewards Program Agreement for Chase Sapphire Reserve establishing JPMorgan Chase Bank, N.A. as issuer/program administrator, point earning exclusions on credited travel/Edit spend, Points Boost rules, and point transfer eligibility.",
+      "title": "Chase Sapphire Reserve with Ultimate Rewards Program Agreement",
+      "url": "https://www.chase.com/sapphirereserve/rewardsagreement"
+    }
+  ],
+  "id": "c-cb.csr.points-boost-portal-redemption",
+  "open_questions": [],
+  "proposed_rule": {
+    "id": "cb.csr.points-boost-portal-redemption",
+    "kind": "grants",
+    "output": "benefit.csr.points-boost-portal-redemption",
+    "restrictions": [
+      "Redemption value varies by eligible flight/hotel inventory in Chase Travel (up to 2¢/pt; 1¢/pt baseline on non-Points Boost inventory)"
+    ],
+    "summary": "Points Boost feature allowing Ultimate Rewards points to be redeemed at up to 2 cents per point on select flights and hotels in Chase Travel.",
+    "when": {
+      "holds": "card.chase-sapphire-reserve"
+    }
+  },
+  "search_path": [
+    "tables import (card_benefits.csv)"
+  ],
+  "status": "proposed"
+}

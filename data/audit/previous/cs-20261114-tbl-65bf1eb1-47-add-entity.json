@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-47-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.select-hotel-credit-250-2026.json": {
+      "after": "51c58a2a46476bc7",
+      "before": null
+    }
+  }
+}

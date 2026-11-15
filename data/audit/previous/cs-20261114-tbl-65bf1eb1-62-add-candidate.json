@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-62-add-candidate",
+  "records": {
+    "data/candidates/c-baseline.mc-wl.concierge-lifestyle.json": {
+      "after": "1c6bc2b1b6707c2f",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-18-cand-bilt-transfer-southwest",
+  "records": {
+    "data/candidates/cand-bilt-transfer-southwest.json": {
+      "after": "49db2a87c51cac5e",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-08-add-entity",
+  "records": {
+    "data/kb/entities/tier.visa-infinite.json": {
+      "after": "9ad0668f6ad5aa5c",
+      "before": null
+    }
+  }
+}

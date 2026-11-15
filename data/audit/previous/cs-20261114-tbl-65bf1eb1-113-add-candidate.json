@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-113-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.trip-cancellation-interruption.json": {
+      "after": "9b8b1dcb7e82a9a4",
+      "before": null
+    }
+  }
+}

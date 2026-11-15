@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "chase.sapphire_lounge_access",
+      "kind": "capability",
+      "name": "Chase Sapphire Lounge by The Club Access (+2 Guests)",
+      "notes": "Access to Chase Sapphire Lounge by The Club locations within 3h of departure."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-core-entities-09-add-entity-chase-sapphire-lounge-access",
+  "op": "add_entity",
+  "reason": "Register loyalty programs, currencies, elite statuses, lounge capabilities, and activation actions for Bilt Palladium and Chase Sapphire Reserve integration. (chase.sapphire_lounge_access)"
+}

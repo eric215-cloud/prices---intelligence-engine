@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-15-add-entity-hyatt-points",
+  "records": {
+    "data/kb/entities/hyatt.points.json": {
+      "after": "782b8296a606ffe5",
+      "before": null
+    }
+  }
+}

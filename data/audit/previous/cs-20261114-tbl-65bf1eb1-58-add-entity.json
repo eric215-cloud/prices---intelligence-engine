@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-58-add-entity",
+  "records": {
+    "data/kb/entities/benefit.visa-inf.luxury-hotel-collection.json": {
+      "after": "8ddc44fc6f4dadf1",
+      "before": null
+    }
+  }
+}

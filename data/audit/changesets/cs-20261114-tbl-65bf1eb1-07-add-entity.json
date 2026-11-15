@@ -1,0 +1,16 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "tier.mastercard-world-legend",
+      "kind": "network_tier",
+      "name": "World Legend Mastercard",
+      "network": "org.mastercard",
+      "notes": "Mastercard luxury benefit tier carried by the Bilt Palladium Card (ARCH-BILT-07)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-07-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: parties row tier.mastercard-world-legend"
+}

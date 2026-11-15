@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-46-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.sapphire-lounge-by-the-club.json": {
+      "after": "8040c82537722f49",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.visa-inf.luxury-hotel-collection",
+      "kind": "benefit",
+      "name": "Visa Infinite Luxury Hotel Collection Baseline",
+      "notes": "Visa Infinite tier-level hotel privileges baseline."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-58-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.visa-inf.luxury-hotel-collection"
+}

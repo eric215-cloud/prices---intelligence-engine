@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-28-cand-bilt-transfer-iprefer",
+  "records": {
+    "data/candidates/cand-bilt-transfer-iprefer.json": {
+      "after": "08bc1501c6aacf41",
+      "before": null
+    }
+  }
+}

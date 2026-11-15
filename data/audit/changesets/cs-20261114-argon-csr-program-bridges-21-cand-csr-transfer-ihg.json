@@ -1,0 +1,79 @@
+{
+  "author": "Argon",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-14",
+      "evidence": [
+        {
+          "applies_to": [
+            "card.chase-sapphire-reserve",
+            "org.jpmorgan-chase",
+            "org.visa",
+            "tier.visa-infinite"
+          ],
+          "id": "src-csr-offer",
+          "notes": "Michaela source SRC-CSR-OFFER.",
+          "publisher": "JPMorgan Chase Bank, N.A.",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Primary U.S. personal Chase Sapphire Reserve offer page and benefit disclosures ($795 annual fee, 8x/4x/3x/1x earning, $300 travel credit, $500 The Edit credit, $250 2026 Select Hotel credit, $300 Exclusive Tables, IHG Platinum, five $75,000 calendar-year spend unlocks, Apple/DoorDash/Lyft/StubHub/Peloton/Global Entry credits).",
+          "title": "Chase Sapphire Reserve Credit Card: Offer Details and Benefit Terms",
+          "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve"
+        },
+        {
+          "applies_to": [
+            "card.chase-sapphire-reserve",
+            "org.jpmorgan-chase"
+          ],
+          "id": "src-csr-transfer",
+          "notes": "Michaela source SRC-CSR-TRANSFER.",
+          "publisher": "JPMorgan Chase Bank, N.A.",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Official Chase education guide listing the 14 participating Ultimate Rewards airline and hotel transfer partners (10 airline, 4 hotel) without partner-by-partner ratio tables.",
+          "title": "How to Transfer Points Through Chase Ultimate Rewards",
+          "url": "https://www.chase.com/personal/credit-cards/education/basics/how-to-transfer-chase-ultimate-rewards-points"
+        }
+      ],
+      "id": "cand-csr-transfer-ihg",
+      "open_questions": [
+        "Verify exact Chase Sapphire Reserve transfer ratio, minimum increment (typically 1,000 points), and transfer speed for IHG One Rewards Points inside the authenticated Ultimate Rewards portal (Q-CSR-001)."
+      ],
+      "proposed_rule": {
+        "id": "chase.ur-to-ihg",
+        "kind": "transfer",
+        "output": "ihg.points",
+        "restrictions": [
+          "Requires holding Chase Sapphire Reserve (or another transfer-enabled Ultimate Rewards card) in good standing",
+          "Recipient loyalty account name must match primary cardholder or eligible authorized user / household member per Ultimate Rewards terms",
+          "Exact per-partner transfer ratio is not listed on the public Chase transfer education page and must be verified in the logged-in Ultimate Rewards portal before promotion"
+        ],
+        "summary": "Transfer Chase Ultimate Rewards points to IHG One Rewards Points when holding an eligible transfer-enabled Ultimate Rewards card such as Chase Sapphire Reserve (BRIDGE-CSR-011).",
+        "transfer": {
+          "from": "chase.ur",
+          "note": "Exact partner transfer ratio, minimum increment, and posting speed omitted pending in-portal verification."
+        },
+        "when": {
+          "all": [
+            {
+              "holds": "card.chase-sapphire-reserve"
+            },
+            {
+              "holds": "chase.ur"
+            }
+          ]
+        }
+      },
+      "search_path": [
+        "card.chase-sapphire-reserve",
+        "chase.ur",
+        "ihg.points"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-csr-program-bridges-21-cand-csr-transfer-ihg",
+  "op": "add_candidate",
+  "reason": "Add Chase Sapphire Reserve currency/lounge/status rules, all five $75,000 calendar-year spend `earns` rules (BRIDGE-CSR-019..023), and all 14 Ultimate Rewards transfer partner candidates (BRIDGE-CSR-001..014). (cand-csr-transfer-ihg)"
+}

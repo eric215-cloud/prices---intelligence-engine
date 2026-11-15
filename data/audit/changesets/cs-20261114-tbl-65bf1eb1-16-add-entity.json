@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.housing-tiered-points",
+      "kind": "benefit",
+      "name": "Bilt Palladium Housing-Only Tiered Points Option (0.5X to 1.25X)",
+      "notes": "BEN-BILT-002A: Selectable housing-only rewards path scaling from 250-pt floor (<25% everyday-to-housing spend ratio) to 0.5X (25%), 0.75X (50%), 1.0X (75%), and 1.25X (>=100%) with no Bilt housing transaction fee."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-16-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.housing-tiered-points"
+}

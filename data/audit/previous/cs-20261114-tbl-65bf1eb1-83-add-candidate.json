@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-83-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.public-welcome-offer.json": {
+      "after": "37673327d0000a83",
+      "before": null
+    }
+  }
+}

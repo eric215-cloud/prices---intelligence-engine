@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.air-canada-maple-leaf-lounge",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Air Canada Maple Leaf Lounge & Cafe Access (Star Alliance Departure)",
+      "notes": "BEN-CSR-006: Cardholder + 1 guest access to select Air Canada Maple Leaf Lounges and Air Canada Cafes when departing same-day on a Star Alliance-operated flight (excludes Montreal YUL and Signature Suites)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-28-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.air-canada-maple-leaf-lounge"
+}

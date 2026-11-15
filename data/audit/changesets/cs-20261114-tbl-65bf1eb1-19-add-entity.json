@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.neighborhood-dining-stack",
+      "kind": "benefit",
+      "name": "Bilt Palladium Neighborhood Dining Stack (Up to 5X Total)",
+      "notes": "BEN-BILT-008: Up to 5X combined Bilt Points at participating Bilt Neighborhood Dining restaurants (2X card + up to 3X dining program bonus)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-19-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.neighborhood-dining-stack"
+}

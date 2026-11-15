@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-115-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.trusted-traveler-credit-120.json": {
+      "after": "fed0749aaa894ca2",
+      "before": null
+    }
+  }
+}

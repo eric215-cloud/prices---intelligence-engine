@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-104-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.public-welcome-offer.json": {
+      "after": "367a96e583a3555b",
+      "before": null
+    }
+  }
+}

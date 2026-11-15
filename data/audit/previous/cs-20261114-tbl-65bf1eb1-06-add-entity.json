@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-06-add-entity",
+  "records": {
+    "data/kb/entities/org.visa.json": {
+      "after": "546ae236a9e7bf6b",
+      "before": null
+    }
+  }
+}

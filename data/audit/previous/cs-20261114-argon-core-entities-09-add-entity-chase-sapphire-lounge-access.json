@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-09-add-entity-chase-sapphire-lounge-access",
+  "records": {
+    "data/kb/entities/chase.sapphire_lounge_access.json": {
+      "after": "83b6790246f9bd33",
+      "before": null
+    }
+  }
+}

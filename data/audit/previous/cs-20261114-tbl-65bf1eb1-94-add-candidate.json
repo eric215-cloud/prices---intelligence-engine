@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-94-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.emergency-evacuation-medical.json": {
+      "after": "8b588607535cd668",
+      "before": null
+    }
+  }
+}

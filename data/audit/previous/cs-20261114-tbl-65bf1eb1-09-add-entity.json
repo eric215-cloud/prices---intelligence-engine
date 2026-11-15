@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-09-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.annual-bilt-cash-200-legacy.json": {
+      "after": "34726e3fe8dbdd1a",
+      "before": null
+    }
+  }
+}

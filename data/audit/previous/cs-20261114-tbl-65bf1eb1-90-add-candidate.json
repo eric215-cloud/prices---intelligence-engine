@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-90-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.apple-tv-apple-music.json": {
+      "after": "6a2409c356cd36fd",
+      "before": null
+    }
+  }
+}

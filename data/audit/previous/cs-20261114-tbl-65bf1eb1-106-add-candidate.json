@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-106-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.reserve-travel-designers.json": {
+      "after": "ad7ecbae6551b39c",
+      "before": null
+    }
+  }
+}

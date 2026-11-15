@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-21-add-entity-benefit-csr-southwest-chase-travel-credit",
+  "records": {
+    "data/kb/entities/benefit.csr.southwest-chase-travel-credit.json": {
+      "after": "f9f8193c112d594d",
+      "before": null
+    }
+  }
+}

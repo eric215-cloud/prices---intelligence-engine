@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.housing-flex-bilt-cash-legacy",
+      "kind": "benefit",
+      "name": "Bilt Palladium Pre-2027 Flexible Bilt Cash Housing Option (4% Bilt Cash)",
+      "notes": "BEN-BILT-002B: Selectable pre-2027 / legacy-elected rewards path earning 4% Bilt Cash on everyday spend redeemable at $3 Bilt Cash per 100 housing points up to 1X."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-15-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.housing-flex-bilt-cash-legacy"
+}

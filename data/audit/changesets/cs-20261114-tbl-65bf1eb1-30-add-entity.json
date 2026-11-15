@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.apple-tv-apple-music",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Complimentary Apple TV+ & Apple Music Subscriptions (Through 2027-06-22)",
+      "notes": "Supplementary CSR benefit from SRC-CSR-OFFER / review_summary.md: complimentary Apple TV+ and Apple Music through 2027-06-22 via one-time activation in Chase Benefits."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-30-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.apple-tv-apple-music"
+}

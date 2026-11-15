@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-54-add-entity-turkish-miles",
+  "records": {
+    "data/kb/entities/turkish.miles.json": {
+      "after": "25f3a82b407c897a",
+      "before": null
+    }
+  }
+}

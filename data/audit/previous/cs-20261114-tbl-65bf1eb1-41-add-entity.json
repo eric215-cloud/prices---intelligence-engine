@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-41-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.primary-auto-rental-cdw.json": {
+      "after": "5aa5fb657a88744e",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-58-add-entity-virgin-red-points",
+  "records": {
+    "data/kb/entities/virgin_red.points.json": {
+      "after": "8790cccd70c28f9e",
+      "before": null
+    }
+  }
+}

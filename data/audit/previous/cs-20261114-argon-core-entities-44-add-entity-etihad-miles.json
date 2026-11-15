@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-44-add-entity-etihad-miles",
+  "records": {
+    "data/kb/entities/etihad.miles.json": {
+      "after": "2201083b8df92efe",
+      "before": null
+    }
+  }
+}

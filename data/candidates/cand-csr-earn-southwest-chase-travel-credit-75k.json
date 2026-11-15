@@ -1,0 +1,72 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase",
+        "org.visa",
+        "tier.visa-infinite"
+      ],
+      "id": "src-csr-offer",
+      "notes": "Michaela source SRC-CSR-OFFER.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Primary U.S. personal Chase Sapphire Reserve offer page and benefit disclosures ($795 annual fee, 8x/4x/3x/1x earning, $300 travel credit, $500 The Edit credit, $250 2026 Select Hotel credit, $300 Exclusive Tables, IHG Platinum, five $75,000 calendar-year spend unlocks, Apple/DoorDash/Lyft/StubHub/Peloton/Global Entry credits).",
+      "title": "Chase Sapphire Reserve Credit Card: Offer Details and Benefit Terms",
+      "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve"
+    },
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase"
+      ],
+      "id": "src-csr-benefits",
+      "notes": "Michaela source SRC-CSR-BENEFITS.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Official Chase Sapphire Reserve personal cardholder benefits overview corroborating annual credits, travel/lifestyle partnerships, lounge network access, and $75,000 spend tier benefits.",
+      "title": "Chase Sapphire Reserve Benefits (Personal)",
+      "url": "https://www.chase.com/sapphire-cards/personal/reserve"
+    }
+  ],
+  "id": "cand-csr-earn-southwest-chase-travel-credit-75k",
+  "open_questions": [],
+  "proposed_rule": {
+    "earn": {
+      "activation": "automatic",
+      "allowance": {
+        "amount": 500,
+        "unit": "usd"
+      },
+      "measure": "csr.qualifying_spend",
+      "period": "calendar_year",
+      "term": {
+        "day": 31,
+        "ends": "fixed",
+        "month": 12,
+        "year_offset": 1
+      },
+      "threshold": 75000,
+      "unit": "usd"
+    },
+    "id": "csr.earn-southwest-chase-travel-credit-75k",
+    "kind": "earns",
+    "output": "benefit.csr.southwest-chase-travel-credit",
+    "restrictions": [
+      "Southwest Airlines flights must be booked through Chase Travel (not direct at southwest.com)",
+      "Valid for remainder of qualifying year and through December 31 of the following calendar year"
+    ],
+    "summary": "Spending $75,000 in a calendar year on Chase Sapphire Reserve unlocks a $500 statement credit for Southwest Airlines flights booked through Chase Travel through December 31 of the following calendar year (BRIDGE-CSR-023 / BEN-CSR-008).",
+    "when": {
+      "holds": "card.chase-sapphire-reserve"
+    }
+  },
+  "search_path": [
+    "card.chase-sapphire-reserve",
+    "benefit.csr.southwest-chase-travel-credit"
+  ],
+  "status": "proposed"
+}

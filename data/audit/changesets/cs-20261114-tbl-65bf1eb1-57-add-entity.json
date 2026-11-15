@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.visa-inf.concierge",
+      "kind": "benefit",
+      "name": "Visa Infinite 24/7 Concierge Baseline",
+      "notes": "Visa Infinite tier-level 24/7 concierge service baseline."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-57-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.visa-inf.concierge"
+}

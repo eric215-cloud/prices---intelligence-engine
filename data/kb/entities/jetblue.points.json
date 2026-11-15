@@ -1,0 +1,6 @@
+{
+  "id": "jetblue.points",
+  "kind": "currency",
+  "name": "JetBlue TrueBlue Points",
+  "program": "jetblue.program"
+}

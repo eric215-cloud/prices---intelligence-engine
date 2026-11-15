@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.points-boost-portal-redemption",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Points Boost (Up to 2 Cents/Point on Select Chase Travel Bookings)",
+      "notes": "Supplementary CSR benefit from SRC-CSR-OFFER / SRC-CSR-REWARDS: Points Boost feature allowing Ultimate Rewards redemptions worth up to 2¢/point on select flights and hotels in Chase Travel."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-40-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.points-boost-portal-redemption"
+}

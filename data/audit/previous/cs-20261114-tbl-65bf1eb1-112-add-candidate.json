@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-112-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.transfer-partner-access.json": {
+      "after": "11efe4a3864073c9",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-87-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.trip-delay-reimbursement.json": {
+      "after": "cd9d9e99cddbe251",
+      "before": null
+    }
+  }
+}

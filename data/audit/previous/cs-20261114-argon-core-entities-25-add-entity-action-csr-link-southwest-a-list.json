@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-25-add-entity-action-csr-link-southwest-a-list",
+  "records": {
+    "data/kb/entities/action.csr.link-southwest-a-list.json": {
+      "after": "9bc6162843a37a14",
+      "before": null
+    }
+  }
+}

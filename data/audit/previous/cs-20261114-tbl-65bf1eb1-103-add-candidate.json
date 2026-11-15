@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-103-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.priority-pass-select.json": {
+      "after": "4e7339f18aecdf72",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-42-add-entity-emirates-skywards",
+  "records": {
+    "data/kb/entities/emirates.skywards.json": {
+      "after": "0df9174ff8cb264d",
+      "before": null
+    }
+  }
+}

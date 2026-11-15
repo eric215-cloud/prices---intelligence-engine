@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-73-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.housing-flex-bilt-cash-legacy.json": {
+      "after": "9815d61a70857e24",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-13-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.cell-phone-protection.json": {
+      "after": "6fc2f42b59a7a601",
+      "before": null
+    }
+  }
+}

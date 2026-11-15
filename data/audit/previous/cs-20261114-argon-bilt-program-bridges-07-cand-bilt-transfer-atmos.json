@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-07-cand-bilt-transfer-atmos",
+  "records": {
+    "data/candidates/cand-bilt-transfer-atmos.json": {
+      "after": "78bacbec1fe92370",
+      "before": null
+    }
+  }
+}

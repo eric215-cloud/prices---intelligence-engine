@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-21-cand-csr-transfer-ihg",
+  "records": {
+    "data/candidates/cand-csr-transfer-ihg.json": {
+      "after": "c3233be2a29c1154",
+      "before": null
+    }
+  }
+}

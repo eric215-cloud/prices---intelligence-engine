@@ -1,0 +1,56 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.bilt-palladium",
+        "tier.mastercard-world-legend",
+        "org.mastercard"
+      ],
+      "id": "src-bilt-guide",
+      "notes": "Michaela source SRC-BILT-GUIDE (pp. 1, 5, 18-19 and benefit sections).",
+      "publisher": "Bilt / Mastercard / Insurance Administrators",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Card-specific World Legend Mastercard Guide to Benefits detailing MasterRental, Trip Cancellation/Interruption, Trip Delay (>6h, $300/trip, 1 claim/12mo), Baggage Delay/Lost Luggage, Cellular Wireless Telephone Protection, Purchase Assurance, Extended Warranty, and World Legend concierge/lifestyle baseline.",
+      "title": "Bilt Palladium World Legend Mastercard Guide to Benefits",
+      "url": "https://www.bilt.com/terms/palladium-card-guide-to-benefits"
+    },
+    {
+      "applies_to": [
+        "card.bilt-palladium",
+        "org.bilt",
+        "org.cardless",
+        "org.column-na",
+        "org.mastercard",
+        "tier.mastercard-world-legend"
+      ],
+      "id": "src-bilt-offer",
+      "notes": "Michaela source SRC-BILT-OFFER (updated 2026-10-27; pp. 1-8, 20-25).",
+      "publisher": "Bilt",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Governing card offer terms establishing Column N.A. as issuer/creditor, Cardless Inc. as servicer, World Legend Mastercard network/tier, $495 annual fee, 2X everyday points, housing rewards options (tiered vs. pre-2027 Flex Bilt Cash), 2027 $200+$400 to $600 Bilt Cash transition, Priority Pass rules, and Point Accelerator.",
+      "title": "Bilt Rewards Card Offer Terms",
+      "url": "https://www.bilt.com/terms/bilt-card-offer-terms"
+    }
+  ],
+  "id": "c-cb.bilt-palladium.mc-wl-concierge",
+  "open_questions": [],
+  "proposed_rule": {
+    "id": "cb.bilt-palladium.mc-wl-concierge",
+    "kind": "grants",
+    "output": "benefit.mc-wl.concierge-lifestyle",
+    "restrictions": [
+      "Governed by Bilt Palladium World Legend Mastercard Guide to Benefits"
+    ],
+    "summary": "Confirmed World Legend Mastercard concierge and lifestyle baseline on Bilt Palladium.",
+    "when": {
+      "holds": "card.bilt-palladium"
+    }
+  },
+  "search_path": [
+    "tables import (card_benefits.csv)"
+  ],
+  "status": "proposed"
+}

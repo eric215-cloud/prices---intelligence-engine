@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-40-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.points-boost-portal-redemption.json": {
+      "after": "72bb5ae6af410ab6",
+      "before": null
+    }
+  }
+}

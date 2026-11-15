@@ -1,0 +1,7 @@
+{
+  "id": "tier.visa-infinite",
+  "kind": "network_tier",
+  "name": "Visa Infinite",
+  "network": "org.visa",
+  "notes": "Visa premium consumer benefit tier carried by the U.S. personal Chase Sapphire Reserve (ARCH-CSR-07)."
+}

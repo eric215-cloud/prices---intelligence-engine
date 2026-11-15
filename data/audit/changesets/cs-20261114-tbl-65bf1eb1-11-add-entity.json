@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.baggage-protection",
+      "kind": "benefit",
+      "name": "Bilt Palladium Baggage Delay & Lost/Damaged Luggage Protection",
+      "notes": "BEN-BILT-012D: Card-specific baggage delay and lost/damaged luggage coverage per Bilt Palladium Guide to Benefits."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-11-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.baggage-protection"
+}

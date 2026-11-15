@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-50-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.the-edit-hotel-credit-500.json": {
+      "after": "8f4068dd4353d658",
+      "before": null
+    }
+  }
+}

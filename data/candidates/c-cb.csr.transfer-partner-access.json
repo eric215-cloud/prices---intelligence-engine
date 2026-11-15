@@ -1,0 +1,82 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase"
+      ],
+      "id": "src-csr-transfer",
+      "notes": "Michaela source SRC-CSR-TRANSFER.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Official Chase education guide listing the 14 participating Ultimate Rewards airline and hotel transfer partners (10 airline, 4 hotel) without partner-by-partner ratio tables.",
+      "title": "How to Transfer Points Through Chase Ultimate Rewards",
+      "url": "https://www.chase.com/personal/credit-cards/education/basics/how-to-transfer-chase-ultimate-rewards-points"
+    },
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase",
+        "org.visa",
+        "tier.visa-infinite"
+      ],
+      "id": "src-csr-offer",
+      "notes": "Michaela source SRC-CSR-OFFER.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Primary U.S. personal Chase Sapphire Reserve offer page and benefit disclosures ($795 annual fee, 8x/4x/3x/1x earning, $300 travel credit, $500 The Edit credit, $250 2026 Select Hotel credit, $300 Exclusive Tables, IHG Platinum, five $75,000 calendar-year spend unlocks, Apple/DoorDash/Lyft/StubHub/Peloton/Global Entry credits).",
+      "title": "Chase Sapphire Reserve Credit Card: Offer Details and Benefit Terms",
+      "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve"
+    },
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase"
+      ],
+      "id": "src-csr-rewards",
+      "notes": "Michaela source SRC-CSR-REWARDS.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Legal Ultimate Rewards Program Agreement for Chase Sapphire Reserve establishing JPMorgan Chase Bank, N.A. as issuer/program administrator, point earning exclusions on credited travel/Edit spend, Points Boost rules, and point transfer eligibility.",
+      "title": "Chase Sapphire Reserve with Ultimate Rewards Program Agreement",
+      "url": "https://www.chase.com/sapphirereserve/rewardsagreement"
+    },
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase"
+      ],
+      "id": "src-csr-hyatt-ratio",
+      "notes": "Michaela source SRC-CSR-HYATT-RATIO (updated 2026-06-15).",
+      "publisher": "Chase Media",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Chase press release (updated 2026-06-15) stating Chase Sapphire Preferred and Ink Business Preferred transfer points to World of Hyatt at a 4:3 rate; cited as a negative/caveat source showing UR transfer ratios are no longer uniformly 1:1 across all Chase cards.",
+      "title": "Meet the New Chase Sapphire Preferred (Hyatt 4:3 Ratio Caveat)",
+      "url": "https://media.chase.com/news/Meet-the-New-Chase-Sapphire-Preferred"
+    }
+  ],
+  "id": "c-cb.csr.transfer-partner-access",
+  "open_questions": [],
+  "proposed_rule": {
+    "id": "cb.csr.transfer-partner-access",
+    "kind": "grants",
+    "output": "benefit.csr.transfer-partner-access",
+    "restrictions": [
+      "Public transfer education page omits partner-by-partner ratios",
+      "Chase 2026-06-15 press release notes Sapphire Preferred/Ink Business Preferred transfer to Hyatt at 4:3, requiring logged-in CSR portal verification"
+    ],
+    "summary": "Enables transferring Chase Ultimate Rewards points to 14 participating airline and hotel loyalty programs (modeled individually as 14 transfer candidate rules).",
+    "when": {
+      "holds": "card.chase-sapphire-reserve"
+    }
+  },
+  "search_path": [
+    "tables import (card_benefits.csv)"
+  ],
+  "status": "proposed"
+}

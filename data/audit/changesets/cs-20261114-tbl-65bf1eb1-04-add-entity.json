@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "org.jpmorgan-chase",
+      "kind": "organization",
+      "name": "JPMorgan Chase Bank, N.A.",
+      "notes": "Issuing bank and Ultimate Rewards program administrator for the U.S. personal Chase Sapphire Reserve (ARCH-CSR-03, ARCH-CSR-04)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-04-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: parties row org.jpmorgan-chase"
+}

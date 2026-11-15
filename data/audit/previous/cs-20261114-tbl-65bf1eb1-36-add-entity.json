@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-36-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.ihg-platinum-elite-status.json": {
+      "after": "58cb6151b76865eb",
+      "before": null
+    }
+  }
+}

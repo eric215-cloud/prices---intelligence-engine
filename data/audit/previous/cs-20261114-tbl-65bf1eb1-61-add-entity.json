@@ -1,0 +1,25 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-61-add-entity",
+  "records": {
+    "data/kb/entities/card.chase-sapphire-reserve.json": {
+      "after": "6cabc259250ca4b8",
+      "before": null
+    },
+    "data/kb/evidence/src-csr-benefits.json": {
+      "after": "c28131d55a3c82b6",
+      "before": null
+    },
+    "data/kb/evidence/src-csr-guide.json": {
+      "after": "d4157dfa8137d910",
+      "before": null
+    },
+    "data/kb/evidence/src-csr-offer.json": {
+      "after": "b8959f577f1953f6",
+      "before": null
+    },
+    "data/kb/evidence/src-csr-rewards.json": {
+      "after": "2ae89d2255badaef",
+      "before": null
+    }
+  }
+}

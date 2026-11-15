@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-69-add-entity-wyndham-program",
+  "records": {
+    "data/kb/entities/wyndham.program.json": {
+      "after": "ef84c77d35ac01b0",
+      "before": null
+    }
+  }
+}

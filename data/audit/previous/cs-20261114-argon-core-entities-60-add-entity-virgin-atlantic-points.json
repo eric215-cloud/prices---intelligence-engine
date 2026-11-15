@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-60-add-entity-virgin-atlantic-points",
+  "records": {
+    "data/kb/entities/virgin_atlantic.points.json": {
+      "after": "eccb5c9fdb4b81d8",
+      "before": null
+    }
+  }
+}

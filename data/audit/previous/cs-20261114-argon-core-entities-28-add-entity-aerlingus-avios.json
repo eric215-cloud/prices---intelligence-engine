@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-28-add-entity-aerlingus-avios",
+  "records": {
+    "data/kb/entities/aerlingus.avios.json": {
+      "after": "1ab2f19ca7f36151",
+      "before": null
+    }
+  }
+}

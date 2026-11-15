@@ -1,0 +1,16 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "tier.visa-infinite",
+      "kind": "network_tier",
+      "name": "Visa Infinite",
+      "network": "org.visa",
+      "notes": "Visa premium consumer benefit tier carried by the U.S. personal Chase Sapphire Reserve (ARCH-CSR-07)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-08-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: parties row tier.visa-infinite"
+}

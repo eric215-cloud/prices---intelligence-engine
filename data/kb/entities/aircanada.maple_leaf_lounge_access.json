@@ -1,0 +1,7 @@
+{
+  "id": "aircanada.maple_leaf_lounge_access",
+  "kind": "capability",
+  "name": "Air Canada Maple Leaf Lounge & Cafe Access (+1 Guest on Star Alliance)",
+  "notes": "Same-day Star Alliance departure required; excludes Montreal YUL and Signature Suites.",
+  "program": "aeroplan"
+}

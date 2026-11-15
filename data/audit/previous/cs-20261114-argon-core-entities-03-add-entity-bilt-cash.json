@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-03-add-entity-bilt-cash",
+  "records": {
+    "data/kb/entities/bilt.cash.json": {
+      "after": "e5ef89f7599acbc4",
+      "before": null
+    }
+  }
+}

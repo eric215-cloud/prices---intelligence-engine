@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-16-add-entity-hyatt-explorist",
+  "records": {
+    "data/kb/entities/hyatt.explorist.json": {
+      "after": "f37f388ab2d1eb36",
+      "before": null
+    }
+  }
+}

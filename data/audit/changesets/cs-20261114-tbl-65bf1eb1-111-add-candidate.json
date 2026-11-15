@@ -1,0 +1,78 @@
+{
+  "author": "Argon",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-14",
+      "evidence": [
+        {
+          "applies_to": [
+            "card.chase-sapphire-reserve",
+            "org.jpmorgan-chase",
+            "org.visa",
+            "tier.visa-infinite"
+          ],
+          "id": "src-csr-offer",
+          "notes": "Michaela source SRC-CSR-OFFER.",
+          "publisher": "JPMorgan Chase Bank, N.A.",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Primary U.S. personal Chase Sapphire Reserve offer page and benefit disclosures ($795 annual fee, 8x/4x/3x/1x earning, $300 travel credit, $500 The Edit credit, $250 2026 Select Hotel credit, $300 Exclusive Tables, IHG Platinum, five $75,000 calendar-year spend unlocks, Apple/DoorDash/Lyft/StubHub/Peloton/Global Entry credits).",
+          "title": "Chase Sapphire Reserve Credit Card: Offer Details and Benefit Terms",
+          "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve"
+        },
+        {
+          "applies_to": [
+            "card.chase-sapphire-reserve",
+            "org.jpmorgan-chase"
+          ],
+          "id": "src-csr-benefits",
+          "notes": "Michaela source SRC-CSR-BENEFITS.",
+          "publisher": "JPMorgan Chase Bank, N.A.",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Official Chase Sapphire Reserve personal cardholder benefits overview corroborating annual credits, travel/lifestyle partnerships, lounge network access, and $75,000 spend tier benefits.",
+          "title": "Chase Sapphire Reserve Benefits (Personal)",
+          "url": "https://www.chase.com/sapphire-cards/personal/reserve"
+        },
+        {
+          "applies_to": [
+            "card.chase-sapphire-reserve",
+            "org.jpmorgan-chase"
+          ],
+          "id": "src-csr-rewards",
+          "notes": "Michaela source SRC-CSR-REWARDS.",
+          "publisher": "JPMorgan Chase Bank, N.A.",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Legal Ultimate Rewards Program Agreement for Chase Sapphire Reserve establishing JPMorgan Chase Bank, N.A. as issuer/program administrator, point earning exclusions on credited travel/Edit spend, Points Boost rules, and point transfer eligibility.",
+          "title": "Chase Sapphire Reserve with Ultimate Rewards Program Agreement",
+          "url": "https://www.chase.com/sapphirereserve/rewardsagreement"
+        }
+      ],
+      "id": "c-cb.csr.the-edit-hotel-credit-500",
+      "open_questions": [],
+      "proposed_rule": {
+        "id": "cb.csr.the-edit-hotel-credit-500",
+        "kind": "grants",
+        "output": "benefit.csr.the-edit-hotel-credit-500",
+        "restrictions": [
+          "Calendar-year cycle (Jan 1-Dec 31)",
+          "Maximum $250 statement credit per eligible 2+ night Pay Now booking",
+          "Credited spend does not earn points"
+        ],
+        "summary": "Up to $500 per calendar year in statement credits (up to $250 per booking) on prepaid Pay Now 2+ night stays at The Edit by Chase Travel properties, plus on-property privileges ($100 property credit, daily breakfast for 2, room upgrade/early-late checkout when available).",
+        "when": {
+          "holds": "card.chase-sapphire-reserve"
+        }
+      },
+      "search_path": [
+        "tables import (card_benefits.csv)"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-111-add-candidate",
+  "op": "add_candidate",
+  "reason": "tables import: card_benefits row cb.csr.the-edit-hotel-credit-500"
+}

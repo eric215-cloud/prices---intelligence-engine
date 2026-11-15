@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.trusted-traveler-credit-120",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve $120 Global Entry / TSA PreCheck / NEXUS Fee Credit (Every 4 Years)",
+      "notes": "Supplementary CSR benefit from SRC-CSR-OFFER / review_summary.md: statement credit up to $120 every 4 years for Global Entry, TSA PreCheck, or NEXUS application fee."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-54-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.trusted-traveler-credit-120"
+}

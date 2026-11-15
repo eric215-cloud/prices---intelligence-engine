@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-14-cand-bilt-transfer-iberia",
+  "records": {
+    "data/candidates/cand-bilt-transfer-iberia.json": {
+      "after": "c0c13e0179455341",
+      "before": null
+    }
+  }
+}

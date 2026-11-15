@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-16-cand-csr-transfer-krisflyer",
+  "records": {
+    "data/candidates/cand-csr-transfer-krisflyer.json": {
+      "after": "5668dfbf526cf4ea",
+      "before": null
+    }
+  }
+}

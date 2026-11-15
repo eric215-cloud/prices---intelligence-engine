@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.ihg-platinum-elite-status",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Complimentary IHG One Rewards Platinum Elite Status",
+      "notes": "BEN-CSR-007: Complimentary IHG One Rewards Platinum Elite status through 2027-12-31 upon linking IHG account in Chase Benefits."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-36-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.ihg-platinum-elite-status"
+}

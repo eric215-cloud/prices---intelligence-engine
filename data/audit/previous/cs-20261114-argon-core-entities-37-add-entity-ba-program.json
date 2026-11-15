@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-37-add-entity-ba-program",
+  "records": {
+    "data/kb/entities/ba.program.json": {
+      "after": "2b77c2186cd602ac",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "tier.visa-infinite",
+        "org.visa"
+      ],
+      "id": "src-csr-guide",
+      "notes": "Michaela source SRC-CSR-GUIDE (updated 2026-06-11).",
+      "publisher": "JPMorgan Chase / Visa / Benefit Administrator",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Card-specific Visa Infinite Guide to Benefits (effective 2026-06-11) governing Primary Auto Rental CDW ($75k cap, NY resident exception), Trip Cancellation/Interruption ($10k/person, $20k/trip), Trip Delay (>6h, $500/ticket), Baggage Delay ($100/day x 5 days), Lost Luggage, Emergency Evacuation, Purchase/Return Protection, Extended Warranty, and Visa Infinite Concierge/Luxury Hotel Collection.",
+      "title": "Chase Sapphire Reserve Visa Infinite Guide to Benefits (BGC11559)",
+      "url": "https://www.chasebenefits.com/K113-006/pdf/BGC11559.pdf"
+    },
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase",
+        "org.visa",
+        "tier.visa-infinite"
+      ],
+      "id": "src-csr-offer",
+      "notes": "Michaela source SRC-CSR-OFFER.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Primary U.S. personal Chase Sapphire Reserve offer page and benefit disclosures ($795 annual fee, 8x/4x/3x/1x earning, $300 travel credit, $500 The Edit credit, $250 2026 Select Hotel credit, $300 Exclusive Tables, IHG Platinum, five $75,000 calendar-year spend unlocks, Apple/DoorDash/Lyft/StubHub/Peloton/Global Entry credits).",
+      "title": "Chase Sapphire Reserve Credit Card: Offer Details and Benefit Terms",
+      "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve"
+    }
+  ],
+  "id": "c-cb.csr.baggage-delay-lost-luggage",
+  "open_questions": [],
+  "proposed_rule": {
+    "id": "cb.csr.baggage-delay-lost-luggage",
+    "kind": "grants",
+    "output": "benefit.csr.baggage-delay-lost-luggage",
+    "restrictions": [
+      "Common carrier fare must be paid with CSR or Ultimate Rewards points",
+      "Subject to BGC11559 claim rules"
+    ],
+    "summary": "Baggage Delay Insurance ($100/day for up to 5 days when delayed over 6 hours) and Lost Luggage Reimbursement (up to $3,000 per covered passenger, including $500 sub-limit for jewelry/watches/cameras/electronics).",
+    "valid_from": "2026-06-11",
+    "when": {
+      "holds": "card.chase-sapphire-reserve"
+    }
+  },
+  "search_path": [
+    "tables import (card_benefits.csv)"
+  ],
+  "status": "proposed"
+}

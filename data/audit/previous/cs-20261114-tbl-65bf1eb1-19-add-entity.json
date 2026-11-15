@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-19-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.neighborhood-dining-stack.json": {
+      "after": "e7a2bab53b76356c",
+      "before": null
+    }
+  }
+}

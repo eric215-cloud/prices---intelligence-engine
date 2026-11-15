@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.mc-wl.concierge-lifestyle",
+      "kind": "benefit",
+      "name": "World Legend Mastercard Concierge & Priceless Lifestyle Baseline",
+      "notes": "Mastercard World Legend tier-level concierge, dining, and lifestyle access baseline (subject to issuer/card configuration)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-55-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.mc-wl.concierge-lifestyle"
+}

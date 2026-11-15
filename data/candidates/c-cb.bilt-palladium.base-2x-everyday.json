@@ -1,0 +1,58 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.bilt-palladium",
+        "org.bilt",
+        "org.cardless",
+        "org.column-na",
+        "org.mastercard",
+        "tier.mastercard-world-legend"
+      ],
+      "id": "src-bilt-offer",
+      "notes": "Michaela source SRC-BILT-OFFER (updated 2026-10-27; pp. 1-8, 20-25).",
+      "publisher": "Bilt",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Governing card offer terms establishing Column N.A. as issuer/creditor, Cardless Inc. as servicer, World Legend Mastercard network/tier, $495 annual fee, 2X everyday points, housing rewards options (tiered vs. pre-2027 Flex Bilt Cash), 2027 $200+$400 to $600 Bilt Cash transition, Priority Pass rules, and Point Accelerator.",
+      "title": "Bilt Rewards Card Offer Terms",
+      "url": "https://www.bilt.com/terms/bilt-card-offer-terms"
+    },
+    {
+      "applies_to": [
+        "card.bilt-palladium",
+        "org.bilt",
+        "org.column-na",
+        "tier.mastercard-world-legend"
+      ],
+      "id": "src-bilt-product",
+      "notes": "Michaela source SRC-BILT-PRODUCT.",
+      "publisher": "Bilt",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Official Bilt Palladium marketing and product specification page confirming $495 annual fee, public welcome offer, Priority Pass valuation, portal/Lyft/Neighborhood Dining stacks, and footer issuer/network disclosures.",
+      "title": "Bilt Palladium Card Product Page",
+      "url": "https://www.bilt.com/card/palladium"
+    }
+  ],
+  "id": "c-cb.bilt-palladium.base-2x-everyday",
+  "open_questions": [],
+  "proposed_rule": {
+    "id": "cb.bilt-palladium.base-2x-everyday",
+    "kind": "grants",
+    "output": "benefit.bilt-palladium.base-2x-everyday",
+    "restrictions": [
+      "Excludes housing payments, cash equivalents, balance transfers, fees, and tax payments",
+      "Account must be open and in good standing"
+    ],
+    "summary": "2X Bilt Points per $1 on eligible everyday purchases excluding rent and mortgage housing payments.",
+    "when": {
+      "holds": "card.bilt-palladium"
+    }
+  },
+  "search_path": [
+    "tables import (card_benefits.csv)"
+  ],
+  "status": "proposed"
+}

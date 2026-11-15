@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-23-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.public-welcome-offer.json": {
+      "after": "4ee5775f88e7c633",
+      "before": null
+    }
+  }
+}

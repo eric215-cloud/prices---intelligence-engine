@@ -1,0 +1,7 @@
+{
+  "id": "bilt.silver",
+  "kind": "status",
+  "name": "Bilt Rewards Silver Status",
+  "notes": "Bilt Rewards elite tier referenced in transfer minimum increment disclosures (SRC-BILT-REWARDS).",
+  "program": "bilt.program"
+}

@@ -1,0 +1,18 @@
+{
+  "applies_to": [
+    "card.bilt-palladium",
+    "org.bilt",
+    "org.cardless",
+    "org.column-na",
+    "org.mastercard",
+    "tier.mastercard-world-legend"
+  ],
+  "id": "src-bilt-offer",
+  "notes": "Michaela source SRC-BILT-OFFER (updated 2026-10-27; pp. 1-8, 20-25).",
+  "publisher": "Bilt",
+  "retrieved_on": "2026-11-14",
+  "source_type": "official",
+  "summary": "Governing card offer terms establishing Column N.A. as issuer/creditor, Cardless Inc. as servicer, World Legend Mastercard network/tier, $495 annual fee, 2X everyday points, housing rewards options (tiered vs. pre-2027 Flex Bilt Cash), 2027 $200+$400 to $600 Bilt Cash transition, Priority Pass rules, and Point Accelerator.",
+  "title": "Bilt Rewards Card Offer Terms",
+  "url": "https://www.bilt.com/terms/bilt-card-offer-terms"
+}

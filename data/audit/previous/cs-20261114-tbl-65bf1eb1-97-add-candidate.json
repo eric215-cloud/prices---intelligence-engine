@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-97-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.ihg-platinum-elite-status.json": {
+      "after": "e0c904c43eed82bd",
+      "before": null
+    }
+  }
+}

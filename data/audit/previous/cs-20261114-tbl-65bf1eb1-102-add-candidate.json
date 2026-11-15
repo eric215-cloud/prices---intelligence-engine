@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-102-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.primary-auto-rental-cdw.json": {
+      "after": "621626eb06155834",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-65-add-candidate",
+  "records": {
+    "data/candidates/c-baseline.visa-inf.luxury-hotel-collection.json": {
+      "after": "2ca928f4662ba395",
+      "before": null
+    }
+  }
+}

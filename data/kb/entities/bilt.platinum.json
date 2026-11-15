@@ -1,0 +1,7 @@
+{
+  "id": "bilt.platinum",
+  "kind": "status",
+  "name": "Bilt Rewards Platinum Status",
+  "notes": "Top Bilt Rewards elite tier referenced in transfer and status disclosures (SRC-BILT-REWARDS).",
+  "program": "bilt.program"
+}

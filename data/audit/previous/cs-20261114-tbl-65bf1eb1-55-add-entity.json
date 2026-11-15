@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-55-add-entity",
+  "records": {
+    "data/kb/entities/benefit.mc-wl.concierge-lifestyle.json": {
+      "after": "a705556e4a0db7fd",
+      "before": null
+    }
+  }
+}

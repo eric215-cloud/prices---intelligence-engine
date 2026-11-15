@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-114-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.trip-delay-reimbursement.json": {
+      "after": "86b4572a9c2c280f",
+      "before": null
+    }
+  }
+}

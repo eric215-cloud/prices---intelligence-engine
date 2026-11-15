@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-04-cand-bilt-transfer-aerlingus",
+  "records": {
+    "data/candidates/cand-bilt-transfer-aerlingus.json": {
+      "after": "6b4032bb92028dd7",
+      "before": null
+    }
+  }
+}

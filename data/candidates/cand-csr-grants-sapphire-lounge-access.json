@@ -1,0 +1,64 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase"
+      ],
+      "id": "src-csr-lounge",
+      "notes": "Michaela source SRC-CSR-LOUNGE.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Official lounge network rules covering Priority Pass Select enrollment (2 guests, $27 extra guest), Chase Sapphire Lounge by The Club (2 guests, 3-hour pre-departure limit), and Air Canada Maple Leaf Lounge & Air Canada Cafe access (cardholder + 1 guest on Star Alliance flights, excluding YUL and Signature Suites).",
+      "title": "Chase Sapphire Airport Lounge Network",
+      "url": "https://www.chase.com/sapphire-cards/lounges"
+    },
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase",
+        "org.visa",
+        "tier.visa-infinite"
+      ],
+      "id": "src-csr-offer",
+      "notes": "Michaela source SRC-CSR-OFFER.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Primary U.S. personal Chase Sapphire Reserve offer page and benefit disclosures ($795 annual fee, 8x/4x/3x/1x earning, $300 travel credit, $500 The Edit credit, $250 2026 Select Hotel credit, $300 Exclusive Tables, IHG Platinum, five $75,000 calendar-year spend unlocks, Apple/DoorDash/Lyft/StubHub/Peloton/Global Entry credits).",
+      "title": "Chase Sapphire Reserve Credit Card: Offer Details and Benefit Terms",
+      "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve"
+    }
+  ],
+  "id": "cand-csr-grants-sapphire-lounge-access",
+  "open_questions": [],
+  "proposed_rule": {
+    "id": "csr.grants-sapphire-lounge-access",
+    "kind": "grants",
+    "output": "chase.sapphire_lounge_access",
+    "restrictions": [
+      "Requires active Priority Pass Select membership issued via Chase Sapphire Reserve",
+      "Admittance limited to within 3 hours prior to scheduled departure (excluding connecting flights)",
+      "Up to 2 accompanying guests complimentary ($27 per additional guest)"
+    ],
+    "summary": "CSR cardholders with enrolled Priority Pass Select receive complimentary access to Chase Sapphire Lounge by The Club locations with up to 2 guests within 3 hours of scheduled departure (BRIDGE-CSR-016).",
+    "when": {
+      "all": [
+        {
+          "holds": "card.chase-sapphire-reserve"
+        },
+        {
+          "holds": "priority_pass.select"
+        }
+      ]
+    }
+  },
+  "search_path": [
+    "card.chase-sapphire-reserve",
+    "priority_pass.select",
+    "chase.sapphire_lounge_access"
+  ],
+  "status": "proposed"
+}

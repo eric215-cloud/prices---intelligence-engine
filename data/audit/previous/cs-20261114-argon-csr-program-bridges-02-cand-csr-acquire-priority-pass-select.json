@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-02-cand-csr-acquire-priority-pass-select",
+  "records": {
+    "data/candidates/cand-csr-acquire-priority-pass-select.json": {
+      "after": "a3b145ebdfac25d5",
+      "before": null
+    }
+  }
+}

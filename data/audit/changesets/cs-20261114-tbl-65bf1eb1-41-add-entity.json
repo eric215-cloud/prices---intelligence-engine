@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.primary-auto-rental-cdw",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Primary Auto Rental Collision Damage Waiver (Up to $75,000)",
+      "notes": "BEN-CSR-012A: Card-specific Primary Auto Rental CDW up to $75,000 MSRP/actual cash value (for New York residents, primary outside US and secondary inside US per BGC11559)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-41-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.primary-auto-rental-cdw"
+}

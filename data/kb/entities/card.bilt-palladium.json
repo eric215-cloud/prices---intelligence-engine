@@ -1,0 +1,20 @@
+{
+  "card": {
+    "annual_fee_usd": 495.0,
+    "cobrand_partner": "org.bilt",
+    "issuer": "org.column-na",
+    "network": "org.mastercard",
+    "network_tier": "tier.mastercard-world-legend",
+    "program_manager": "org.cardless"
+  },
+  "id": "card.bilt-palladium",
+  "kind": "card",
+  "name": "Bilt Palladium World Legend Mastercard",
+  "notes": "Bilt 2.0 flagship card. Column N.A. is verified issuer/creditor (ARCH-BILT-04); Cardless Inc. is named servicer mapped functionally to program_manager (ARCH-BILT-03); Bilt is brand/loyalty administrator mapped provisionally to cobrand_partner (ARCH-BILT-02); capital_provider left blank (unresolved per Q-BILT-001).",
+  "sources": [
+    "src-bilt-offer",
+    "src-bilt-product",
+    "src-bilt-guide",
+    "src-bilt-root"
+  ]
+}

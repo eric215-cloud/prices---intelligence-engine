@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-51-add-entity-tap-program",
+  "records": {
+    "data/kb/entities/tap.program.json": {
+      "after": "db6b05b10c4e67ef",
+      "before": null
+    }
+  }
+}

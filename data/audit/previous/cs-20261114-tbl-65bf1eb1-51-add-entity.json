@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-51-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.transfer-partner-access.json": {
+      "after": "4c5b14146335f1df",
+      "before": null
+    }
+  }
+}

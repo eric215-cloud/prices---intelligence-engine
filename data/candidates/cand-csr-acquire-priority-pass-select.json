@@ -1,0 +1,81 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase"
+      ],
+      "id": "src-csr-lounge",
+      "notes": "Michaela source SRC-CSR-LOUNGE.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Official lounge network rules covering Priority Pass Select enrollment (2 guests, $27 extra guest), Chase Sapphire Lounge by The Club (2 guests, 3-hour pre-departure limit), and Air Canada Maple Leaf Lounge & Air Canada Cafe access (cardholder + 1 guest on Star Alliance flights, excluding YUL and Signature Suites).",
+      "title": "Chase Sapphire Airport Lounge Network",
+      "url": "https://www.chase.com/sapphire-cards/lounges"
+    },
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase",
+        "org.visa",
+        "tier.visa-infinite"
+      ],
+      "id": "src-csr-offer",
+      "notes": "Michaela source SRC-CSR-OFFER.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Primary U.S. personal Chase Sapphire Reserve offer page and benefit disclosures ($795 annual fee, 8x/4x/3x/1x earning, $300 travel credit, $500 The Edit credit, $250 2026 Select Hotel credit, $300 Exclusive Tables, IHG Platinum, five $75,000 calendar-year spend unlocks, Apple/DoorDash/Lyft/StubHub/Peloton/Global Entry credits).",
+      "title": "Chase Sapphire Reserve Credit Card: Offer Details and Benefit Terms",
+      "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve"
+    },
+    {
+      "applies_to": [
+        "card.chase-sapphire-reserve",
+        "org.jpmorgan-chase"
+      ],
+      "id": "src-csr-benefits",
+      "notes": "Michaela source SRC-CSR-BENEFITS.",
+      "publisher": "JPMorgan Chase Bank, N.A.",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Official Chase Sapphire Reserve personal cardholder benefits overview corroborating annual credits, travel/lifestyle partnerships, lounge network access, and $75,000 spend tier benefits.",
+      "title": "Chase Sapphire Reserve Benefits (Personal)",
+      "url": "https://www.chase.com/sapphire-cards/personal/reserve"
+    }
+  ],
+  "id": "cand-csr-acquire-priority-pass-select",
+  "open_questions": [],
+  "proposed_rule": {
+    "id": "csr.acquire-priority-pass-select",
+    "kind": "acquire",
+    "output": "priority_pass.select",
+    "restrictions": [
+      "Requires one-time enrollment activation in Chase Benefits",
+      "Includes up to 2 accompanying guests per visit ($27 per additional guest)"
+    ],
+    "retention": {
+      "mode": "while_qualified",
+      "note": "Remains active while card account is open and Priority Pass enrollment is maintained."
+    },
+    "summary": "Primary cardholder and authorized users acquire Priority Pass Select membership (+2 guests free, $27 per additional guest) after one-time enrollment in Chase Benefits (BRIDGE-CSR-015).",
+    "when": {
+      "all": [
+        {
+          "holds": "card.chase-sapphire-reserve"
+        },
+        {
+          "holds": "action.csr.enroll-priority-pass"
+        }
+      ]
+    }
+  },
+  "search_path": [
+    "card.chase-sapphire-reserve",
+    "action.csr.enroll-priority-pass",
+    "priority_pass.select"
+  ],
+  "status": "proposed"
+}

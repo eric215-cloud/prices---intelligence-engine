@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-93-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.doordash-dashpass-and-promos.json": {
+      "after": "8d25a4d677e1c0b6",
+      "before": null
+    }
+  }
+}

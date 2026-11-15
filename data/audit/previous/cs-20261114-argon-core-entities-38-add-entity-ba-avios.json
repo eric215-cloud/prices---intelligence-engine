@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-38-add-entity-ba-avios",
+  "records": {
+    "data/kb/entities/ba.avios.json": {
+      "after": "6672a262d48f96dc",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-72-add-entity-bilt-platinum",
+  "records": {
+    "data/kb/entities/bilt.platinum.json": {
+      "after": "6e70872c6a70ec1b",
+      "before": null
+    }
+  }
+}

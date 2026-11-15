@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-24-cand-bilt-transfer-hilton",
+  "records": {
+    "data/candidates/cand-bilt-transfer-hilton.json": {
+      "after": "9e4e21e4b411cdf3",
+      "before": null
+    }
+  }
+}

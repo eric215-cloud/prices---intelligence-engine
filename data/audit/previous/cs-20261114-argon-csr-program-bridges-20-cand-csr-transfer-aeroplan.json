@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-20-cand-csr-transfer-aeroplan",
+  "records": {
+    "data/candidates/cand-csr-transfer-aeroplan.json": {
+      "after": "4e50affc09b6da23",
+      "before": null
+    }
+  }
+}

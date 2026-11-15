@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-15-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.housing-flex-bilt-cash-legacy.json": {
+      "after": "9dd8b4bbadddd871",
+      "before": null
+    }
+  }
+}

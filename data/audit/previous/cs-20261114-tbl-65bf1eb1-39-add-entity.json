@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-39-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.peloton-credit-and-10x.json": {
+      "after": "a8bc1502da79fbbd",
+      "before": null
+    }
+  }
+}

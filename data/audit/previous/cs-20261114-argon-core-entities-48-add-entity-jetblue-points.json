@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-48-add-entity-jetblue-points",
+  "records": {
+    "data/kb/entities/jetblue.points.json": {
+      "after": "8eb892c2f9c9282e",
+      "before": null
+    }
+  }
+}

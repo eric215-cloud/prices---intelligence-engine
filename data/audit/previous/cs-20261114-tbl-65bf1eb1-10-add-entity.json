@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-10-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.annual-bilt-cash-600-post2027.json": {
+      "after": "5af61a53d2f62f9d",
+      "before": null
+    }
+  }
+}

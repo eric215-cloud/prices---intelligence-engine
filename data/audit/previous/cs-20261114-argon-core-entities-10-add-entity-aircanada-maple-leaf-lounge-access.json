@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-10-add-entity-aircanada-maple-leaf-lounge-access",
+  "records": {
+    "data/kb/entities/aircanada.maple_leaf_lounge_access.json": {
+      "after": "b05001217dd77136",
+      "before": null
+    }
+  }
+}

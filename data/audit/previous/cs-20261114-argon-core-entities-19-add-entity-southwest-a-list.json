@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-19-add-entity-southwest-a-list",
+  "records": {
+    "data/kb/entities/southwest.a_list.json": {
+      "after": "d13892d825578667",
+      "before": null
+    }
+  }
+}

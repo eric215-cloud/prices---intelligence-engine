@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.emergency-evacuation-medical",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Emergency Evacuation ($100,000) & Travel Medical/Accident Coverage",
+      "notes": "BEN-CSR-012E: Emergency Evacuation & Transportation (up to $100,000), Emergency Medical & Dental ($2,500), and Travel Accident Insurance (up to $1,000,000)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-34-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.emergency-evacuation-medical"
+}

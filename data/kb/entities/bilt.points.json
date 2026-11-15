@@ -1,0 +1,6 @@
+{
+  "id": "bilt.points",
+  "kind": "currency",
+  "name": "Bilt Points",
+  "program": "bilt.program"
+}

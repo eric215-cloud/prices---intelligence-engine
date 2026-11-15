@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-22-cand-csr-transfer-marriott",
+  "records": {
+    "data/candidates/cand-csr-transfer-marriott.json": {
+      "after": "edafe196d3723a19",
+      "before": null
+    }
+  }
+}

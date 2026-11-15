@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "action.csr.link-ihg-platinum",
+      "kind": "action",
+      "name": "Link IHG One Rewards Account in Chase Benefits for Complimentary Platinum Elite",
+      "notes": "Required enrollment step; allow up to 3 weeks for status activation."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-core-entities-22-add-entity-action-csr-link-ihg-platinum",
+  "op": "add_entity",
+  "reason": "Register loyalty programs, currencies, elite statuses, lounge capabilities, and activation actions for Bilt Palladium and Chase Sapphire Reserve integration. (action.csr.link-ihg-platinum)"
+}

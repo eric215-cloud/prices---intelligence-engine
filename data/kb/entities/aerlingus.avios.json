@@ -1,0 +1,6 @@
+{
+  "id": "aerlingus.avios",
+  "kind": "currency",
+  "name": "Aer Lingus AerClub Avios",
+  "program": "aerlingus.program"
+}

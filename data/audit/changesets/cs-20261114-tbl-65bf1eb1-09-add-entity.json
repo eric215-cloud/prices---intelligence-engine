@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.annual-bilt-cash-200-legacy",
+      "kind": "benefit",
+      "name": "Bilt Palladium $200 Annual Bilt Cash Credit (Legacy Regime)",
+      "notes": "BEN-BILT-003A: $200 annual Bilt Cash credit under pre-2027 opening or legacy election structure."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-09-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.annual-bilt-cash-200-legacy"
+}

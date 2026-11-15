@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.purchase-return-extended-warranty",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Purchase Protection, Return Protection & Extended Warranty",
+      "notes": "BEN-CSR-012F: Purchase Protection (120 days, up to $10,000/item, $50,000/year), Return Protection (90 days, up to $500/item, $1,000/year), and Extended Warranty (+1 year on <=3yr U.S. warranties)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-44-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.purchase-return-extended-warranty"
+}

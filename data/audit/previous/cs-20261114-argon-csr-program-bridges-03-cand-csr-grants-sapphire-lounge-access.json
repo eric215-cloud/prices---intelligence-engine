@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-03-cand-csr-grants-sapphire-lounge-access",
+  "records": {
+    "data/candidates/cand-csr-grants-sapphire-lounge-access.json": {
+      "after": "0c81ff9276ef0b52",
+      "before": null
+    }
+  }
+}

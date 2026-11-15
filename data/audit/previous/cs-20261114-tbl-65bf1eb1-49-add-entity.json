@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-49-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.stubhub-viagogo-credit-300.json": {
+      "after": "b5d17d95425aa325",
+      "before": null
+    }
+  }
+}

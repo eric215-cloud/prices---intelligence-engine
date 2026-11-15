@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-85-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.transfer-partner-access.json": {
+      "after": "955275c7db54c185",
+      "before": null
+    }
+  }
+}

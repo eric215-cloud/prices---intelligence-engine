@@ -1,0 +1,48 @@
+{
+  "author": "Argon",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-14",
+      "evidence": [
+        {
+          "applies_to": [
+            "card.bilt-palladium",
+            "tier.mastercard-world-legend",
+            "org.mastercard"
+          ],
+          "id": "src-bilt-guide",
+          "notes": "Michaela source SRC-BILT-GUIDE (pp. 1, 5, 18-19 and benefit sections).",
+          "publisher": "Bilt / Mastercard / Insurance Administrators",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Card-specific World Legend Mastercard Guide to Benefits detailing MasterRental, Trip Cancellation/Interruption, Trip Delay (>6h, $300/trip, 1 claim/12mo), Baggage Delay/Lost Luggage, Cellular Wireless Telephone Protection, Purchase Assurance, Extended Warranty, and World Legend concierge/lifestyle baseline.",
+          "title": "Bilt Palladium World Legend Mastercard Guide to Benefits",
+          "url": "https://www.bilt.com/terms/palladium-card-guide-to-benefits"
+        }
+      ],
+      "id": "c-cb.bilt-palladium.purchase-assurance-extended-warranty",
+      "open_questions": [],
+      "proposed_rule": {
+        "id": "cb.bilt-palladium.purchase-assurance-extended-warranty",
+        "kind": "grants",
+        "output": "benefit.bilt-palladium.purchase-assurance-extended-warranty",
+        "restrictions": [
+          "Item must be purchased entirely with Bilt Palladium",
+          "Subject to per-item and annual aggregate limits in Guide to Benefits"
+        ],
+        "summary": "Purchase Assurance against theft/damage on new purchases and Extended Warranty doubling/extending eligible manufacturer warranties.",
+        "when": {
+          "holds": "card.bilt-palladium"
+        }
+      },
+      "search_path": [
+        "tables import (card_benefits.csv)"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-84-add-candidate",
+  "op": "add_candidate",
+  "reason": "tables import: card_benefits row cb.bilt-palladium.purchase-assurance-extended-warranty"
+}

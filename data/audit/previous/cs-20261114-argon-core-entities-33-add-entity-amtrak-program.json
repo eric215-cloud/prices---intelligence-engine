@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-33-add-entity-amtrak-program",
+  "records": {
+    "data/kb/entities/amtrak.program.json": {
+      "after": "fd4e31748c390d7a",
+      "before": null
+    }
+  }
+}

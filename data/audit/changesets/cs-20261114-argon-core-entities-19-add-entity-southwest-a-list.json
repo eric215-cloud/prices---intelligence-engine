@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "southwest.a_list",
+      "kind": "status",
+      "name": "Southwest Rapid Rewards A-List Status",
+      "program": "southwest.program"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-core-entities-19-add-entity-southwest-a-list",
+  "op": "add_entity",
+  "reason": "Register loyalty programs, currencies, elite statuses, lounge capabilities, and activation actions for Bilt Palladium and Chase Sapphire Reserve integration. (southwest.a_list)"
+}

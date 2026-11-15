@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-57-add-entity",
+  "records": {
+    "data/kb/entities/benefit.visa-inf.concierge.json": {
+      "after": "c6894731781e55bb",
+      "before": null
+    }
+  }
+}

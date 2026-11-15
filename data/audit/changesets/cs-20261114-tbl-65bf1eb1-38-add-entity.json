@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.lyft-in-app-credit-120",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve $10/Month Lyft In-App Credit (Up to $120/Year Through 2027-09-30)",
+      "notes": "BEN-CSR-011A: $10 monthly Lyft in-app ride credit through 2027-09-30 when CSR is set as payment method."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-38-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.lyft-in-app-credit-120"
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-22-add-entity-action-csr-link-ihg-platinum",
+  "records": {
+    "data/kb/entities/action.csr.link-ihg-platinum.json": {
+      "after": "306c67688f1ff286",
+      "before": null
+    }
+  }
+}

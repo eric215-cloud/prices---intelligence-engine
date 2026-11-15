@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-105-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.purchase-return-extended-warranty.json": {
+      "after": "c400b0a92f2316d5",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-16-cand-bilt-transfer-jetblue",
+  "records": {
+    "data/candidates/cand-bilt-transfer-jetblue.json": {
+      "after": "1c2da4855e319dfa",
+      "before": null
+    }
+  }
+}

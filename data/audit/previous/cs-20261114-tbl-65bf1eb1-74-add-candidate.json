@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-74-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.housing-tiered-points.json": {
+      "after": "d02331154f9dea8c",
+      "before": null
+    }
+  }
+}

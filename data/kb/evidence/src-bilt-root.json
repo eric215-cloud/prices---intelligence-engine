@@ -1,0 +1,15 @@
+{
+  "applies_to": [
+    "card.bilt-palladium",
+    "org.bilt",
+    "org.column-na"
+  ],
+  "id": "src-bilt-root",
+  "notes": "Michaela source SRC-BILT-ROOT.",
+  "publisher": "Bilt",
+  "retrieved_on": "2026-11-14",
+  "source_type": "official",
+  "summary": "Bilt root site footer corroborating Column N.A., Member FDIC as card issuer for Bilt cards.",
+  "title": "Bilt Main Website",
+  "url": "https://www.bilt.com/"
+}

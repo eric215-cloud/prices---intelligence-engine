@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.priority-pass-select",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Priority Pass Select Membership (Cardholder + 2 Guests)",
+      "notes": "BEN-CSR-005A: Complimentary Priority Pass Select lounge membership (activation required; up to 2 guests free, $27 per extra guest)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-42-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.priority-pass-select"
+}

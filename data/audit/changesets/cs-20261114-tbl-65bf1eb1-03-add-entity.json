@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "org.column-na",
+      "kind": "organization",
+      "name": "Column N.A., Member FDIC",
+      "notes": "Explicitly named issuing bank and Card Account creditor for the Bilt Palladium Card under Bilt 2.0 (ARCH-BILT-04)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-03-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: parties row org.column-na"
+}

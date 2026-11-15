@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "virgin_red.points",
+      "kind": "currency",
+      "name": "Virgin Points (Virgin Red)",
+      "program": "virgin_red.program"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-core-entities-58-add-entity-virgin-red-points",
+  "op": "add_entity",
+  "reason": "Register loyalty programs, currencies, elite statuses, lounge capabilities, and activation actions for Bilt Palladium and Chase Sapphire Reserve integration. (virgin_red.points)"
+}

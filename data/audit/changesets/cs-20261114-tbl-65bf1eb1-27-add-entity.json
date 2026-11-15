@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.trip-delay-reimbursement",
+      "kind": "benefit",
+      "name": "Bilt Palladium Trip Delay Reimbursement (>6 Hours, Up to $300/Trip)",
+      "notes": "BEN-BILT-012C: Reimburses eligible expenses for covered delays over 6 hours up to $300 per trip (max 1 claim per 12-month period)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-27-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.trip-delay-reimbursement"
+}

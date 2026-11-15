@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-95-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.exclude-secondary-cdw.json": {
+      "after": "9db40c2d0640feba",
+      "before": null
+    }
+  }
+}

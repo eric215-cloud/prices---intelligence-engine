@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-48-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.spend-75k-unlock-suite.json": {
+      "after": "7d6a0c211a0b37b7",
+      "before": null
+    }
+  }
+}

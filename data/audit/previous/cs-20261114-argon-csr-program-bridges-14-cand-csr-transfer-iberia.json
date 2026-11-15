@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-14-cand-csr-transfer-iberia",
+  "records": {
+    "data/candidates/cand-csr-transfer-iberia.json": {
+      "after": "a5117f3197126364",
+      "before": null
+    }
+  }
+}

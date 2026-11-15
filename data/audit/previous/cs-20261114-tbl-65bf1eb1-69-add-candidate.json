@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-69-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.baggage-protection.json": {
+      "after": "db0851382fcb9e4b",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.select-hotel-credit-250-2026",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve $250 Select Chase Travel Hotel Credit (2026 Promotional Window)",
+      "notes": "BEN-CSR-004: Up to $250 statement credit through 2026-12-31 on prepaid Chase Travel 2+ night stays at IHG, Montage, Pendry, Omni, Virgin, Minor, or Pan Pacific."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-47-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.select-hotel-credit-250-2026"
+}

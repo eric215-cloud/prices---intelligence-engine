@@ -1,0 +1,47 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.bilt-palladium",
+        "org.bilt"
+      ],
+      "id": "src-bilt-rewards",
+      "notes": "Michaela source SRC-BILT-REWARDS.",
+      "publisher": "Bilt",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Official Bilt Rewards transfer partner directory listing 19 airline/rail partners and 7 hotel partners (26 named partners total, alongside conflicting 27 headline and 23 FAQ counts on the same page).",
+      "title": "Bilt Rewards Travel Partners Page",
+      "url": "https://www.bilt.com/rewards"
+    }
+  ],
+  "id": "cand-bilt-transfer-amtrak",
+  "open_questions": [
+    "Verify exact base transfer ratio (e.g., whether 1:1 or tier-dependent such as 3:2 on Accor), minimum transfer increment by Bilt status tier, and posting time for Amtrak Guest Rewards Points in the authenticated Bilt app (Q-BILT-004).",
+    "Resolve the 27th unnamed partner referenced in the Bilt Rewards headline ('27 airlines & hotels') vs. the 26 named partners in the directory (Q-BILT-003)."
+  ],
+  "proposed_rule": {
+    "id": "bilt.points-to-amtrak",
+    "kind": "transfer",
+    "output": "amtrak.points",
+    "restrictions": [
+      "Program-level Bilt Rewards transfer feature (available across eligible Bilt Rewards members, not exclusive to Bilt Palladium)",
+      "Requires linking matching loyalty account in the Bilt app",
+      "Exact transfer ratio, minimum increment, and posting speed are not printed on the public Bilt Rewards partner directory and must be verified in-app prior to promotion"
+    ],
+    "summary": "Program-level Bilt Rewards point transfer from Bilt Points to Amtrak Guest Rewards Points (BRIDGE-BILT-005; not exclusive to Bilt Palladium).",
+    "transfer": {
+      "from": "bilt.points",
+      "note": "Exact partner transfer ratio, minimum increment, and posting speed omitted pending in-portal verification."
+    },
+    "when": {
+      "holds": "bilt.points"
+    }
+  },
+  "search_path": [
+    "bilt.points",
+    "amtrak.points"
+  ],
+  "status": "proposed"
+}

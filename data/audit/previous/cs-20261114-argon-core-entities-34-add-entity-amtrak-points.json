@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-34-add-entity-amtrak-points",
+  "records": {
+    "data/kb/entities/amtrak.points.json": {
+      "after": "5cc92eb2d17d436f",
+      "before": null
+    }
+  }
+}

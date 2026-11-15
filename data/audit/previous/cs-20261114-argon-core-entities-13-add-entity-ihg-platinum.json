@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-13-add-entity-ihg-platinum",
+  "records": {
+    "data/kb/entities/ihg.platinum.json": {
+      "after": "b6bf28bb7400545b",
+      "before": null
+    }
+  }
+}

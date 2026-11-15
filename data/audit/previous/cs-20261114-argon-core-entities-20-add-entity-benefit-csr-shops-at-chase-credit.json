@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-20-add-entity-benefit-csr-shops-at-chase-credit",
+  "records": {
+    "data/kb/entities/benefit.csr.shops-at-chase-credit.json": {
+      "after": "0d282fd0a286549c",
+      "before": null
+    }
+  }
+}

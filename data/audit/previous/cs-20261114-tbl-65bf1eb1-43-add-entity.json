@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-43-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.public-welcome-offer.json": {
+      "after": "4978184ff9c31041",
+      "before": null
+    }
+  }
+}

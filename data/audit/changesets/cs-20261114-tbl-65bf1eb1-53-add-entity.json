@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.trip-delay-reimbursement",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Trip Delay Reimbursement (>6 Hours or Overnight, Up to $500/Ticket)",
+      "notes": "BEN-CSR-012C: Reimburses reasonable expenses up to $500 per covered ticket when common carrier delay exceeds 6 hours or requires an overnight stay."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-53-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.trip-delay-reimbursement"
+}

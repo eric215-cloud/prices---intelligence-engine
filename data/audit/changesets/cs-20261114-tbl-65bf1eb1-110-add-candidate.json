@@ -1,0 +1,64 @@
+{
+  "author": "Argon",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-14",
+      "evidence": [
+        {
+          "applies_to": [
+            "card.chase-sapphire-reserve",
+            "org.jpmorgan-chase",
+            "org.visa",
+            "tier.visa-infinite"
+          ],
+          "id": "src-csr-offer",
+          "notes": "Michaela source SRC-CSR-OFFER.",
+          "publisher": "JPMorgan Chase Bank, N.A.",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Primary U.S. personal Chase Sapphire Reserve offer page and benefit disclosures ($795 annual fee, 8x/4x/3x/1x earning, $300 travel credit, $500 The Edit credit, $250 2026 Select Hotel credit, $300 Exclusive Tables, IHG Platinum, five $75,000 calendar-year spend unlocks, Apple/DoorDash/Lyft/StubHub/Peloton/Global Entry credits).",
+          "title": "Chase Sapphire Reserve Credit Card: Offer Details and Benefit Terms",
+          "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve"
+        },
+        {
+          "applies_to": [
+            "card.chase-sapphire-reserve",
+            "org.jpmorgan-chase"
+          ],
+          "id": "src-csr-benefits",
+          "notes": "Michaela source SRC-CSR-BENEFITS.",
+          "publisher": "JPMorgan Chase Bank, N.A.",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Official Chase Sapphire Reserve personal cardholder benefits overview corroborating annual credits, travel/lifestyle partnerships, lounge network access, and $75,000 spend tier benefits.",
+          "title": "Chase Sapphire Reserve Benefits (Personal)",
+          "url": "https://www.chase.com/sapphire-cards/personal/reserve"
+        }
+      ],
+      "id": "c-cb.csr.stubhub-viagogo-credit-300",
+      "open_questions": [],
+      "proposed_rule": {
+        "id": "cb.csr.stubhub-viagogo-credit-300",
+        "kind": "grants",
+        "output": "benefit.csr.stubhub-viagogo-credit-300",
+        "restrictions": [
+          "Requires benefit activation prior to purchase",
+          "Semiannual $150 caps do not roll over"
+        ],
+        "summary": "Up to $300 annually ($150 Jan 1-Jun 30 and $150 Jul 1-Dec 31) in statement credits on StubHub and viagogo ticket purchases through December 31, 2027.",
+        "valid_to": "2027-12-31",
+        "when": {
+          "holds": "card.chase-sapphire-reserve"
+        }
+      },
+      "search_path": [
+        "tables import (card_benefits.csv)"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-110-add-candidate",
+  "op": "add_candidate",
+  "reason": "tables import: card_benefits row cb.csr.stubhub-viagogo-credit-300"
+}

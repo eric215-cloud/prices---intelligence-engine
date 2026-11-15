@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-29-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.annual-travel-credit-300.json": {
+      "after": "c0beda5159c9b436",
+      "before": null
+    }
+  }
+}

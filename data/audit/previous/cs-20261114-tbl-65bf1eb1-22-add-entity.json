@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-22-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.priority-pass-lounge.json": {
+      "after": "bc5bb6fde5919d19",
+      "before": null
+    }
+  }
+}

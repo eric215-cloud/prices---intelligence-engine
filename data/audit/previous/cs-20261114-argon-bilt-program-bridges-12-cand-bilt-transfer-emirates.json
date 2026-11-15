@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-12-cand-bilt-transfer-emirates",
+  "records": {
+    "data/candidates/cand-bilt-transfer-emirates.json": {
+      "after": "3c52d30a1a7b5334",
+      "before": null
+    }
+  }
+}

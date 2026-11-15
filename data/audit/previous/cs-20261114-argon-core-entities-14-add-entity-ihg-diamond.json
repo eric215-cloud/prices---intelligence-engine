@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-14-add-entity-ihg-diamond",
+  "records": {
+    "data/kb/entities/ihg.diamond.json": {
+      "after": "13aa11f511257465",
+      "before": null
+    }
+  }
+}

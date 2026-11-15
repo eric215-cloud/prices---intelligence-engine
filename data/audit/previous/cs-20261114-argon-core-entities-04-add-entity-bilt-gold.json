@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-04-add-entity-bilt-gold",
+  "records": {
+    "data/kb/entities/bilt.gold.json": {
+      "after": "fa62a45e5235ae65",
+      "before": null
+    }
+  }
+}

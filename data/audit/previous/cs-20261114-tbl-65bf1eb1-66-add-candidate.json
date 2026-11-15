@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-66-add-candidate",
+  "records": {
+    "data/candidates/c-baseline.visa-inf.secondary-auto-cdw.json": {
+      "after": "36d0415736e824c0",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-26-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.trip-cancellation-interruption.json": {
+      "after": "035db6c4464ae11d",
+      "before": null
+    }
+  }
+}

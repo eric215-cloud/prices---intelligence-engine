@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-07-add-entity",
+  "records": {
+    "data/kb/entities/tier.mastercard-world-legend.json": {
+      "after": "4107ea494894d9e6",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-64-add-entity-accor-points",
+  "records": {
+    "data/kb/entities/accor.points.json": {
+      "after": "0b4d943d1a3aca54",
+      "before": null
+    }
+  }
+}

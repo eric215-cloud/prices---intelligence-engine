@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-71-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.cell-phone-protection.json": {
+      "after": "321966f206e2dbc3",
+      "before": null
+    }
+  }
+}

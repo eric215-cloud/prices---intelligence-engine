@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-18-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.masterrental-cdw.json": {
+      "after": "016c927a7a407135",
+      "before": null
+    }
+  }
+}

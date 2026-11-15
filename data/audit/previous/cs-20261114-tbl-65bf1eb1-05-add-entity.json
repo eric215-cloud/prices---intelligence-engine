@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-05-add-entity",
+  "records": {
+    "data/kb/entities/org.mastercard.json": {
+      "after": "e312084e62f7ef8f",
+      "before": null
+    }
+  }
+}

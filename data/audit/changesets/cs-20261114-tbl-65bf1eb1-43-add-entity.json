@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.public-welcome-offer",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Public Acquisition Welcome Offer (100,000 UR Points After $6,000/3mo)",
+      "notes": "Supplementary CSR offer from SRC-CSR-OFFER: public acquisition welcome bonus for eligible new applicants (never assumed for existing cardholders)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-43-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.public-welcome-offer"
+}

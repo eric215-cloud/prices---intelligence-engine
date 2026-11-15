@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-88-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.air-canada-maple-leaf-lounge.json": {
+      "after": "a89c3641cf4641d2",
+      "before": null
+    }
+  }
+}

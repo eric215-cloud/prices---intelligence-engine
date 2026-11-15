@@ -1,0 +1,6 @@
+{
+  "id": "wyndham.points",
+  "kind": "currency",
+  "name": "Wyndham Rewards Points",
+  "program": "wyndham.program"
+}

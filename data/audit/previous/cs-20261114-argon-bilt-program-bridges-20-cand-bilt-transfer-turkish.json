@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-20-cand-bilt-transfer-turkish",
+  "records": {
+    "data/candidates/cand-bilt-transfer-turkish.json": {
+      "after": "a6233bc562d0a17c",
+      "before": null
+    }
+  }
+}

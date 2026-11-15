@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-86-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.trip-cancellation-interruption.json": {
+      "after": "3ed76125d70ad7e5",
+      "before": null
+    }
+  }
+}

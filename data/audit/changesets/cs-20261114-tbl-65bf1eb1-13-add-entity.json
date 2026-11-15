@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.cell-phone-protection",
+      "kind": "benefit",
+      "name": "Bilt Palladium Cellular Wireless Telephone Protection",
+      "notes": "BEN-BILT-012E: Cellular telephone damage/theft coverage when monthly wireless bill is paid with Bilt Palladium."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-13-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.cell-phone-protection"
+}

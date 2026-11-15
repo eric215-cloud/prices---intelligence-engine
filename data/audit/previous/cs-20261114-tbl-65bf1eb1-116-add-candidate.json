@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-116-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.visa-inf-concierge.json": {
+      "after": "8a4636d76f7ce6cc",
+      "before": null
+    }
+  }
+}

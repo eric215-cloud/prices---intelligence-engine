@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.transfer-partner-access",
+      "kind": "benefit",
+      "name": "Bilt Rewards Point Transfer Access (26 Named Airline, Rail & Hotel Partners)",
+      "notes": "BEN-BILT-009: Program-level Bilt Points transfer capability to 19 airline/rail and 7 hotel partners (modeled individually as 26 transfer candidate rules)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-25-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.transfer-partner-access"
+}

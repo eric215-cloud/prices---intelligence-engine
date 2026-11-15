@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-14-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.hotel-credit-400-semiannual-legacy.json": {
+      "after": "1d50a2e200d7233a",
+      "before": null
+    }
+  }
+}

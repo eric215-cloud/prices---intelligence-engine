@@ -1,0 +1,14 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "lifemiles.program",
+      "kind": "program",
+      "name": "Avianca LifeMiles"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-core-entities-35-add-entity-lifemiles-program",
+  "op": "add_entity",
+  "reason": "Register loyalty programs, currencies, elite statuses, lounge capabilities, and activation actions for Bilt Palladium and Chase Sapphire Reserve integration. (lifemiles.program)"
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-110-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.stubhub-viagogo-credit-300.json": {
+      "after": "6f19d737f66c5099",
+      "before": null
+    }
+  }
+}

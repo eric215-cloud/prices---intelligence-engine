@@ -1,0 +1,25 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-60-add-entity",
+  "records": {
+    "data/kb/entities/card.bilt-palladium.json": {
+      "after": "f08c9ee79bb68fdd",
+      "before": null
+    },
+    "data/kb/evidence/src-bilt-guide.json": {
+      "after": "1c8ae9437a4025cd",
+      "before": null
+    },
+    "data/kb/evidence/src-bilt-offer.json": {
+      "after": "134ecef9e9a3f8f3",
+      "before": null
+    },
+    "data/kb/evidence/src-bilt-product.json": {
+      "after": "93e638ffbf6fffe2",
+      "before": null
+    },
+    "data/kb/evidence/src-bilt-root.json": {
+      "after": "352aac3eb1c8be7f",
+      "before": null
+    }
+  }
+}

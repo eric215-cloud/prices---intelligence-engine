@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-11-cand-csr-transfer-aerlingus",
+  "records": {
+    "data/candidates/cand-csr-transfer-aerlingus.json": {
+      "after": "e12a3c15ab398809",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.bilt-palladium.purchase-assurance-extended-warranty",
+      "kind": "benefit",
+      "name": "Bilt Palladium Purchase Assurance & Extended Warranty Coverage",
+      "notes": "BEN-BILT-012F: Purchase Assurance (damage/theft within coverage window) and Extended Warranty coverage per Bilt Palladium Guide to Benefits."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-24-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.bilt-palladium.purchase-assurance-extended-warranty"
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-12-add-entity-ihg-points",
+  "records": {
+    "data/kb/entities/ihg.points.json": {
+      "after": "ec68d321ff7013d2",
+      "before": null
+    }
+  }
+}

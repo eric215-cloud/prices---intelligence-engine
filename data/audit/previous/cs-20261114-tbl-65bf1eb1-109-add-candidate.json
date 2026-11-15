@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-109-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.spend-75k-unlock-suite.json": {
+      "after": "68a0caf6eb06e03b",
+      "before": null
+    }
+  }
+}

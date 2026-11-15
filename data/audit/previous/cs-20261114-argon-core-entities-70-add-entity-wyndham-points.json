@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-70-add-entity-wyndham-points",
+  "records": {
+    "data/kb/entities/wyndham.points.json": {
+      "after": "ccec285ae2b58122",
+      "before": null
+    }
+  }
+}

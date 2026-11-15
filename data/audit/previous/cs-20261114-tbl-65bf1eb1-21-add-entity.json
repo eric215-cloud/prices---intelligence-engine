@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-21-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.portal-travel-multiplier.json": {
+      "after": "724f8b0125561918",
+      "before": null
+    }
+  }
+}

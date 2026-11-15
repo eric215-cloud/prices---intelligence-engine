@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-19-cand-csr-transfer-virgin-atlantic",
+  "records": {
+    "data/candidates/cand-csr-transfer-virgin-atlantic.json": {
+      "after": "a73206779681ab6d",
+      "before": null
+    }
+  }
+}

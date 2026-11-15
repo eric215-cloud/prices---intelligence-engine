@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-42-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.priority-pass-select.json": {
+      "after": "3ed577fc2aefa673",
+      "before": null
+    }
+  }
+}

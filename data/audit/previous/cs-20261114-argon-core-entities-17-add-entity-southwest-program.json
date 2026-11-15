@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-17-add-entity-southwest-program",
+  "records": {
+    "data/kb/entities/southwest.program.json": {
+      "after": "22ab36765ceea58c",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "created_on": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.bilt-palladium",
+        "org.bilt",
+        "org.column-na",
+        "tier.mastercard-world-legend"
+      ],
+      "id": "src-bilt-product",
+      "notes": "Michaela source SRC-BILT-PRODUCT.",
+      "publisher": "Bilt",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Official Bilt Palladium marketing and product specification page confirming $495 annual fee, public welcome offer, Priority Pass valuation, portal/Lyft/Neighborhood Dining stacks, and footer issuer/network disclosures.",
+      "title": "Bilt Palladium Card Product Page",
+      "url": "https://www.bilt.com/card/palladium"
+    }
+  ],
+  "id": "c-cb.bilt-palladium.lyft-multiplier-stack",
+  "open_questions": [],
+  "proposed_rule": {
+    "id": "cb.bilt-palladium.lyft-multiplier-stack",
+    "kind": "grants",
+    "output": "benefit.bilt-palladium.lyft-multiplier-stack",
+    "restrictions": [
+      "Requires linking Bilt and Lyft accounts, selecting Bilt as the active loyalty partner in Lyft, and paying with Bilt Palladium"
+    ],
+    "summary": "4X total Bilt Points on qualifying Lyft rides (2X card base + 2X linked Bilt-Lyft loyalty bonus).",
+    "when": {
+      "holds": "card.bilt-palladium"
+    }
+  },
+  "search_path": [
+    "tables import (card_benefits.csv)"
+  ],
+  "status": "proposed"
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-98-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.lyft-5x-multiplier.json": {
+      "after": "907898b5f72d37a6",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "author": "Argon",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-14",
+      "evidence": [
+        {
+          "applies_to": [
+            "card.chase-sapphire-reserve",
+            "tier.visa-infinite",
+            "org.visa"
+          ],
+          "id": "src-csr-guide",
+          "notes": "Michaela source SRC-CSR-GUIDE (updated 2026-06-11).",
+          "publisher": "JPMorgan Chase / Visa / Benefit Administrator",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Card-specific Visa Infinite Guide to Benefits (effective 2026-06-11) governing Primary Auto Rental CDW ($75k cap, NY resident exception), Trip Cancellation/Interruption ($10k/person, $20k/trip), Trip Delay (>6h, $500/ticket), Baggage Delay ($100/day x 5 days), Lost Luggage, Emergency Evacuation, Purchase/Return Protection, Extended Warranty, and Visa Infinite Concierge/Luxury Hotel Collection.",
+          "title": "Chase Sapphire Reserve Visa Infinite Guide to Benefits (BGC11559)",
+          "url": "https://www.chasebenefits.com/K113-006/pdf/BGC11559.pdf"
+        },
+        {
+          "applies_to": [
+            "card.chase-sapphire-reserve",
+            "org.jpmorgan-chase",
+            "org.visa",
+            "tier.visa-infinite"
+          ],
+          "id": "src-csr-offer",
+          "notes": "Michaela source SRC-CSR-OFFER.",
+          "publisher": "JPMorgan Chase Bank, N.A.",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Primary U.S. personal Chase Sapphire Reserve offer page and benefit disclosures ($795 annual fee, 8x/4x/3x/1x earning, $300 travel credit, $500 The Edit credit, $250 2026 Select Hotel credit, $300 Exclusive Tables, IHG Platinum, five $75,000 calendar-year spend unlocks, Apple/DoorDash/Lyft/StubHub/Peloton/Global Entry credits).",
+          "title": "Chase Sapphire Reserve Credit Card: Offer Details and Benefit Terms",
+          "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve"
+        }
+      ],
+      "id": "c-cb.csr.purchase-return-extended-warranty",
+      "open_questions": [],
+      "proposed_rule": {
+        "id": "cb.csr.purchase-return-extended-warranty",
+        "kind": "grants",
+        "output": "benefit.csr.purchase-return-extended-warranty",
+        "restrictions": [
+          "Item must be purchased with CSR or Ultimate Rewards points",
+          "Subject to exclusions in BGC11559"
+        ],
+        "summary": "Purchase Protection (120 days against damage/theft up to $10,000/item and $50,000/year), Return Protection (90 days up to $500/item and $1,000/year), and Extended Warranty (+1 additional year on eligible warranties of 3 years or less).",
+        "valid_from": "2026-06-11",
+        "when": {
+          "holds": "card.chase-sapphire-reserve"
+        }
+      },
+      "search_path": [
+        "tables import (card_benefits.csv)"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-105-add-candidate",
+  "op": "add_candidate",
+  "reason": "tables import: card_benefits row cb.csr.purchase-return-extended-warranty"
+}

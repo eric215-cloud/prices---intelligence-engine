@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-13-cand-csr-transfer-flyingblue",
+  "records": {
+    "data/candidates/cand-csr-transfer-flyingblue.json": {
+      "after": "061e4bf13ae8a314",
+      "before": null
+    }
+  }
+}

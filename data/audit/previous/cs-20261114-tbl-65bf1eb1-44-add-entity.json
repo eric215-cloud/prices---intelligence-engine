@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-44-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.purchase-return-extended-warranty.json": {
+      "after": "9ef28380fed77e1e",
+      "before": null
+    }
+  }
+}

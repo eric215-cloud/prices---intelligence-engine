@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-20-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.point-accelerator.json": {
+      "after": "8df4bbd434945f84",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-63-add-candidate",
+  "records": {
+    "data/candidates/c-baseline.mc-wl.id-theft-protection.json": {
+      "after": "f5952a828a798c40",
+      "before": null
+    }
+  }
+}

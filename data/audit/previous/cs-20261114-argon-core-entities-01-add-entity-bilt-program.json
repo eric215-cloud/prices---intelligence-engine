@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-01-add-entity-bilt-program",
+  "records": {
+    "data/kb/entities/bilt.program.json": {
+      "after": "0553b2410e6080b1",
+      "before": null
+    }
+  }
+}

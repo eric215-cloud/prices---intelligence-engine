@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-01-cand-csr-grants-chase-ur",
+  "records": {
+    "data/candidates/cand-csr-grants-chase-ur.json": {
+      "after": "e30ba62b68b455c9",
+      "before": null
+    }
+  }
+}

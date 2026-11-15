@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-91-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.baggage-delay-lost-luggage.json": {
+      "after": "54d5e493a5f3dec3",
+      "before": null
+    }
+  }
+}

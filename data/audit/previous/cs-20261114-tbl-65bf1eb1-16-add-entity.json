@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-16-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.housing-tiered-points.json": {
+      "after": "0e54bd5a8d71ee7e",
+      "before": null
+    }
+  }
+}

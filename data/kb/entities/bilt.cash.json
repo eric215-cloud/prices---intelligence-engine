@@ -1,0 +1,7 @@
+{
+  "id": "bilt.cash",
+  "kind": "currency",
+  "name": "Bilt Cash",
+  "notes": "Dollar-denominated Bilt Cash balance subject to annual rollover/expiration rules (SRC-BILT-CASH).",
+  "program": "bilt.program"
+}

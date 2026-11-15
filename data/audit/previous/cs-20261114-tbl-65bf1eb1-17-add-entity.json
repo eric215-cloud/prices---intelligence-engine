@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-17-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.lyft-multiplier-stack.json": {
+      "after": "8cfc11fe6d1306b9",
+      "before": null
+    }
+  }
+}

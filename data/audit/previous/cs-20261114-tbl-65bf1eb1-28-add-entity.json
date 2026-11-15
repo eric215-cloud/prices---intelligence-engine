@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-28-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.air-canada-maple-leaf-lounge.json": {
+      "after": "641fc278263b3bb8",
+      "before": null
+    }
+  }
+}

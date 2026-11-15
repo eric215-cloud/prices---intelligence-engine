@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-31-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.baggage-delay-lost-luggage.json": {
+      "after": "1687120372963f35",
+      "before": null
+    }
+  }
+}

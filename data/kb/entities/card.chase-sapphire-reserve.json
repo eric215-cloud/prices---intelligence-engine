@@ -1,0 +1,20 @@
+{
+  "card": {
+    "annual_fee_usd": 795.0,
+    "cobrand_partner": null,
+    "issuer": "org.jpmorgan-chase",
+    "network": "org.visa",
+    "network_tier": "tier.visa-infinite",
+    "program_manager": "org.jpmorgan-chase"
+  },
+  "id": "card.chase-sapphire-reserve",
+  "kind": "card",
+  "name": "Chase Sapphire Reserve",
+  "notes": "U.S. personal Chase Sapphire Reserve ($795 annual fee). JPMorgan Chase Bank, N.A. is verified issuer and functional Ultimate Rewards program manager (ARCH-CSR-03, ARCH-CSR-04); cobrand_partner is confirmed none (ARCH-CSR-02); capital_provider left blank (unresolved per Q-CSR-002).",
+  "sources": [
+    "src-csr-offer",
+    "src-csr-benefits",
+    "src-csr-rewards",
+    "src-csr-guide"
+  ]
+}

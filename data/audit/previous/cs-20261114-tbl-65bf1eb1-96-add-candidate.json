@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-96-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.exclusive-tables-dining-credit-300.json": {
+      "after": "e4b42e6563171cbd",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-24-cand-csr-transfer-wyndham",
+  "records": {
+    "data/candidates/cand-csr-transfer-wyndham.json": {
+      "after": "3ffd51f36668c18c",
+      "before": null
+    }
+  }
+}

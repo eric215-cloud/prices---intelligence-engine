@@ -1,0 +1,14 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "iprefer.program",
+      "kind": "program",
+      "name": "I Prefer Hotel Rewards"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-core-entities-67-add-entity-iprefer-program",
+  "op": "add_entity",
+  "reason": "Register loyalty programs, currencies, elite statuses, lounge capabilities, and activation actions for Bilt Palladium and Chase Sapphire Reserve integration. (iprefer.program)"
+}

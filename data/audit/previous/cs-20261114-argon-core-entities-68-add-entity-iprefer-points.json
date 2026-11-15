@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-68-add-entity-iprefer-points",
+  "records": {
+    "data/kb/entities/iprefer.points.json": {
+      "after": "b356fc977be8fb52",
+      "before": null
+    }
+  }
+}

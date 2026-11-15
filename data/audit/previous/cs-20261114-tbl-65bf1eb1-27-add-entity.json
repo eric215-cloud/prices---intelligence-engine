@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-27-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.trip-delay-reimbursement.json": {
+      "after": "4112e73edc12e1f5",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-73-add-entity-action-bilt-enroll-priority-pass",
+  "records": {
+    "data/kb/entities/action.bilt.enroll-priority-pass.json": {
+      "after": "772f272407fbc924",
+      "before": null
+    }
+  }
+}

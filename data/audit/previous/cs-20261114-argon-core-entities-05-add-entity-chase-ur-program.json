@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-05-add-entity-chase-ur-program",
+  "records": {
+    "data/kb/entities/chase.ur.program.json": {
+      "after": "3784c1ce81e6f42c",
+      "before": null
+    }
+  }
+}

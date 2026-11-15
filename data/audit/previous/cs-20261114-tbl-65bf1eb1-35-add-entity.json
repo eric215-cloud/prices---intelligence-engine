@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-35-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.exclusive-tables-dining-credit-300.json": {
+      "after": "d02e15521a6f2e57",
+      "before": null
+    }
+  }
+}

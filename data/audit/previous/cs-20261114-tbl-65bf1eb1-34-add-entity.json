@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-34-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.emergency-evacuation-medical.json": {
+      "after": "dca1eb56525f8ab6",
+      "before": null
+    }
+  }
+}

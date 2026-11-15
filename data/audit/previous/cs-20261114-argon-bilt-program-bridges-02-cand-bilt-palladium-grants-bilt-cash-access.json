@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-02-cand-bilt-palladium-grants-bilt-cash-access",
+  "records": {
+    "data/candidates/cand-bilt-palladium-grants-bilt-cash-access.json": {
+      "after": "d86a45dc09db2276",
+      "before": null
+    }
+  }
+}

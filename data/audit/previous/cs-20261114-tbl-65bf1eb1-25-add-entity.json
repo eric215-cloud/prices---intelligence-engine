@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-25-add-entity",
+  "records": {
+    "data/kb/entities/benefit.bilt-palladium.transfer-partner-access.json": {
+      "after": "5ab1143d89f81b88",
+      "before": null
+    }
+  }
+}

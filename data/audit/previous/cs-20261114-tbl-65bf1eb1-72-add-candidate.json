@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-72-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.hotel-credit-400-semiannual-legacy.json": {
+      "after": "1eec6b5811279260",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "org.mastercard",
+      "kind": "organization",
+      "name": "Mastercard International Incorporated",
+      "notes": "Payment network for the Bilt Palladium World Legend Mastercard (ARCH-BILT-06)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-05-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: parties row org.mastercard"
+}

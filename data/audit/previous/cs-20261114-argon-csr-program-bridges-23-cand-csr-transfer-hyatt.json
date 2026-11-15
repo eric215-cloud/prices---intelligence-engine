@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-23-cand-csr-transfer-hyatt",
+  "records": {
+    "data/candidates/cand-csr-transfer-hyatt.json": {
+      "after": "30b08f3ca7cc2e9b",
+      "before": null
+    }
+  }
+}

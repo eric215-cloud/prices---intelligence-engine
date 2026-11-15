@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-18-add-entity-southwest-points",
+  "records": {
+    "data/kb/entities/southwest.points.json": {
+      "after": "e95eb84dd7056bb6",
+      "before": null
+    }
+  }
+}

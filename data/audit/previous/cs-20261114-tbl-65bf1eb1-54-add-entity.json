@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-54-add-entity",
+  "records": {
+    "data/kb/entities/benefit.csr.trusted-traveler-credit-120.json": {
+      "after": "77396102ec7b6728",
+      "before": null
+    }
+  }
+}

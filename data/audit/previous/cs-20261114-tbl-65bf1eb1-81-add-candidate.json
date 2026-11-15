@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-81-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.portal-travel-multiplier.json": {
+      "after": "b7f0dde629458690",
+      "before": null
+    }
+  }
+}

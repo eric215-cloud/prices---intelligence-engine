@@ -1,0 +1,7 @@
+{
+  "id": "tier.mastercard-world-legend",
+  "kind": "network_tier",
+  "name": "World Legend Mastercard",
+  "network": "org.mastercard",
+  "notes": "Mastercard luxury benefit tier carried by the Bilt Palladium Card (ARCH-BILT-07)."
+}

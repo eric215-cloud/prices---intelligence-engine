@@ -1,0 +1,6 @@
+{
+  "id": "tap.miles",
+  "kind": "currency",
+  "name": "TAP Miles&Go Miles",
+  "program": "tap.program"
+}

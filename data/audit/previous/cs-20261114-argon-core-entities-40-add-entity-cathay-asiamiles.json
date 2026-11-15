@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-40-add-entity-cathay-asiamiles",
+  "records": {
+    "data/kb/entities/cathay.asiamiles.json": {
+      "after": "ea0cce4a2b1e2aef",
+      "before": null
+    }
+  }
+}

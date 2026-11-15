@@ -1,0 +1,6 @@
+{
+  "id": "benefit.bilt-palladium.transfer-partner-access",
+  "kind": "benefit",
+  "name": "Bilt Rewards Point Transfer Access (26 Named Airline, Rail & Hotel Partners)",
+  "notes": "BEN-BILT-009: Program-level Bilt Points transfer capability to 19 airline/rail and 7 hotel partners (modeled individually as 26 transfer candidate rules)."
+}

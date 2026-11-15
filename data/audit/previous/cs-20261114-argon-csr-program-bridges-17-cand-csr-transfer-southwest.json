@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-csr-program-bridges-17-cand-csr-transfer-southwest",
+  "records": {
+    "data/candidates/cand-csr-transfer-southwest.json": {
+      "after": "5040163f6cab74a6",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.sapphire-lounge-by-the-club",
+      "kind": "benefit",
+      "name": "Chase Sapphire Lounge by The Club Access (Cardholder + 2 Guests)",
+      "notes": "BEN-CSR-005B: Complimentary access to Chase Sapphire Lounge by The Club locations with up to 2 guests (within 3 hours of scheduled departure)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-46-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.sapphire-lounge-by-the-club"
+}

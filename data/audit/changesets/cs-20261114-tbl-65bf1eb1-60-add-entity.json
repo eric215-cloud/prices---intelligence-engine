@@ -1,0 +1,95 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "card": {
+        "annual_fee_usd": 495.0,
+        "cobrand_partner": "org.bilt",
+        "issuer": "org.column-na",
+        "network": "org.mastercard",
+        "network_tier": "tier.mastercard-world-legend",
+        "program_manager": "org.cardless"
+      },
+      "id": "card.bilt-palladium",
+      "kind": "card",
+      "name": "Bilt Palladium World Legend Mastercard",
+      "notes": "Bilt 2.0 flagship card. Column N.A. is verified issuer/creditor (ARCH-BILT-04); Cardless Inc. is named servicer mapped functionally to program_manager (ARCH-BILT-03); Bilt is brand/loyalty administrator mapped provisionally to cobrand_partner (ARCH-BILT-02); capital_provider left blank (unresolved per Q-BILT-001).",
+      "sources": [
+        "src-bilt-offer",
+        "src-bilt-product",
+        "src-bilt-guide",
+        "src-bilt-root"
+      ]
+    }
+  },
+  "date": "2026-11-14",
+  "evidence": [
+    {
+      "applies_to": [
+        "card.bilt-palladium",
+        "org.bilt",
+        "org.cardless",
+        "org.column-na",
+        "org.mastercard",
+        "tier.mastercard-world-legend"
+      ],
+      "id": "src-bilt-offer",
+      "notes": "Michaela source SRC-BILT-OFFER (updated 2026-10-27; pp. 1-8, 20-25).",
+      "publisher": "Bilt",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Governing card offer terms establishing Column N.A. as issuer/creditor, Cardless Inc. as servicer, World Legend Mastercard network/tier, $495 annual fee, 2X everyday points, housing rewards options (tiered vs. pre-2027 Flex Bilt Cash), 2027 $200+$400 to $600 Bilt Cash transition, Priority Pass rules, and Point Accelerator.",
+      "title": "Bilt Rewards Card Offer Terms",
+      "url": "https://www.bilt.com/terms/bilt-card-offer-terms"
+    },
+    {
+      "applies_to": [
+        "card.bilt-palladium",
+        "org.bilt",
+        "org.column-na",
+        "tier.mastercard-world-legend"
+      ],
+      "id": "src-bilt-product",
+      "notes": "Michaela source SRC-BILT-PRODUCT.",
+      "publisher": "Bilt",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Official Bilt Palladium marketing and product specification page confirming $495 annual fee, public welcome offer, Priority Pass valuation, portal/Lyft/Neighborhood Dining stacks, and footer issuer/network disclosures.",
+      "title": "Bilt Palladium Card Product Page",
+      "url": "https://www.bilt.com/card/palladium"
+    },
+    {
+      "applies_to": [
+        "card.bilt-palladium",
+        "tier.mastercard-world-legend",
+        "org.mastercard"
+      ],
+      "id": "src-bilt-guide",
+      "notes": "Michaela source SRC-BILT-GUIDE (pp. 1, 5, 18-19 and benefit sections).",
+      "publisher": "Bilt / Mastercard / Insurance Administrators",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Card-specific World Legend Mastercard Guide to Benefits detailing MasterRental, Trip Cancellation/Interruption, Trip Delay (>6h, $300/trip, 1 claim/12mo), Baggage Delay/Lost Luggage, Cellular Wireless Telephone Protection, Purchase Assurance, Extended Warranty, and World Legend concierge/lifestyle baseline.",
+      "title": "Bilt Palladium World Legend Mastercard Guide to Benefits",
+      "url": "https://www.bilt.com/terms/palladium-card-guide-to-benefits"
+    },
+    {
+      "applies_to": [
+        "card.bilt-palladium",
+        "org.bilt",
+        "org.column-na"
+      ],
+      "id": "src-bilt-root",
+      "notes": "Michaela source SRC-BILT-ROOT.",
+      "publisher": "Bilt",
+      "retrieved_on": "2026-11-14",
+      "source_type": "official",
+      "summary": "Bilt root site footer corroborating Column N.A., Member FDIC as card issuer for Bilt cards.",
+      "title": "Bilt Main Website",
+      "url": "https://www.bilt.com/"
+    }
+  ],
+  "id": "cs-20261114-tbl-65bf1eb1-60-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: cards row card.bilt-palladium"
+}

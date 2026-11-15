@@ -1,0 +1,14 @@
+{
+  "applies_to": [
+    "card.chase-sapphire-reserve",
+    "org.jpmorgan-chase"
+  ],
+  "id": "src-csr-rewards",
+  "notes": "Michaela source SRC-CSR-REWARDS.",
+  "publisher": "JPMorgan Chase Bank, N.A.",
+  "retrieved_on": "2026-11-14",
+  "source_type": "official",
+  "summary": "Legal Ultimate Rewards Program Agreement for Chase Sapphire Reserve establishing JPMorgan Chase Bank, N.A. as issuer/program administrator, point earning exclusions on credited travel/Edit spend, Points Boost rules, and point transfer eligibility.",
+  "title": "Chase Sapphire Reserve with Ultimate Rewards Program Agreement",
+  "url": "https://www.chase.com/sapphirereserve/rewardsagreement"
+}

@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.reserve-travel-designers",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Travel Designers Bespoke Itinerary Service",
+      "notes": "Supplementary CSR benefit from SRC-CSR-OFFER: complimentary access to Reserve Travel Designers for trip planning."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-45-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.reserve-travel-designers"
+}

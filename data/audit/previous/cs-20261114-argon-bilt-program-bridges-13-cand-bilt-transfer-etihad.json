@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-bilt-program-bridges-13-cand-bilt-transfer-etihad",
+  "records": {
+    "data/candidates/cand-bilt-transfer-etihad.json": {
+      "after": "af28ccd29172106a",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-99-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.lyft-in-app-credit-120.json": {
+      "after": "1fc58a3a32efcea5",
+      "before": null
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "id": "virgin_atlantic.points",
+  "kind": "currency",
+  "name": "Virgin Atlantic Flying Club Points",
+  "program": "virgin_atlantic.program"
+}

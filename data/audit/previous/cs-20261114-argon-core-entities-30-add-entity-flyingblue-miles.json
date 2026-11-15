@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-30-add-entity-flyingblue-miles",
+  "records": {
+    "data/kb/entities/flyingblue.miles.json": {
+      "after": "13a1227687181d1d",
+      "before": null
+    }
+  }
+}

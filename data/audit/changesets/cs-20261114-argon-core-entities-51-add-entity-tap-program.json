@@ -1,0 +1,14 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "tap.program",
+      "kind": "program",
+      "name": "TAP Air Portugal Miles&Go"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-argon-core-entities-51-add-entity-tap-program",
+  "op": "add_entity",
+  "reason": "Register loyalty programs, currencies, elite statuses, lounge capabilities, and activation actions for Bilt Palladium and Chase Sapphire Reserve integration. (tap.program)"
+}

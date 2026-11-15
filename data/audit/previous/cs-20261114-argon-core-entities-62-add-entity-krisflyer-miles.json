@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-62-add-entity-krisflyer-miles",
+  "records": {
+    "data/kb/entities/krisflyer.miles.json": {
+      "after": "2fbffdbbb4dd5785",
+      "before": null
+    }
+  }
+}

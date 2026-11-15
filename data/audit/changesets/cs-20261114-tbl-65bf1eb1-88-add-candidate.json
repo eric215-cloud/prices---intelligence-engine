@@ -1,0 +1,63 @@
+{
+  "author": "Argon",
+  "data": {
+    "candidate": {
+      "created_on": "2026-11-14",
+      "evidence": [
+        {
+          "applies_to": [
+            "card.chase-sapphire-reserve",
+            "org.jpmorgan-chase"
+          ],
+          "id": "src-csr-lounge",
+          "notes": "Michaela source SRC-CSR-LOUNGE.",
+          "publisher": "JPMorgan Chase Bank, N.A.",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Official lounge network rules covering Priority Pass Select enrollment (2 guests, $27 extra guest), Chase Sapphire Lounge by The Club (2 guests, 3-hour pre-departure limit), and Air Canada Maple Leaf Lounge & Air Canada Cafe access (cardholder + 1 guest on Star Alliance flights, excluding YUL and Signature Suites).",
+          "title": "Chase Sapphire Airport Lounge Network",
+          "url": "https://www.chase.com/sapphire-cards/lounges"
+        },
+        {
+          "applies_to": [
+            "card.chase-sapphire-reserve",
+            "org.jpmorgan-chase",
+            "org.visa",
+            "tier.visa-infinite"
+          ],
+          "id": "src-csr-offer",
+          "notes": "Michaela source SRC-CSR-OFFER.",
+          "publisher": "JPMorgan Chase Bank, N.A.",
+          "retrieved_on": "2026-11-14",
+          "source_type": "official",
+          "summary": "Primary U.S. personal Chase Sapphire Reserve offer page and benefit disclosures ($795 annual fee, 8x/4x/3x/1x earning, $300 travel credit, $500 The Edit credit, $250 2026 Select Hotel credit, $300 Exclusive Tables, IHG Platinum, five $75,000 calendar-year spend unlocks, Apple/DoorDash/Lyft/StubHub/Peloton/Global Entry credits).",
+          "title": "Chase Sapphire Reserve Credit Card: Offer Details and Benefit Terms",
+          "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/reserve"
+        }
+      ],
+      "id": "c-cb.csr.air-canada-maple-leaf-lounge",
+      "open_questions": [],
+      "proposed_rule": {
+        "id": "cb.csr.air-canada-maple-leaf-lounge",
+        "kind": "grants",
+        "output": "benefit.csr.air-canada-maple-leaf-lounge",
+        "restrictions": [
+          "Requires physical CSR card and same-day departing boarding pass on a flight operated by Air Canada or another Star Alliance member airline",
+          "Excludes Montreal (YUL) and Air Canada Signature Suites"
+        ],
+        "summary": "Access to eligible Air Canada Maple Leaf Lounges and Air Canada Cafes in the U.S., Canada, and Europe for the primary cardholder/authorized user plus 1 guest ($59 CAD/USD/EUR/GBP per additional guest).",
+        "when": {
+          "holds": "card.chase-sapphire-reserve"
+        }
+      },
+      "search_path": [
+        "tables import (card_benefits.csv)"
+      ],
+      "status": "proposed"
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-88-add-candidate",
+  "op": "add_candidate",
+  "reason": "tables import: card_benefits row cb.csr.air-canada-maple-leaf-lounge"
+}

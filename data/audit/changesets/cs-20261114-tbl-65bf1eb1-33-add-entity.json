@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.doordash-dashpass-and-promos",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve DoorDash DashPass & Up to $25/Month Promo Credits (Through 2027-12-31)",
+      "notes": "Supplementary CSR benefit from SRC-CSR-OFFER / review_summary.md: complimentary 12-month DashPass membership plus up to $25/month in DoorDash promos ($5 restaurant + two $10 non-restaurant) through 2027-12-31."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-33-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.doordash-dashpass-and-promos"
+}

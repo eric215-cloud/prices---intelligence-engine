@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.exclusive-tables-dining-credit-300",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve $300 Exclusive Tables Dining Credit ($150 Semiannual)",
+      "notes": "BEN-CSR-010: Up to $150 Jan-Jun and $150 Jul-Dec statement credits at Sapphire Reserve Exclusive Tables restaurants on OpenTable."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-35-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.exclusive-tables-dining-credit-300"
+}

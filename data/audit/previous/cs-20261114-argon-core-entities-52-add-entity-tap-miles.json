@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-argon-core-entities-52-add-entity-tap-miles",
+  "records": {
+    "data/kb/entities/tap.miles.json": {
+      "after": "7247b2a545995581",
+      "before": null
+    }
+  }
+}

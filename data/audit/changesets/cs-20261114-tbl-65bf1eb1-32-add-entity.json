@@ -1,0 +1,15 @@
+{
+  "author": "Argon",
+  "data": {
+    "entity": {
+      "id": "benefit.csr.category-earning-structure",
+      "kind": "benefit",
+      "name": "Chase Sapphire Reserve Category Earning (8X Chase Travel / 4X Direct Air & Hotel / 3X Dining / 1X Base)",
+      "notes": "BEN-CSR-001: 8X Chase Travel, 4X direct airlines & hotels, 3X worldwide dining, 1X other eligible spend (excluding $300 Travel and $500 The Edit credited spend)."
+    }
+  },
+  "date": "2026-11-14",
+  "id": "cs-20261114-tbl-65bf1eb1-32-add-entity",
+  "op": "add_entity",
+  "reason": "tables import: benefits row benefit.csr.category-earning-structure"
+}

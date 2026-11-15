@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-77-add-candidate",
+  "records": {
+    "data/candidates/c-cb.bilt-palladium.mc-wl-concierge.json": {
+      "after": "2663b923d0be4579",
+      "before": null
+    }
+  }
+}

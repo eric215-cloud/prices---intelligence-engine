@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261114-tbl-65bf1eb1-100-add-candidate",
+  "records": {
+    "data/candidates/c-cb.csr.peloton-credit-and-10x.json": {
+      "after": "bbde5463ed9193f9",
+      "before": null
+    }
+  }
+}

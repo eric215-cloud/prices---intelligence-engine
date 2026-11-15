@@ -1,0 +1,6 @@
+{
+  "id": "hilton.points",
+  "kind": "currency",
+  "name": "Hilton Honors Points",
+  "program": "hilton.program"
+}
