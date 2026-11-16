@@ -248,6 +248,24 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 **Decision.** No ENG-01 credit terms were added to the Bilt Cash candidates. Election eligibility is decided; grant dates, per-grant expiry and the wallet are not computed (docs/ELECTIONS.md section 8.6).
 **Why.** ENG-01 periods have one balance per period and an anniversary counted from `opened_on`. Describing Bilt Cash that way would look supported and be wrong.
 
+## D-53  Text conditions on who has a benefit never establish it (`unchecked`) — experimental branch
+**Decision.** A rule may list `unchecked`: conditions stated by the source on WHO has the output that `when` does not check. While any is listed, nothing is established through the rule; the answer is UNRESOLVED with the texts as the reason. `restrictions` keeps usage terms, which are shown as text and never block.
+**Alternatives considered.** Cap every rule that has any restriction (makes nearly everything unresolved: 68 of 124 real restrictions are usage terms); a prefix convention inside `restrictions` (survives the tables but is easy to get wrong); leave it to review (the defect is that review did not catch it: 20 of 73 real candidates).
+**Why.** Promoted as written, real candidates reported a new-applicant welcome offer as established for a 2024 account. The guard is deliberately blunt: to resolve such a benefit, model the condition as something a person can attest and put it in `when`.
+
+## D-54  Calculations are a separate kind of answer (`prices/calc.py`) — experimental branch
+**Decision.** `earnings` and `convert` return CALCULATED with rule, verification, evidence, arithmetic, assumptions and unevaluated terms, or NOT_CALCULATED with the reason. They use only verified rules in effect whose benefit the engine established for that person. Rates are published totals and are never added. Spend categories form a tree in the vocabulary; a question broader than the published rates is declined, not answered with the catch-all.
+**Why.** A number looks more certain than a sentence. Every stop (no ratio, no rate, unverified, unconfirmed, unchecked condition) is a place where an estimate would otherwise appear.
+
+## D-55  The same relationship with later dates is a successor, not a duplicate — experimental branch
+**Decision.** Two rules with the same signature are duplicates only if their validity windows overlap. To change published terms: end the old rule (`revise_rule`, `valid_to`) and add the new one with a later `valid_from`.
+**Alternatives considered.** Version terms inside one rule (a larger change to every reader of rules); keep refusing (then every change of terms rewrites or erases the past).
+**Why.** United's real 2027 terms could not be entered beside the 2026 terms. Not yet done: `revise_rule` still changes terms in place, and a retired rule is still absent from every date.
+
+## D-56  Real content is tested in a throwaway copy, with the code frozen between batches — experimental branch
+**Decision.** `experiments/viability/run.py` promotes real candidates only in a copy, and its end-to-end test proves the project's data is untouched. The second batch was entered at a recorded commit with `prices/` unchanged.
+**Why.** Both defects found here had survived 358 tests on invented data.
+
 ## Limits of the Argon intake and election work (2026-11-15), stated plainly
 
 - The 113 Argon candidates are integrated exactly as packaged and none is promoted. Engineering did not review their content.

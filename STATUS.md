@@ -80,7 +80,20 @@ Full record: `docs/commissions/results/2026-11-15-fable-eng-01-recurring-credits
 
 Full record: `docs/commissions/results/2026-11-15-fable-eng-02b-bilt-election-correction-RESULTS.md`.
 
-358 automated tests pass. Run: `python3 -m unittest discover -s tests`.
+### Foundation viability test (2026-11-16) — real content, in a throwaway copy only; branch `exp/foundation-viability`
+
+**Verdict: viable with specific architectural corrections.** Full assessment: `docs/VIABILITY_ASSESSMENT.md`. Reproduce: `python3 experiments/viability/run.py`.
+
+| Test | Result | Evidence observed |
+|---|---|---|
+| Baseline on real content | **Defect found** | Promoted as they stand, real candidates told an invented 2024 cardholder that nine benefits with unchecked conditions were established, including the new-applicant welcome offer. 20 of 73 non-transfer candidates state such a condition |
+| First capabilities | **Pass** | `unchecked` conditions never establish; `earnings` and `convert` calculate from published rates and ratios or say why not. `tests/test_r_viability_capabilities.py`, 23 tests |
+| Batch 1: existing research | **Pass** | 24 checks on the Sapphire Reserve packet and the ten verified rules |
+| Batch 2: new programmes, code frozen | **Entry passes; completeness does not** | 28 real records (Venture X, Capital One transfers, Hyatt tiers, United Premier): 0 code changes, 26 accepted as first written, 23 answer their main question; only 5 have every answer-changing term captured |
+| Maintenance | **Defect found and corrected** | Changed terms were refused as duplicates, so the past could only be rewritten or erased. Successor rules now keep both; in-place revision and retirement still do not |
+| Reviewed content | **None** | Batch 2 was read by engineering from extracts. Nothing was promoted in the project |
+
+358 automated tests from earlier commissions still pass unchanged; 382 in all. Run: `python3 -m unittest discover -s tests`.
 
 ## Capability status
 

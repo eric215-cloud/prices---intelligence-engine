@@ -1,6 +1,6 @@
 # PRICES — continuation document
 
-Update this file at the end of every work session. Last updated 2026-11-15 by Claude Fable 5.2 after the ENG-02B Bilt election correction (branch `dev/eng-02b-bilt-election-correction`, from `dev/eng-01-recurring-credits` at bb95d8b; `main` unchanged).
+Update this file at the end of every work session. Last updated 2026-11-16 by Claude Fable 5.2 after the foundation viability test (EXPERIMENTAL branch `exp/foundation-viability`, from `dev/eng-02b-bilt-election-correction` at d36ebbc; `main` and every `dev/` branch unchanged).
 
 ## Coordinator continuity
 
@@ -10,6 +10,8 @@ For project leadership, architecture decisions, model responsibilities, office-m
 A working, tested foundation: eligibility engine, validation, changeset pipeline, discovery planners, goal reports, maintainer procedures, successor-test harness. 10 researched rules. Two synthetic profiles. Eric's profile with two confirmed statuses. Details: `STATUS.md`. Design: `docs/ARCHITECTURE.md`.
 
 Added 2026-11-14: card architecture (six role references per card), network-tier baselines and card exclusions that derive nothing, an applicability report, and CSV tables in `tables/` that are a view of the store and a validated authoring input. Demonstrated on invented cards only (`fixtures/`). No real card is loaded. Read `docs/RELATIONAL_TABLES.md`; results in `docs/commissions/results/2026-11-14-fable-relational-foundation-RESULTS.md`.
+
+Added 2026-11-16 (sixth commission, foundation viability test), on the experimental branch only: a test of whether the engine can grow by data entry. Read `docs/VIABILITY_ASSESSMENT.md` first; its section 9 is the recommended next milestone. The branch adds `unchecked` conditions (text conditions on who has a benefit never establish it), `prices/calc.py` with the `earnings` and `convert` commands, and successor rules (the same relationship with later dates is not a duplicate). None of this is merged anywhere; adopting it is a coordinator decision. Batch 2 in `experiments/viability/` is real but unreviewed content and must not be promoted from there.
 
 Added 2026-11-15 (fifth commission, ENG-02B): the Bilt Palladium elections were corrected from the published terms. The Legacy Election is one linked arrangement (Flexible Bilt Cash, $200 Bilt Cash, $400 hotel credit); the refreshed arrangement (Housing-only, $600) applies from opening to accounts opened in 2027 or later; leaving the Legacy Election is permanent; the card anniversary is counted from the first billing cycle after opening (`anniversary_on` on the card holding). Read `docs/ELECTIONS.md` section 8 and `docs/operations/OP-12-card-elections.md` section 0 first.
 
@@ -23,7 +25,7 @@ Added 2026-11-14 (second commission): earned benefits. A public `earns` rule, a 
 Needs Python 3.9+ only. From the project root:
 
 ```
-python3 -m unittest discover -s tests      # expect: Ran 358 tests ... OK
+python3 -m unittest discover -s tests      # expect: Ran 382 tests ... OK
 python3 -m prices lint                     # expect: lint: 0 error(s), 1 warning(s)  (Eric's Aeroplan 25K has no expiry date yet)
 python3 -m prices status --profile synthetic-demo --as-of 2026-11-12
 python3 -m prices tables status            # expect: "no" twice
@@ -70,6 +72,8 @@ Acceptance tests A, B, C, E, F, H, I pass. D passed for one discovery chain. G p
 5. Research those tasks (procedure in `docs/DISCOVERY.md`). This grows the knowledge base around what Eric actually holds, which keeps maintenance small.
 
 ## Engineering commissions suggested next
+After the foundation viability test (2026-11-16): the next milestone is foundation corrections before more content, in the order given in `docs/VIABILITY_ASSESSMENT.md` section 9: adopt the restriction guard and have Argon classify the restrictions on the 20 affected candidates; adopt successor rules and stop in-place changes of terms; a supported intake command; then programme status qualification. No further Bilt-specific work is recommended.
+
 After ENG-02B (see its results file of 2026-11-15): Argon confirms the six Bilt election definitions against the published terms and decides the open points listed in `docs/ELECTIONS.md` section 8.5; a named reviewer countersigns the four revised definitions; per-grant Bilt Cash accounting is a separate piece of work (section 8.6) and should be commissioned before any Bilt Cash amount is reported as a balance. Eric has said he made the Legacy Election: recording it (OP-12 section 0, with `opened_on` and `anniversary_on`) is a profile task for the coordinator, not done here.
 
 After ENG-01 (see the results file of 2026-11-15 for ENG-01): Argon enters credit terms for the candidates that fit; the structures that do not fit are listed in `docs/RECURRING_CREDITS.md` section 6, each with what it would need. ENG-03 and ENG-04 were deliberately not started.
