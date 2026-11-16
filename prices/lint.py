@@ -37,6 +37,15 @@ def signature(rule):
     return "%s:%s->%s" % (rule["kind"], "+".join(pos), rule["output"])
 
 
+def windows_overlap(a, b):
+    """Do two rules' validity windows share a day? A missing valid_from / valid_to is open-ended.
+    Two rules for the same relationship are a duplicate only when they overlap: the same relationship with new
+    terms from a later date is a SUCCESSOR, and both stay so that questions about earlier dates keep their answer."""
+    lo_a, hi_a = a.get("valid_from") or "0000-01-01", a.get("valid_to") or "9999-12-31"
+    lo_b, hi_b = b.get("valid_from") or "0000-01-01", b.get("valid_to") or "9999-12-31"
+    return lo_a <= hi_b and lo_b <= hi_a
+
+
 NOT_HOLDABLE = ("organization", "network_tier")
 ROLES = ("cobrand_partner", "program_manager", "issuer", "capital_provider", "network", "network_tier")
 
@@ -251,9 +260,10 @@ def lint(store):
             err("BAD_DATES", p, "valid_to is before valid_from")
         if v["status"] != "retired":
             s = signature(r)
-            if s in sigs:
-                err("DUPLICATE_RELATIONSHIP", p, "same relationship as rule %s (%s)" % (sigs[s], s))
-            sigs[s] = r["id"]
+            for other in sigs.get(s, []):
+                if windows_overlap(other, r):
+                    err("DUPLICATE_RELATIONSHIP", p, "same relationship as rule %s (%s) for overlapping dates" % (other["id"], s))
+            sigs.setdefault(s, []).append(r)
 
     # 4. negation must not sit on a dependency cycle (keeps evaluation well-defined)
     deps = {}

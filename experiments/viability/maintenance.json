@@ -1,0 +1,31 @@
+{
+  "about": "A real change of published terms, for the maintenance test: from January 1, 2027 United removes the PQF route and raises 1K. Two independent secondary sources (the evidence policy's minimum when no official page was read). Read by engineering on 2026-11-16 from search extracts; not reviewed content.",
+  "sources": {
+    "src-fm-united-2027": {"url": "https://frequentmiler.com/united-is-making-it-harder-to-earn-elite-status-from-2027/", "title": "United is making it harder to earn elite status from 2027", "publisher": "Frequent Miler", "source_type": "reputable_secondary", "retrieved_on": "2026-11-16",
+      "summary": "From January 1, 2027 the only route to status is PQP: Premier Silver 6,000, Gold 12,000, Platinum 18,000, 1K 32,000. Premier Qualifying Flights no longer count."},
+    "src-bt-united-2027": {"url": "https://www.businesstraveller.com/news/united-mileageplus-2027-status-pqp-premier-1k-changes/", "title": "United MileagePlus 2027 status: PQP and Premier 1K changes", "publisher": "Business Traveller", "source_type": "reputable_secondary", "retrieved_on": "2026-11-16",
+      "summary": "2027 requirements by PQP only: Silver 6,000, Gold 12,000, Platinum 18,000, 1K 32,000; Silver, Gold and Platinum match the 2026 PQP-only figures."}
+  },
+  "records": [
+    {"key": "UA-2027-silver", "mechanism": "successor terms from a date", "evidence": ["src-fm-united-2027", "src-bt-united-2027"],
+     "rule": {"id": "united.silver-by-qualification-2027", "kind": "grants", "output": "united.silver", "valid_from": "2027-01-01", "valid_to": "2027-12-31",
+              "when": {"all": [{"holds": "united.member"}, {"metric": "united.2027.pqp", "gte": 6000}]},
+              "summary": "Premier Silver in the 2027 qualification year: 6,000 PQP. Premier Qualifying Flights no longer count."},
+     "open_questions": ["Whether a minimum number of United-operated flights still applies in 2027 was not established from the sources read"]},
+    {"key": "UA-2027-gold", "mechanism": "successor terms from a date", "evidence": ["src-fm-united-2027", "src-bt-united-2027"],
+     "rule": {"id": "united.gold-by-qualification-2027", "kind": "grants", "output": "united.gold", "valid_from": "2027-01-01", "valid_to": "2027-12-31",
+              "when": {"all": [{"holds": "united.member"}, {"metric": "united.2027.pqp", "gte": 12000}]},
+              "summary": "Premier Gold in the 2027 qualification year: 12,000 PQP."},
+     "open_questions": ["Whether a minimum number of United-operated flights still applies in 2027 was not established from the sources read"]},
+    {"key": "UA-2027-platinum", "mechanism": "successor terms from a date", "evidence": ["src-fm-united-2027", "src-bt-united-2027"],
+     "rule": {"id": "united.platinum-by-qualification-2027", "kind": "grants", "output": "united.platinum", "valid_from": "2027-01-01", "valid_to": "2027-12-31",
+              "when": {"all": [{"holds": "united.member"}, {"metric": "united.2027.pqp", "gte": 18000}]},
+              "summary": "Premier Platinum in the 2027 qualification year: 18,000 PQP."},
+     "open_questions": ["Whether a minimum number of United-operated flights still applies in 2027 was not established from the sources read"]},
+    {"key": "UA-2027-1k", "mechanism": "successor terms from a date", "evidence": ["src-fm-united-2027", "src-bt-united-2027"],
+     "rule": {"id": "united.1k-by-qualification-2027", "kind": "grants", "output": "united.1k", "valid_from": "2027-01-01", "valid_to": "2027-12-31",
+              "when": {"all": [{"holds": "united.member"}, {"metric": "united.2027.pqp", "gte": 32000}]},
+              "summary": "Premier 1K in the 2027 qualification year: 32,000 PQP (28,000 in 2026)."},
+     "open_questions": ["Whether a minimum number of United-operated flights still applies in 2027 was not established from the sources read"]}
+  ]
+}

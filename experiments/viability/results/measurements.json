@@ -1,0 +1,771 @@
+{
+ "batch1_amendments": {
+  "credit ok": 7,
+  "earning ok": 2,
+  "unchecked ok": 10
+ },
+ "batch2": {
+  "by_gap": {
+   "G2": 2,
+   "G3": 7,
+   "G5": 1,
+   "G6": 1,
+   "G7": 9,
+   "G8": 1,
+   "G9": 2,
+   "none": 5
+  },
+  "by_level": {
+   "calculated": 10,
+   "evaluated": 13,
+   "recorded": 5
+  },
+  "by_path": {
+   "data": 19,
+   "data-workaround": 9
+  },
+  "changeset_fields_per_record": 25.1,
+  "entities": 23,
+  "fully_captured": 5,
+  "fully_captured_by_data_alone": 5,
+  "operations_attempted": 82,
+  "operations_refused": 3,
+  "pipeline_operations_per_record": 2.93,
+  "records": 28,
+  "records_accepted_first_time": 26,
+  "records_reshaped_to_fit": [
+   "HY-1",
+   "VX-2"
+  ],
+  "sheet_fields_per_record": 11.2
+ },
+ "batch2_outcome": {
+  "HY-1": {
+   "accepted": true,
+   "attempts": 2,
+   "changeset_fields": 27,
+   "first_error": "['BAD_EARN_SHAPE: data/candidates/c-hyatt.earn-discoverist-nights.json: an earns rule is exactly: when {\"holds\": <card>} -> output <benefit or status>']",
+   "mechanism": "programme status by threshold, with alternative measures",
+   "promoted": true,
+   "rule": "hyatt.discoverist-by-qualification-2026",
+   "sheet_fields": 29
+  },
+  "HY-2": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 27,
+   "first_error": null,
+   "mechanism": "programme status by threshold, with alternative measures",
+   "promoted": true,
+   "rule": "hyatt.explorist-by-qualification-2026",
+   "sheet_fields": 17
+  },
+  "HY-3": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 27,
+   "first_error": null,
+   "mechanism": "programme status by threshold, with alternative measures",
+   "promoted": true,
+   "rule": "hyatt.globalist-by-qualification-2026",
+   "sheet_fields": 17
+  },
+  "HY-4": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 25,
+   "first_error": null,
+   "mechanism": "threshold reward with a member's choice of award",
+   "promoted": true,
+   "rule": "hyatt.milestone-20-2026",
+   "sheet_fields": 15
+  },
+  "TR-accor": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 23,
+   "first_error": null,
+   "mechanism": "transfer with a published ratio",
+   "promoted": true,
+   "rule": "capitalone.miles-to-accor",
+   "sheet_fields": 4
+  },
+  "TR-aeroplan": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 23,
+   "first_error": null,
+   "mechanism": "transfer with a published ratio",
+   "promoted": true,
+   "rule": "capitalone.miles-to-aeroplan",
+   "sheet_fields": 4
+  },
+  "TR-choice": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 24,
+   "first_error": null,
+   "mechanism": "transfer with an eligibility restriction",
+   "promoted": true,
+   "rule": "capitalone.miles-to-choice",
+   "sheet_fields": 5
+  },
+  "TR-emirates": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 23,
+   "first_error": null,
+   "mechanism": "transfer with a published ratio",
+   "promoted": true,
+   "rule": "capitalone.miles-to-emirates",
+   "sheet_fields": 4
+  },
+  "TR-flyingblue": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 23,
+   "first_error": null,
+   "mechanism": "transfer with a published ratio",
+   "promoted": true,
+   "rule": "capitalone.miles-to-flyingblue",
+   "sheet_fields": 4
+  },
+  "TR-iprefer": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 23,
+   "first_error": null,
+   "mechanism": "transfer with a published ratio",
+   "promoted": true,
+   "rule": "capitalone.miles-to-iprefer",
+   "sheet_fields": 4
+  },
+  "TR-jal": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 23,
+   "first_error": null,
+   "mechanism": "transfer with a published ratio",
+   "promoted": true,
+   "rule": "capitalone.miles-to-jal",
+   "sheet_fields": 4
+  },
+  "TR-jetblue": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 23,
+   "first_error": null,
+   "mechanism": "transfer with a published ratio",
+   "promoted": true,
+   "rule": "capitalone.miles-to-jetblue",
+   "sheet_fields": 4
+  },
+  "TR-krisflyer": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 23,
+   "first_error": null,
+   "mechanism": "transfer with a published ratio",
+   "promoted": true,
+   "rule": "capitalone.miles-to-krisflyer",
+   "sheet_fields": 4
+  },
+  "TR-wyndham": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 23,
+   "first_error": null,
+   "mechanism": "transfer with a published ratio",
+   "promoted": true,
+   "rule": "capitalone.miles-to-wyndham",
+   "sheet_fields": 4
+  },
+  "UA-1": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 34,
+   "first_error": null,
+   "mechanism": "airline status by a compound threshold (two measures, or one)",
+   "promoted": true,
+   "rule": "united.silver-by-qualification-2026",
+   "sheet_fields": 19
+  },
+  "UA-2": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 34,
+   "first_error": null,
+   "mechanism": "airline status by a compound threshold (two measures, or one)",
+   "promoted": true,
+   "rule": "united.gold-by-qualification-2026",
+   "sheet_fields": 19
+  },
+  "UA-3": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 34,
+   "first_error": null,
+   "mechanism": "airline status by a compound threshold (two measures, or one)",
+   "promoted": true,
+   "rule": "united.platinum-by-qualification-2026",
+   "sheet_fields": 19
+  },
+  "UA-4": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 34,
+   "first_error": null,
+   "mechanism": "airline status by a compound threshold (two measures, or one)",
+   "promoted": true,
+   "rule": "united.1k-by-qualification-2026",
+   "sheet_fields": 19
+  },
+  "UA-5": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 19,
+   "first_error": null,
+   "mechanism": "a grant of qualifying points that depends on status held",
+   "promoted": true,
+   "rule": "united.starter-pqp",
+   "sheet_fields": 10
+  },
+  "UA-6": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 17,
+   "first_error": null,
+   "mechanism": "an earning formula",
+   "promoted": true,
+   "rule": "united.partner-pqp-earning",
+   "sheet_fields": 8
+  },
+  "VX-1": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 38,
+   "first_error": null,
+   "mechanism": "card earning rates, incl. portal",
+   "promoted": true,
+   "rule": "cb.venture-x.earning",
+   "sheet_fields": 28
+  },
+  "VX-2": {
+   "accepted": true,
+   "attempts": 2,
+   "changeset_fields": 26,
+   "first_error": "[\"SCHEMA: $.proposed_rule.credit: missing required field 'cycle'\"]",
+   "mechanism": "recurring credit, cycle not stated by the source",
+   "promoted": true,
+   "rule": "cb.venture-x.travel-credit-300",
+   "sheet_fields": 14
+  },
+  "VX-3": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 25,
+   "first_error": null,
+   "mechanism": "recurring grant of points on the account anniversary",
+   "promoted": true,
+   "rule": "cb.venture-x.anniversary-miles",
+   "sheet_fields": 9
+  },
+  "VX-4": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 22,
+   "first_error": null,
+   "mechanism": "recurring credit, multi-year",
+   "promoted": true,
+   "rule": "cb.venture-x.trusted-traveler-credit-120",
+   "sheet_fields": 12
+  },
+  "VX-5": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 26,
+   "first_error": null,
+   "mechanism": "welcome offer with eligibility restrictions",
+   "promoted": true,
+   "rule": "cb.venture-x.early-spend-bonus",
+   "sheet_fields": 10
+  },
+  "VX-6": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 21,
+   "first_error": null,
+   "mechanism": "card benefit with usage terms",
+   "promoted": true,
+   "rule": "cb.venture-x.capital-one-lounges",
+   "sheet_fields": 11
+  },
+  "VX-7": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 20,
+   "first_error": null,
+   "mechanism": "membership acquired by enrolment",
+   "promoted": true,
+   "rule": "venture-x.acquire-priority-pass",
+   "sheet_fields": 10
+  },
+  "VX-8": {
+   "accepted": true,
+   "attempts": 1,
+   "changeset_fields": 17,
+   "first_error": null,
+   "mechanism": "card gives access to a transferable currency",
+   "promoted": true,
+   "rule": "venture-x.grants-capitalone-miles",
+   "sheet_fields": 7
+  },
+  "entity action.venture-x.enroll-priority-pass": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 4
+  },
+  "entity benefit.hyatt.milestone-20": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity benefit.united.partner-pqp-earning": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity benefit.united.starter-pqp": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity benefit.venture-x.anniversary-miles": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity benefit.venture-x.capital-one-lounges": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity benefit.venture-x.early-spend-bonus": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity benefit.venture-x.earning": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity benefit.venture-x.travel-credit-300": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity benefit.venture-x.trusted-traveler-credit-120": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity capitalone.miles": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 4
+  },
+  "entity capitalone.program": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity card.capital-one-venture-x": {
+   "accepted": true,
+   "attempts": 2,
+   "first_error": "[\"UNKNOWN_REFERENCE: data/kb/entities/card.capital-one-venture-x.json: source 'src-c1-venturex-about' is not an evidence record\"]",
+   "sheet_fields": 7
+  },
+  "entity choice.points": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 4
+  },
+  "entity choice.program": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity hyatt.discoverist": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 4
+  },
+  "entity hyatt.member": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 4
+  },
+  "entity org.capital-one": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 3
+  },
+  "entity united.1k": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 4
+  },
+  "entity united.gold": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 4
+  },
+  "entity united.member": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 4
+  },
+  "entity united.platinum": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 4
+  },
+  "entity united.silver": {
+   "accepted": true,
+   "attempts": 1,
+   "first_error": null,
+   "sheet_fields": 4
+  }
+ },
+ "checks": [
+  {
+   "check": "0.0 the evidence policy holds on real content: a candidate with one secondary source cannot be promoted, even in the copy",
+   "detail": "c-ana-business-award-via-ana-miles",
+   "ok": true
+  },
+  {
+   "check": "0.1 the restriction classification covers every restriction (124 strings on the 73 real non-transfer candidates)",
+   "detail": "{'U': 68, 'G': 24, 'M': 9, 'g': 12, 'T': 11}",
+   "ok": true
+  },
+  {
+   "check": "0.2 BASELINE DEFECT reproduced: an account opened in 2024 is shown the new-applicant welcome offer as ESTABLISHED",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "0.3 BASELINE DEFECT reproduced: IHG Platinum 'benefit' ESTABLISHED while the status itself still needs enrolment",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.0 the copy is sound after batch 1 (lint: no errors)",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.1 EVALUATED chain: Marriott Titanium -> JAL Crystal -> oneworld Ruby is CONDITIONAL (an action is needed), not established",
+   "detail": "{'jal.crystal': 'CONDITIONAL', 'oneworld.ruby': 'CONDITIONAL', 'aeroplan.25k': 'CONDITIONAL', 'aeroplan.points': 'ESTABLISHED', 'cap.japan-business.ana-via-aeroplan': 'ESTABLISHED', 'benefit.csr.public-welcome-offer': 'UNRESOLVED', 'benefit.csr.ihg-platinum-elite-status': 'UNRESOLVED', 'ihg.platinum': 'UNRESOLVED', 'benefit.csr.annual-travel-credit-300': 'ESTABLISHED', 'benefit.csr.trip-delay-reimbursement': 'ESTABLISHED', 'hyatt.explorist': 'NOT_AVAILABLE'}",
+   "ok": true
+  },
+  {
+   "check": "1.2 EVALUATED chain: Amex points -> Aeroplan points -> ANA business award to Japan is ESTABLISHED",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.3 GUARD: the new-applicant welcome offer is now UNRESOLVED for an existing cardholder, never ESTABLISHED",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.4 GUARD: IHG Platinum is UNRESOLVED both as the card benefit and as the status (primary cardholder is not checked)",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.5 a benefit with usage terms only stays ESTABLISHED (travel credit, trip delay)",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.6 a spending threshold is never met by holding the card: Hyatt Explorist is NOT_AVAILABLE",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.7 CALCULATED: $400 of dining on Sapphire Reserve = 1,200 Ultimate Rewards points (3 per $1)",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.8 CALCULATED: $1,000 through Chase Travel = 8,000 points",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.9 DECLINED: 'travel' is too broad (the card publishes 8, 4 and 1 for different kinds of travel)",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.10 CALCULATED with dates: $60 of Lyft = 300 points today, 60 after the 5X offer ends on 2027-09-30 (catch-all rate, said so)",
+   "detail": "300.0 / 60.0",
+   "ok": true
+  },
+  {
+   "check": "1.11 DECLINED: no calculation for a person whose card holding is unconfirmed",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.12 DECLINED: an unknown category is refused, not guessed",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.13 DECLINED: Ultimate Rewards -> 14 partners, no amount for any: the source publishes no ratio",
+   "detail": "14 answers",
+   "ok": true
+  },
+  {
+   "check": "1.14 CALCULATED: 50,000 Amex points -> 50,000 ANA miles at the recorded 1:1, with its open question shown",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.15 CALCULATED: travel credit period for an account opened 2024-03-01 is 2026-03-01 to 2027-02-28; allowance 300; personal balance NOT_RECORDED (never assumed unused)",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.16 the guard reaches credits: StubHub period is computed (2026-H2) but whether it applies is UNRESOLVED (activation not checked)",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.17 DECLINED: Global Entry credit, the source does not say what the four years count from; no period is invented",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.18 EVALUATED: $61,200 against the $75,000 threshold is BELOW; five outcomes listed, none earned",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "1.19 EVALUATED over time: the 2026-only hotel credit is ESTABLISHED on 2026-11-16 and NOT_AVAILABLE on 2027-01-15",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "2.0 every batch 2 record ended up in the copy (accepted and promoted there), and the copy is sound",
+   "detail": " ",
+   "ok": true
+  },
+  {
+   "check": "2.1 EVALUATED: 34 Hyatt nights in 2026 -> Discoverist and Explorist ESTABLISHED, Globalist not; the 20-night milestone ESTABLISHED",
+   "detail": "{'hyatt.discoverist': 'ESTABLISHED', 'hyatt.explorist': 'ESTABLISHED', 'hyatt.globalist': 'NOT_AVAILABLE', 'benefit.hyatt.milestone-20': 'ESTABLISHED', 'united.silver': 'ESTABLISHED', 'united.gold': 'NOT_AVAILABLE', 'benefit.united.starter-pqp': 'ESTABLISHED', 'priority_pass.select': 'CONDITIONAL', 'benefit.venture-x.early-spend-bonus': 'UNRESOLVED', 'benefit.venture-x.anniversary-miles': 'UNRESOLVED', 'benefit.venture-x.capital-one-lounges': 'ESTABLISHED', 'capitalone.miles': 'ESTABLISHED'}",
+   "ok": true
+  },
+  {
+   "check": "2.2 EVALUATED compound threshold: 6,500 PQP, 10 PQF, 9 United segments -> Silver by the PQP-only route; not Gold; starter PQP follows",
+   "detail": "{'hyatt.discoverist': 'ESTABLISHED', 'hyatt.explorist': 'ESTABLISHED', 'hyatt.globalist': 'NOT_AVAILABLE', 'benefit.hyatt.milestone-20': 'ESTABLISHED', 'united.silver': 'ESTABLISHED', 'united.gold': 'NOT_AVAILABLE', 'benefit.united.starter-pqp': 'ESTABLISHED', 'priority_pass.select': 'CONDITIONAL', 'benefit.venture-x.early-spend-bonus': 'UNRESOLVED', 'benefit.venture-x.anniversary-miles': 'UNRESOLVED', 'benefit.venture-x.capital-one-lounges': 'ESTABLISHED', 'capitalone.miles': 'ESTABLISHED'}",
+   "ok": true
+  },
+  {
+   "check": "2.3 EVALUATED: Priority Pass is CONDITIONAL (enrolment needed); the early-spend bonus and anniversary miles are UNRESOLVED; lounges ESTABLISHED",
+   "detail": "{'hyatt.discoverist': 'ESTABLISHED', 'hyatt.explorist': 'ESTABLISHED', 'hyatt.globalist': 'NOT_AVAILABLE', 'benefit.hyatt.milestone-20': 'ESTABLISHED', 'united.silver': 'ESTABLISHED', 'united.gold': 'NOT_AVAILABLE', 'benefit.united.starter-pqp': 'ESTABLISHED', 'priority_pass.select': 'CONDITIONAL', 'benefit.venture-x.early-spend-bonus': 'UNRESOLVED', 'benefit.venture-x.anniversary-miles': 'UNRESOLVED', 'benefit.venture-x.capital-one-lounges': 'ESTABLISHED', 'capitalone.miles': 'ESTABLISHED'}",
+   "ok": true
+  },
+  {
+   "check": "2.4 UNCERTAINTY: a member with no figures recorded is UNRESOLVED for Silver, not refused and not assumed",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "2.5 LIMIT (gap G3): on 2027-02-01 the engine no longer shows the Silver that Devon qualified for in 2026; the validity of an earned programme status is not represented",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "2.6 CALCULATED with unchanged code: $500 of portal hotels = 5,000 miles; $200 of entertainment = 1,000; $400 of dining = 800 at the catch-all rate; 'portal travel' is too broad (10 and 5 are published)",
+   "detail": "{'portal-hotels': 5000.0, 'dining': 800.0, 'portal-travel': 'NOT_CALCULATED', 'issuer-entertainment': 1000.0}",
+   "ok": true
+  },
+  {
+   "check": "2.7 CALCULATED with unchanged code: 30,000 Capital One miles -> 30,000 Aeroplan, 22,500 JAL (2:1.5), 18,000 JetBlue (5:3), 15,000 Accor (2:1), 60,000 I Prefer (1:2)",
+   "detail": "{'aeroplan.points': 30000.0, 'jal.miles': 22500.0, 'jetblue.points': 18000.0, 'accor.points': 15000.0, 'iprefer.points': 60000.0}",
+   "ok": true
+  },
+  {
+   "check": "2.8 DECLINED: Choice Privileges is not calculated: 'U.S.-based accounts only' is not checked",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "2.9 the $300 Capital One Travel credit has no period (the source states no cycle, and the credit block cannot hold that): it is absent from the credits report; the Global Entry credit is there with its period unresolved",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "2.10 the assessment covers every record",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "3.1 SUCCESSOR TERMS: the four 2027 United rules are accepted next to the 2026 rules (same relationship, later dates)",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "3.2 HISTORY KEPT: the 2026 answer is unchanged by the 2027 terms (still ESTABLISHED through the 2026 rule)",
+   "detail": "united.silver-by-qualification-2026",
+   "ok": true
+  },
+  {
+   "check": "3.3 NEW TERMS APPLY FROM THEIR DATE: on 2027-07-01, 5,400 PQP is not Silver (the PQF route is gone)",
+   "detail": "NOT_AVAILABLE",
+   "ok": true
+  },
+  {
+   "check": "3.4 ... and 6,100 PQP is Silver through the 2027 rule",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "3.5 the change of year is visible as a dated change with what depended on it",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "3.6 DEFECT reproduced: revising a term in place rewrites the answer for a date BEFORE the change (1,200 becomes 800 for 2026-11-16)",
+   "detail": "1200.0 -> 800.0",
+   "ok": true
+  },
+  {
+   "check": "3.7 the audit trail holds the record as it was, and the revision can be undone exactly",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "3.8 SUCCESSOR RULE: $400 of dining is 1,200 on 2026-11-16 and on 2027-03-31, and 800 from 2027-04-01; each answer names its own rule",
+   "detail": "1200.0 1200.0 800.0",
+   "ok": true
+  },
+  {
+   "check": "3.9 DEPENDENTS FOLLOW: flagging the only rule behind ANA miles drops them from ESTABLISHED to UNRESOLVED and stops the conversion; undoing it restores both",
+   "detail": "ESTABLISHED UNRESOLVED ESTABLISHED NOT_CALCULATED",
+   "ok": true
+  },
+  {
+   "check": "3.9b ... and where a second sourced route exists the answer stands on it instead: with Amex -> Aeroplan in doubt, the Japan award stays ESTABLISHED through Chase points -> Aeroplan",
+   "detail": "aeroplan-points-from-amex-mr -> chase.ur-to-aeroplan",
+   "ok": true
+  },
+  {
+   "check": "3.10 the copy is sound after every maintenance step (lint: no errors)",
+   "detail": "",
+   "ok": true
+  }
+ ],
+ "needs": {
+  "nothing more": 5,
+  "schema": 3,
+  "schema+code": 20
+ },
+ "phase0": {
+  "established_despite_gate": [
+   "benefit.csr.apple-tv-apple-music",
+   "benefit.csr.doordash-dashpass-and-promos",
+   "benefit.csr.ihg-platinum-elite-status",
+   "benefit.csr.lyft-in-app-credit-120",
+   "benefit.csr.priority-pass-select",
+   "benefit.csr.public-welcome-offer",
+   "benefit.csr.sapphire-lounge-by-the-club",
+   "benefit.csr.spend-75k-unlock-suite",
+   "benefit.csr.stubhub-viagogo-credit-300"
+  ],
+  "gates": {
+   "aligned": true,
+   "candidates": 73,
+   "deriving_with_unchecked_gate": [
+    "bilt-palladium.acquire-priority-pass-enrolled",
+    "bilt-palladium.grants-priority-pass-select",
+    "bilt-palladium.welcome-gold-status",
+    "cb.bilt-palladium.base-2x-everyday",
+    "cb.bilt-palladium.lyft-multiplier-stack",
+    "cb.bilt-palladium.mc-wl-id-theft",
+    "cb.bilt-palladium.point-accelerator",
+    "cb.bilt-palladium.priority-pass-lounge",
+    "cb.bilt-palladium.public-welcome-offer",
+    "cb.csr.apple-tv-apple-music",
+    "cb.csr.doordash-dashpass-and-promos",
+    "cb.csr.ihg-platinum-elite-status",
+    "cb.csr.lyft-in-app-credit-120",
+    "cb.csr.priority-pass-select",
+    "cb.csr.public-welcome-offer",
+    "cb.csr.sapphire-lounge-by-the-club",
+    "cb.csr.spend-75k-unlock-suite",
+    "cb.csr.stubhub-viagogo-credit-300",
+    "csr.acquire-ihg-platinum"
+   ],
+   "restrictions": 124,
+   "tally": {
+    "G": 24,
+    "M": 9,
+    "T": 11,
+    "U": 68,
+    "g": 12
+   },
+   "with_unchecked_gate": [
+    "baseline.mc-wl.id-theft-protection",
+    "bilt-palladium.acquire-priority-pass-enrolled",
+    "bilt-palladium.grants-priority-pass-select",
+    "bilt-palladium.welcome-gold-status",
+    "cb.bilt-palladium.base-2x-everyday",
+    "cb.bilt-palladium.lyft-multiplier-stack",
+    "cb.bilt-palladium.mc-wl-id-theft",
+    "cb.bilt-palladium.point-accelerator",
+    "cb.bilt-palladium.priority-pass-lounge",
+    "cb.bilt-palladium.public-welcome-offer",
+    "cb.csr.apple-tv-apple-music",
+    "cb.csr.doordash-dashpass-and-promos",
+    "cb.csr.ihg-platinum-elite-status",
+    "cb.csr.lyft-in-app-credit-120",
+    "cb.csr.priority-pass-select",
+    "cb.csr.public-welcome-offer",
+    "cb.csr.sapphire-lounge-by-the-club",
+    "cb.csr.spend-75k-unlock-suite",
+    "cb.csr.stubhub-viagogo-credit-300",
+    "csr.acquire-ihg-platinum"
+   ]
+  },
+  "promoted": 58
+ },
+ "scope": {
+  "reusable": 23
+ }
+}

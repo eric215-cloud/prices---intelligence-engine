@@ -89,7 +89,7 @@ def phase0(spec):
     check("0.3 BASELINE DEFECT reproduced: IHG Platinum 'benefit' ESTABLISHED while the status itself still needs enrolment",
           status_of(rep, "benefit.csr.ihg-platinum-elite-status") == "ESTABLISHED" and status_of(rep, "ihg.platinum") == "CONDITIONAL")
     section("Phase 0 - baseline: real candidates promoted in the copy as they are", [
-        "%d real candidates promoted in the copy (Chase Sapphire Reserve packet, Visa Infinite baselines, two loyalty candidates); "
+        "%d real candidates promoted in the copy (Chase Sapphire Reserve packet, Visa Infinite baselines, one loyalty candidate; a second was refused by the evidence policy); "
         "44 of the 113 in the store carry open questions and promote only with an explicit acceptance." % len(ids),
         "Restrictions on the 73 real non-transfer candidates: %d strings. Engineering's classification: %s."
         % (g["restrictions"], ", ".join("%s %d" % (k, v) for k, v in sorted(g["tally"].items()))),
@@ -365,12 +365,98 @@ def phase2(lab):
     return {"outcome": outcome, "rows": rows, "measurements": m, "assessment": assess}
 
 
+# ------------------------------------------------------------------------------------------------ phase 3
+def phase3(lab):
+    notes = []
+    silver = lambda day: lab.js("explain", "--profile", "syn-devon", "--as-of", day, "united.silver")       # noqa: E731
+    dining = lambda day: lab.js("earnings", "--profile", "syn-casey", "--as-of", day, "--category", "dining", "--amount", 400)["answers"][0]   # noqa: E731
+
+    # M1  a REAL change: United's 2027 terms arrive while the 2026 terms are still in force
+    before = silver(TODAY)
+    out = intake(lab, load("maintenance.json"), "maintenance")
+    check("3.1 SUCCESSOR TERMS: the four 2027 United rules are accepted next to the 2026 rules (same relationship, later dates)",
+          all(v["accepted"] and v["promoted"] for v in out.values()), "; ".join(str(v["first_error"]) for v in out.values() if not v["accepted"])[:300])
+    lab.person("syn-devon", DEVON, DEVON_METRICS + [{"id": "united.2027.pqp", "value": 5400, "as_of": "2027-06-30"}])
+    after, mid = silver(TODAY), silver("2027-07-01")
+    check("3.2 HISTORY KEPT: the 2026 answer is unchanged by the 2027 terms (still ESTABLISHED through the 2026 rule)",
+          before["status"] == after["status"] == "ESTABLISHED" and after["chain"]["via"] == "united.silver-by-qualification-2026", after["chain"].get("via", ""))
+    check("3.3 NEW TERMS APPLY FROM THEIR DATE: on 2027-07-01, 5,400 PQP is not Silver (the PQF route is gone)", mid["status"] == "NOT_AVAILABLE", mid["status"])
+    lab.person("syn-devon", DEVON, DEVON_METRICS + [{"id": "united.2027.pqp", "value": 6100, "as_of": "2027-09-30"}])
+    late = silver("2027-10-01")
+    check("3.4 ... and 6,100 PQP is Silver through the 2027 rule", late["status"] == "ESTABLISHED" and late["chain"]["via"] == "united.silver-by-qualification-2027")
+    rev = lab.cli("review", "--profile", "syn-devon", "--from", "2026-12-31", "--to", "2027-01-01")[1]
+    check("3.5 the change of year is visible as a dated change with what depended on it", "united.silver" in rev and "benefit.united.starter-pqp" in rev)
+
+    # M2  TEST EDIT (not a real term): what an in-place revision does to answers about the past
+    rid = "cb.csr.category-earning-structure"
+    was = dining(TODAY)["points"]
+    block = json.loads(json.dumps(lab.store().rules[rid]["earning"]))
+    for r in block["rates"]:
+        if r["category"] == "dining":
+            r["per_usd"] = 2
+    ok = lab.apply("revise_rule", "maintenance", "M2", target=rid, data={"set": {"earning": block}}, evidence=lab.evidence_of(rid))["ok"]
+    cs_id = "cs-%s-via-%04d-revise-rule" % (TODAY.replace("-", ""), lab.n)
+    now = dining(TODAY)["points"]
+    check("3.6 DEFECT reproduced: revising a term in place rewrites the answer for a date BEFORE the change (1,200 becomes 800 for %s)" % TODAY,
+          ok and (was, now) == (1200, 800), "%s -> %s" % (was, now))
+    snap = os.path.exists(os.path.join(lab.root, "data", "audit", "previous", cs_id + ".json"))
+    ok = lab.apply("revert_changeset", "maintenance", "M2 revert", data={"changeset": cs_id}, attestation=lab.attest())["ok"]
+    check("3.7 the audit trail holds the record as it was, and the revision can be undone exactly", snap and ok and dining(TODAY)["points"] == 1200)
+
+    # M3  TEST EDIT: the same change made as a successor rule
+    ok1 = lab.apply("revise_rule", "maintenance", "M3 end", target=rid, data={"set": {"valid_to": "2027-03-31"}}, evidence=lab.evidence_of(rid))["ok"]
+    old = lab.store().rules[rid]
+    new = {k: old[k] for k in ("kind", "output", "when", "restrictions")}
+    new.update(id=rid + "-from-2027-04", valid_from="2027-04-01", earning=block, summary="TEST EDIT, not a real term: " + old["summary"])
+    cand = {"id": "c-" + new["id"], "status": "proposed", "created_on": TODAY, "proposed_rule": new, "evidence": lab.evidence_of(rid),
+            "search_path": ["viability experiment: test edit"], "open_questions": []}
+    ok2 = lab.apply("add_candidate", "maintenance", "M3 successor", data={"candidate": cand})["ok"] and lab.promote(cand["id"], "maintenance")["ok"]
+    a, b, c = dining(TODAY), dining("2027-03-31"), dining("2027-04-01")
+    check("3.8 SUCCESSOR RULE: $400 of dining is 1,200 on %s and on 2027-03-31, and 800 from 2027-04-01; each answer names its own rule" % TODAY,
+          ok1 and ok2 and (a["points"], b["points"], c["points"]) == (1200, 1200, 800) and c["basis"]["rule"] == new["id"] and a["basis"]["rule"] == rid,
+          "%s %s %s" % (a.get("points"), b.get("points"), c.get("points")))
+
+    # M4  a source is called into question: what rested on it follows, and comes back when the doubt is withdrawn
+    P = ["--profile", "syn-casey", "--as-of", TODAY]
+
+    def doubt(rule_id):
+        ok = lab.apply("flag_rule", "maintenance", "M4 " + rule_id, target=rule_id,
+                       data={"open_questions": ["TEST EDIT: suppose this transfer were reported as ended"]}, evidence=lab.evidence_of(rule_id))["ok"]
+        return ok, "cs-%s-via-%04d-flag-rule" % (TODAY.replace("-", ""), lab.n)
+
+    def undo(cs_id):
+        return lab.apply("revert_changeset", "maintenance", "M4 revert", data={"changeset": cs_id}, attestation=lab.attest())["ok"]
+
+    s0 = status_of(lab.js("status", *P), "ana.miles")
+    ok, cs_id = doubt("ana-miles-from-amex-mr")
+    s1 = status_of(lab.js("status", *P), "ana.miles")
+    conv = lab.js("convert", *P, "--from", "amex.mr", "--amount", 50000, "--to", "ana.miles")["answers"][0]["result"]
+    ok2 = undo(cs_id)
+    s2 = status_of(lab.js("status", *P), "ana.miles")
+    check("3.9 DEPENDENTS FOLLOW: flagging the only rule behind ANA miles drops them from ESTABLISHED to UNRESOLVED and stops the conversion; "
+          "undoing it restores both", ok and ok2 and (s0, s1, s2, conv) == ("ESTABLISHED", "UNRESOLVED", "ESTABLISHED", "NOT_CALCULATED"),
+          "%s %s %s %s" % (s0, s1, s2, conv))
+    cap = "cap.japan-business.ana-via-aeroplan"
+    via0 = lab.js("explain", *P, "aeroplan.points")["chain"]["via"]
+    ok, cs_id = doubt("aeroplan-points-from-amex-mr")
+    e1 = lab.js("explain", *P, "aeroplan.points")
+    s1 = status_of(lab.js("status", *P), cap)
+    ok2 = undo(cs_id)
+    check("3.9b ... and where a second sourced route exists the answer stands on it instead: with Amex -> Aeroplan in doubt, the Japan award "
+          "stays ESTABLISHED through Chase points -> Aeroplan",
+          ok and ok2 and via0 == "aeroplan-points-from-amex-mr" and e1["status"] == "ESTABLISHED" and e1["chain"]["via"] == "chase.ur-to-aeroplan"
+          and s1 == "ESTABLISHED", "%s -> %s" % (via0, e1["chain"].get("via")))
+    check("3.10 the copy is sound after every maintenance step (lint: no errors)", lab.lint_errors() == [], "; ".join(lab.lint_errors()[:2]))
+    return {"notes": notes, "united_2027": out}
+
+
 def main():
     spec = load("batch1.json")
     p0 = phase0(spec)
     p1 = phase1(spec)
     p2 = phase2(p1["lab"])
     p1["p2"] = p2
+    p1["p3"] = phase3(p1["lab"])
     bad = [c for c in checks if not c["ok"]]
     for c in checks:
         print("%-4s %s%s" % ("ok" if c["ok"] else "FAIL", c["check"], ("   [" + c["detail"] + "]") if c["detail"] and not c["ok"] else ""))
@@ -378,6 +464,76 @@ def main():
     return p0, p1, bad
 
 
+def write(p0, p1):
+    """Rewrite experiments/viability/results/ from this run. Temp paths are removed so the files are stable between runs."""
+    p2, lab = p1["p2"], p1["lab"]
+    m, assess, outcome = p2["measurements"], p2["assessment"], p2["outcome"]
+    clean = lambda t: t.replace(lab.root, "<copy>")                 # noqa: E731
+    os.makedirs(OUT, exist_ok=True)
+    n = m["records"]
+    pct = lambda k: "%d of %d (%d%%)" % (k, n, round(100.0 * k / n))        # noqa: E731
+    gaps = load("gaps.json")["gaps"]
+    need = collections.Counter(gaps[v["gap"]]["needs"] if v["gap"] else "nothing more" for v in assess.values())
+    scope = collections.Counter(gaps[v["gap"]]["scope"] for v in assess.values() if v["gap"])
+    L = ["# Viability experiment: results of the run", "",
+         "Generated by `python3 experiments/viability/run.py --write`. Do not edit by hand. Every person is invented; every rule is real content "
+         "promoted only in a throwaway copy of the store.", "", "## Checks (%d, all must hold)" % len(checks), ""]
+    L += ["- %s %s" % ("ok  " if c["ok"] else "FAIL", c["check"]) for c in checks]
+    for title, lines in sections:
+        L += ["", "## " + title, ""] + ["- " + x if not x.startswith("    ") else "  - `" + x.strip() + "`" for x in lines]
+    b1 = [o for o in lab.log if o["batch"] == "batch1"]
+    L += ["", "## Batch 1 - structured terms added to existing research", "",
+          "| | |", "|---|---|",
+          "| Real candidates promoted in the copy | %d |" % sum(1 for o in b1 if o["op"] == "promote_candidate" and o["ok"]),
+          "| Refused by the evidence policy | %d |" % sum(1 for o in b1 if o["op"] == "promote_candidate" and not o["ok"]),
+          "| Amendments accepted (unchecked conditions / earning rates / credit terms) | %d / %d / %d |"
+          % (p1["amendments"].get("unchecked ok", 0), p1["amendments"].get("earning ok", 0), p1["amendments"].get("credit ok", 0)),
+          "| Left as text because no structure fits | %d kinds (batch1.json, not_structured) |" % len(load("batch1.json")["not_structured"])]
+    L += ["", "## Batch 2 - new programmes, code frozen", "",
+          "| Measure | Value |", "|---|---|",
+          "| Records | %d (plus %d new entities), from %d source pages |" % (n, m["entities"], len(load("batch2.json")["sources"])),
+          "| Pipeline operations attempted / refused | %d / %d |" % (m["operations_attempted"], m["operations_refused"]),
+          "| Records accepted exactly as first written | %s |" % pct(m["records_accepted_first_time"]),
+          "| Records reshaped after a refusal | %s: %s |" % (pct(len(m["records_reshaped_to_fit"])), ", ".join(m["records_reshaped_to_fit"])),
+          "| Records that needed a change to `prices/` | 0 (the code is identical to the freeze commit) |",
+          "| Values an operator writes per record: compact sheet / full changeset | %s / %s |" % (m["sheet_fields_per_record"], m["changeset_fields_per_record"]),
+          "| Pipeline operations per record (entities, candidate, promotion) | %s |" % m["pipeline_operations_per_record"],
+          "| Best the frozen engine does: calculated / evaluated / recorded only | %s / %s / %s |"
+          % (pct(m["by_level"].get("calculated", 0)), pct(m["by_level"].get("evaluated", 0)), pct(m["by_level"].get("recorded", 0))),
+          "| Entered by data alone, first time / only by reshaping to fit | %s / %s |" % (pct(m["by_path"].get("data", 0)), pct(m["by_path"].get("data-workaround", 0))),
+          "| Every answer-changing term captured | %s |" % pct(m["fully_captured"]),
+          "| To capture the rest: schema change only / schema and code | %s / %s |" % (pct(need.get("schema", 0)), pct(need.get("schema+code", 0))),
+          "| Gaps behind those records: reusable across programmes / specific to one | %d / %d records |" % (scope.get("reusable", 0), scope.get("program-specific", 0))]
+    L += ["", "| Record | Mechanism | Tries | Level | Path | Full | Gap |", "|---|---|---|---|---|---|---|"]
+    for k, v in outcome.items():
+        if not k.startswith("entity "):
+            a = assess[k]
+            L.append("| %s | %s | %d | %s | %s | %s | %s |" % (k, v["mechanism"], v["attempts"], a["level"], a["path"], "yes" if a["full"] else "no", a["gap"] or ""))
+    L += ["", "Refusals during batch 2 intake (each one caught by the frozen pipeline, none silently accepted):", ""]
+    L += ["- `%s`: %s" % (k, clean(str(v["first_error"][0]))[:260]) for k, v in outcome.items() if v["first_error"]]
+    L += ["", "## Gap register (experiments/viability/gaps.json)", "", "| Id | Gap | Needs | Scope | Records in batch 2 |", "|---|---|---|---|---|"]
+    for gid, g in gaps.items():
+        L.append("| %s | %s | %s | %s | %d |" % (gid, g["title"], g["needs"], g["scope"], m["by_gap"].get(gid, 0)))
+    with open(os.path.join(OUT, "RESULTS.md"), "w", encoding="utf-8") as f:
+        f.write("\n".join(L) + "\n")
+    A = ["# Viability experiment: the questions and what the engine answered", "",
+         "Generated by `python3 experiments/viability/run.py --write`. RECORDED = sourced text shown as text. EVALUATED = the engine decided whether "
+         "it applies to this person. CALCULATED = arithmetic on a published number. DECLINED = the engine said why it would not answer.", ""]
+    for r in p1["rows"] + p2["rows"]:
+        out = clean(r["output"]).splitlines()
+        A += ["## %s [%s] %s" % (r["id"], r["kind"], r["question"]), "", "`%s`" % clean(r["command"]), "", "Answer: %s" % r["answer"], "", "```"]
+        A += out[:34] + (["... (%d more lines)" % (len(out) - 34)] if len(out) > 34 else []) + ["```", ""]
+    with open(os.path.join(OUT, "ANSWERS.md"), "w", encoding="utf-8") as f:
+        f.write("\n".join(A) + "\n")
+    with open(os.path.join(OUT, "measurements.json"), "w", encoding="utf-8") as f:
+        json.dump({"checks": checks, "phase0": {k: v for k, v in p0.items()}, "batch1_amendments": p1["amendments"], "batch2": m,
+                   "batch2_outcome": {k: {kk: (clean(str(vv)) if kk == "first_error" and vv else vv) for kk, vv in v.items()} for k, v in outcome.items()},
+                   "needs": dict(need), "scope": dict(scope)}, f, indent=1, sort_keys=True)
+
+
 if __name__ == "__main__":
     p0, p1, bad = main()
+    if "--write" in sys.argv and not bad:
+        write(p0, p1)
+        print("results written to " + os.path.relpath(OUT))
     sys.exit(1 if bad else 0)

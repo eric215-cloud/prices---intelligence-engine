@@ -13,7 +13,7 @@ import json
 import os
 
 from .engine import evaluate, to_date
-from .lint import errors, evidence_ok, lint, signature
+from .lint import errors, evidence_ok, lint, signature, windows_overlap
 from .review import diff, new_flags
 from .schema import Schema
 from .store import LEDGER_PATH, Store, append_audit, read_audit
@@ -262,10 +262,12 @@ def op_add_candidate(store, cs):
     _need(c["status"] == "proposed", "BAD_DATA", "new candidates must have status 'proposed'")
     sig = signature(c["proposed_rule"])
     for r in store.rules.values():
-        _need(r["verification"]["status"] == "retired" or signature(r) != sig, "DUPLICATE_RELATIONSHIP",
-              "rule %s already records %s" % (r["id"], sig))
+        _need(r["verification"]["status"] == "retired" or signature(r) != sig or not windows_overlap(r, c["proposed_rule"]),
+              "DUPLICATE_RELATIONSHIP", "rule %s already records %s for overlapping dates. To supersede it, end it first "
+              "(revise_rule: valid_to) and give the new rule a later valid_from" % (r["id"], sig))
     for o in store.candidates.values():
-        _need(o["status"] != "proposed" or signature(o["proposed_rule"]) != sig, "DUPLICATE_RELATIONSHIP",
+        _need(o["status"] != "proposed" or signature(o["proposed_rule"]) != sig or not windows_overlap(o["proposed_rule"], c["proposed_rule"]),
+              "DUPLICATE_RELATIONSHIP",
               "candidate %s already proposes %s" % (o["id"], sig))
     store.files[store.path("candidates", c["id"])] = c
 

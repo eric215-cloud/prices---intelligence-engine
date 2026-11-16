@@ -228,5 +228,63 @@ class TestPipeline(unittest.TestCase):
             shutil.rmtree(tmp)
 
 
+class TestSuccessorRules(unittest.TestCase):
+    """Published terms change. The same relationship with new terms from a later date is a successor, not a duplicate."""
+
+    def setUp(self):
+        import shutil
+        import tempfile
+        from util import write_store
+        self.tmp = tempfile.mkdtemp(prefix="prices-r-")
+        self.addCleanup(shutil.rmtree, self.tmp)
+        old = rule("r.earn", "grants", "b.earn", H("card.a"), earning=earning(("dining", 3)))
+        write_store(world([old], [holding("h1", "card.a")]), self.tmp)
+
+    def candidate(self, **kw):
+        new = dict({"id": "r.earn-2", "kind": "grants", "output": "b.earn", "when": H("card.a"), "summary": "new terms",
+                    "earning": earning(("dining", 2))}, **kw)
+        return {"id": "cs-20260601-r-%s" % len(kw), "op": "add_candidate", "author": "test", "date": DAY, "reason": "invented",
+                "data": {"candidate": {"id": "c-r.earn-2", "status": "proposed", "created_on": DAY, "proposed_rule": new, "evidence": [ev("ev2")],
+                                       "search_path": ["test"], "open_questions": []}}}
+
+    def test_overlapping_dates_are_still_a_duplicate(self):
+        from prices import changes
+        for kw in ({}, {"valid_from": "2027-01-01"}):                          # the old rule has no end date: every date overlaps
+            out = changes.apply(self.tmp, self.candidate(**kw))
+            self.assertFalse(out["ok"])
+            self.assertIn("DUPLICATE_RELATIONSHIP", out["errors"][0])
+            self.assertIn("valid_to", out["errors"][0])                        # the message says how to supersede
+
+    def test_end_the_old_rule_then_the_successor_is_accepted_and_each_date_gets_its_own_terms(self):
+        from prices import changes
+        from prices.store import Store
+        end = {"id": "cs-20260601-r-end", "op": "revise_rule", "target": "r.earn", "author": "test", "date": DAY, "reason": "invented",
+               "data": {"set": {"valid_to": "2026-12-31"}}, "evidence": [ev("ev3", retrieved_on=DAY)]}
+        self.assertTrue(changes.apply(self.tmp, end)["ok"])
+        self.assertFalse(changes.apply(self.tmp, self.candidate(valid_from="2026-12-31"))["ok"])       # one shared day is an overlap
+        self.assertTrue(changes.apply(self.tmp, self.candidate(valid_from="2027-01-01", valid_to="2027-12-31"))["ok"])
+        promote = {"id": "cs-20260601-r-promote", "op": "promote_candidate", "target": "c-r.earn-2", "author": "test", "date": DAY,
+                   "reason": "invented", "data": {"review_by": "2027-05-01"},
+                   "attestation": {"by": "Synthetic Reviewer", "on": DAY, "statement": "invented"}}
+        s = Store.load(self.tmp)
+        s.files["data/kb/vocab.json"]["promotion_reviewers"] = ["Synthetic Reviewer"]
+        from util import write_store
+        write_store(s, self.tmp)
+        out = changes.apply(self.tmp, promote)
+        self.assertTrue(out["ok"], out.get("errors"))
+        s = Store.load(self.tmp)
+        self.assertEqual(codes(lint(s)), set())
+        pts = lambda day: [a.get("points") for a in earn_quote(s, "t", day, "dining", 100)["answers"]]      # noqa: E731
+        self.assertEqual((pts("2026-12-31"), pts("2027-01-01"), pts("2028-01-01")), ([300], [200], [None]))
+        self.assertEqual(sorted(s.rules), ["r.earn", "r.earn-2"])               # both kept: history is not rewritten
+
+    def test_two_rules_in_force_for_the_same_relationship_is_a_lint_error(self):
+        a = rule("r.one", "grants", "b.earn", H("card.a"), valid_to="2026-12-31")
+        b = rule("r.two", "grants", "b.earn", H("card.a"), valid_from="2026-12-01")
+        self.assertIn("DUPLICATE_RELATIONSHIP", codes(lint(world([a, b], []))))
+        b2 = dict(b, valid_from="2027-01-01")
+        self.assertNotIn("DUPLICATE_RELATIONSHIP", codes(lint(world([a, b2], []))))
+
+
 if __name__ == "__main__":
     unittest.main()
