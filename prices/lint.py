@@ -96,6 +96,12 @@ def shape_issues(rule, kind_of):
             out.append(("UNEXPECTED_FIELD", "superseded_by belongs only on excludes rules"))
     if rule["kind"] != "earns" and "earn" in rule:
         out.append(("UNEXPECTED_FIELD", "an 'earn' block belongs only on earns rules"))
+    if "unchecked" in rule and not all(isinstance(x, str) and x.strip() for x in rule["unchecked"]):
+        out.append(("BAD_DATA", "unchecked lists conditions as text; an entry is empty"))
+    if "earning" in rule:
+        from .calc import earning_shape
+        for msg in earning_shape(rule, kind_of):
+            out.append(("BAD_EARNING_SHAPE", msg))
     if "credit" in rule:
         from .credits import shape
         if rule["kind"] != "grants":
@@ -207,6 +213,10 @@ def lint(store):
         check_condition(r["when"], p, ents)
         for code, msg in shape_issues(r, lambda i: ents.get(i, {}).get("kind")):
             err(code, p, msg)
+        if isinstance(r.get("earning"), dict):
+            from .calc import unknown_categories
+            for cat in unknown_categories(r, store.vocab):
+                err("UNKNOWN_CATEGORY", p, "earning category %r is not in vocab.json spend_categories; add it there first" % cat)
         if contradictory(r["when"]):
             err("CONTRADICTORY_CONDITION", p, "an 'all' both requires and excludes the same entity; rule can never apply")
         if r["kind"] == "acquire" and "retention" not in r:
@@ -316,6 +326,10 @@ def lint(store):
             kinds = {e["id"]: e["kind"] for e in c.get("proposed_entities", [])}
             for code, msg in shape_issues(pr, lambda i: ents.get(i, {}).get("kind") or kinds.get(i)):
                 err(code, p, msg)
+            if isinstance(pr.get("earning"), dict):
+                from .calc import unknown_categories
+                for cat in unknown_categories(pr, store.vocab):
+                    err("UNKNOWN_CATEGORY", p, "earning category %r is not in vocab.json spend_categories; add it there first" % cat)
         if pr["kind"] == "acquire" and "retention" not in pr:
             err("MISSING_RETENTION", p, "acquire rules must state retention (use mode 'unknown' if not established)")
         if c["status"] == "proposed" and not c["evidence"]:

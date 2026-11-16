@@ -6,7 +6,7 @@ import os
 import sys
 import zipfile
 
-from . import cards, changes, discovery, earned, goals, review, tables
+from . import calc, cards, changes, discovery, earned, goals, review, tables
 from .engine import evaluate
 from .lint import lint
 from .store import Store, read_audit
@@ -106,7 +106,50 @@ def cmd_explain(args):
         if o["steps"] or o["unknowns"]:
             print("  needs: " + _steps(o))
         print("  downstream: " + (", ".join(o["downstream"]) or "none"))
+        if o["terms_not_evaluated"]:
+            print("  terms recorded as text (shown, not evaluated by the engine):")
+            for t in o["terms_not_evaluated"]:
+                print("    - " + t)
+    via = obj["chain"].get("via", "")
+    obj["terms_not_evaluated"] = list(store.rules.get(via, {}).get("restrictions", []))
     _emit(args, obj, text)
+    return 0
+
+
+def _calc_rows(o, unit):
+    print("%s  profile=%s  as-of=%s" % (o["question"], o["profile"], o["as_of"]))
+    if not o["answers"]:
+        print("  no answer: nothing on record for this person applies")
+    for a in o["answers"]:
+        head = a.get("card") or a.get("to")
+        if a["result"] != "CALCULATED":
+            print("  %-34s NOT CALCULATED: %s" % (head, a["reason"]))
+            for q in a.get("open_questions", []):
+                print("      open question: " + q)
+            continue
+        b = a["basis"]
+        print("  %-34s CALCULATED %s %s  = %s" % (head, calc._num(a.get("points", a.get("amount"))), a.get("currency", a.get("to")), a["arithmetic"]))
+        print("      from rule %s (%s %s, review by %s; evidence %s)" % (b["rule"], b["verification"], b["last_verified"], b["review_by"],
+                                                                         ", ".join(b["evidence"]) or "none"))
+        for n in a["assumptions"]:
+            print("      note: " + n)
+        for t in a["terms_not_evaluated"]:
+            print("      term (text, not evaluated): " + t)
+        for q in a.get("open_questions", []):
+            print("      open question: " + q)
+
+
+def cmd_earnings(args):
+    store = Store.load(_root(args))
+    obj = calc.earn_quote(store, args.profile, _today(args), args.category, args.amount, args.card)
+    _emit(args, obj, lambda o: _calc_rows(o, "points"))
+    return 0
+
+
+def cmd_convert(args):
+    store = Store.load(_root(args))
+    obj = calc.convert_quote(store, args.profile, _today(args), args.source, args.amount, args.to)
+    _emit(args, obj, lambda o: _calc_rows(o, "amount"))
     return 0
 
 
@@ -626,6 +669,18 @@ def main(argv=None):
     p.add_argument("--card", help="only this card (entity id)")
     p.add_argument("--until", help="with --profile: also list allowance periods ending up to this date")
     p.add_argument("--candidates", action="store_true", help="also show credit terms on candidates awaiting review (never established)")
+    p = add("earnings", cmd_earnings, "points for a purchase, from published earning rates; says so when it cannot be calculated")
+    p.add_argument("--profile", required=True)
+    p.add_argument("--as-of", dest="as_of", help="evaluation date YYYY-MM-DD (default today)")
+    p.add_argument("--category", required=True, help="a spend category from vocab.json spend_categories")
+    p.add_argument("--amount", required=True, type=float, help="US dollars")
+    p.add_argument("--card", help="only this card (entity id)")
+    p = add("convert", cmd_convert, "points after a transfer, from recorded ratios; says so when no ratio is recorded")
+    p.add_argument("--profile", required=True)
+    p.add_argument("--as-of", dest="as_of", help="evaluation date YYYY-MM-DD (default today)")
+    p.add_argument("--from", dest="source", required=True, help="currency entity transferred from")
+    p.add_argument("--amount", required=True, type=float)
+    p.add_argument("--to", help="only this destination currency")
     p = add("cards", cmd_cards, "card roles and which benefits are confirmed, excluded or unproven per card")
     p.add_argument("--profile", help="only cards this person holds, with the benefit's status for them")
     p.add_argument("--as-of", dest="as_of", help="evaluation date YYYY-MM-DD (default today)")

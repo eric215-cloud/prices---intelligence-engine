@@ -121,6 +121,16 @@
       }
     },
 
+    "earning": {
+      "x-doc": "Published earning rates of a card, on a grants rule {holds: card}. Each rate is the TOTAL the source states per US dollar for one spend category; rates are never added together. A category that is absent means the source states no rate for it.",
+      "type": "object", "additionalProperties": false, "required": ["currency", "rates"],
+      "properties": {
+        "currency": {"$ref": "#/$defs/id"},
+        "rates": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["category", "per_usd"],
+                  "properties": {"category": {"type": "string"}, "per_usd": {"type": "number"}, "label": {"type": "string"}}}},
+        "note": {"type": "string"}
+      }
+    },
     "earn": {
       "x-doc": "Public terms of an earned benefit: reach `threshold` on `measure` within one `period` on the card named in `when`. Says nothing about any person.",
       "type": "object", "additionalProperties": false,
@@ -241,6 +251,8 @@
         "when": {"$ref": "#/$defs/condition"},
         "summary": {"$ref": "#/$defs/text"},
         "superseded_by": {"$ref": "#/$defs/id"},
+        "unchecked": {"type": "array", "items": {"$ref": "#/$defs/text"}, "x-doc": "Conditions on WHO has this, stated by the source, that `when` does not check (new applicants only, enrollment required). While any is listed the engine never establishes the output through this rule: it stays UNRESOLVED with these texts as the reason. Usage terms (how the benefit is used) stay in `restrictions`."},
+        "earning": {"$ref": "#/$defs/earning"},
         "earn": {"$ref": "#/$defs/earn"},
         "credit": {"$ref": "#/$defs/credit"},
         "retention": {"$ref": "#/$defs/retention"},
@@ -338,6 +350,8 @@
             "when": {"$ref": "#/$defs/condition"},
             "summary": {"$ref": "#/$defs/text"},
             "superseded_by": {"$ref": "#/$defs/id"},
+            "unchecked": {"type": "array", "items": {"$ref": "#/$defs/text"}, "x-doc": "Conditions on WHO has this, stated by the source, that `when` does not check (new applicants only, enrollment required). While any is listed the engine never establishes the output through this rule: it stays UNRESOLVED with these texts as the reason. Usage terms (how the benefit is used) stay in `restrictions`."},
+            "earning": {"$ref": "#/$defs/earning"},
             "earn": {"$ref": "#/$defs/earn"},
             "credit": {"$ref": "#/$defs/credit"},
             "retention": {"$ref": "#/$defs/retention"},

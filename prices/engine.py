@@ -47,6 +47,10 @@ def in_effect(rec, as_of):
     return (f is None or f <= as_of) and (t is None or as_of <= t)
 
 
+def unchecked_tokens(rule):
+    return frozenset(("unknown", "not checked by the engine (%s): %s" % (rule.get("id"), text)) for text in rule.get("unchecked", []))
+
+
 def leaves(cond, neg=False):
     """Yield (kind, id, negated) for every leaf of a condition."""
     if "holds" in cond:
@@ -283,6 +287,10 @@ def evaluate(store, profile, as_of, include_candidates=False):
             levels, toks = (P, U), frozenset([("unknown", "rule %s is unverified" % rule["id"])])
         if rule["kind"] in NON_DERIVING or rule["kind"] in PERSONAL_KINDS:
             continue   # baseline/excludes: applicability matrix only (cards.py). earns: personal records only (earned.py)
+        if rule.get("unchecked"):
+            # the source states conditions on who has this that `when` does not check. Prose is not enforcement:
+            # nothing is established through this rule; it is at best a possibility, with the texts as the reason
+            levels, toks = (P, U), toks | unchecked_tokens(rule)
         rules.append({"id": rule["id"], "kind": rule["kind"], "output": rule["output"], "when": gate(rule["id"], rule["when"], gov),
                       "levels": levels, "tokens": toks, "src": rule})
     if include_candidates:
@@ -293,7 +301,7 @@ def evaluate(store, profile, as_of, include_candidates=False):
             if pr["kind"] in NON_DERIVING or pr["kind"] in PERSONAL_KINDS:
                 continue
             rules.append({"id": "candidate:" + c["id"], "kind": pr["kind"], "output": pr["output"], "when": gate(pr.get("id"), pr["when"], gov),
-                          "levels": (U,), "tokens": frozenset([("unknown", "candidate %s is not promoted" % c["id"])]),
+                          "levels": (U,), "tokens": frozenset([("unknown", "candidate %s is not promoted" % c["id"])]) | unchecked_tokens(pr),
                           "src": pr})
 
     # 2. personal qualifications -> base facts (and retention rules for acquired holdings)

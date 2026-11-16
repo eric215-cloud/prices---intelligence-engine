@@ -1,0 +1,57 @@
+{
+  "about": "Batch 1: existing sourced research only. The ten rules already verified in the store (airline and hotel loyalty links, Amex transfers) plus Michaela's Chase Sapphire Reserve packet as converted by Argon (candidates in data/candidates). Nothing here adds a source term: every structured value below is transcribed from the named candidate's own summary or restriction text.",
+  "select_prefixes": ["c-cb.csr.", "cand-csr-", "c-baseline.visa-inf."],
+  "select_ids": ["c-ana-business-award-via-ana-miles", "c-united-silver-via-marriott-top-tier"],
+  "spend_categories": {
+    "other": {"name": "All other eligible purchases (a source's catch-all rate)"},
+    "dining": {"name": "Restaurants and dining"},
+    "travel": {"name": "Travel, as the issuer defines it"},
+    "flights-direct": {"name": "Flights bought directly from the airline", "parent": "travel"},
+    "hotels-direct": {"name": "Hotels booked directly with the hotel", "parent": "travel"},
+    "portal-travel": {"name": "Travel booked through the card issuer's own travel portal", "parent": "travel"},
+    "rideshare-lyft": {"name": "Lyft rides"}
+  },
+  "unchecked": {
+    "cb.csr.public-welcome-offer": ["New applicants only; unavailable to current Sapphire cardholders or previous Sapphire bonus recipients within eligibility window"],
+    "cb.csr.ihg-platinum-elite-status": ["Primary cardholder only", "Requires linking IHG One Rewards number in Chase Benefits (allow up to 3 weeks for status activation)"],
+    "cb.csr.priority-pass-select": ["Requires one-time enrollment activation in Chase Benefits"],
+    "cb.csr.sapphire-lounge-by-the-club": ["Requires active Priority Pass Select card/digital membership from CSR"],
+    "cb.csr.apple-tv-apple-music": ["Requires one-time activation per service through chase.com or the Chase Mobile app"],
+    "cb.csr.doordash-dashpass-and-promos": ["Requires DashPass enrollment with CSR set as default payment method"],
+    "cb.csr.stubhub-viagogo-credit-300": ["Requires benefit activation prior to purchase"],
+    "cb.csr.lyft-in-app-credit-120": ["Requires CSR saved as payment method in Lyft app"],
+    "cb.csr.spend-75k-unlock-suite": ["Measured on calendar-year qualifying purchases (Jan 1-Dec 31)", "Statuses require partner account linking in Chase Benefits; credits apply automatically"],
+    "csr.acquire-ihg-platinum": ["Primary cardholder only"]
+  },
+  "earning": {
+    "cb.csr.category-earning-structure": {
+      "currency": "chase.ur",
+      "rates": [
+        {"category": "portal-travel", "per_usd": 8, "label": "Chase Travel purchases"},
+        {"category": "flights-direct", "per_usd": 4, "label": "flights booked direct"},
+        {"category": "hotels-direct", "per_usd": 4, "label": "hotels booked direct"},
+        {"category": "dining", "per_usd": 3, "label": "dining worldwide"},
+        {"category": "other", "per_usd": 1, "label": "all other eligible purchases"}
+      ]
+    },
+    "cb.csr.lyft-5x-multiplier": {
+      "currency": "chase.ur",
+      "rates": [{"category": "rideshare-lyft", "per_usd": 5, "label": "5X total on qualifying Lyft rides"}]
+    }
+  },
+  "credit": {
+    "cb.csr.annual-travel-credit-300": {"amount": 300, "unit": "usd", "cycle": "anniversary_year"},
+    "cb.csr.the-edit-hotel-credit-500": {"amount": 500, "unit": "usd", "cycle": "calendar_year", "max_per_transaction": 250, "min_stay_nights": 2},
+    "cb.csr.exclusive-tables-dining-credit-300": {"amount": 150, "unit": "usd", "cycle": "calendar_half", "rollover": "none"},
+    "cb.csr.stubhub-viagogo-credit-300": {"amount": 150, "unit": "usd", "cycle": "calendar_half", "rollover": "none"},
+    "cb.csr.select-hotel-credit-250-2026": {"amount": 250, "unit": "usd", "cycle": "calendar_year", "min_stay_nights": 2},
+    "cb.csr.lyft-in-app-credit-120": {"amount": 10, "unit": "usd", "cycle": "calendar_month", "rollover": "none"},
+    "cb.csr.trusted-traveler-credit-120": {"amount": 120, "unit": "usd", "cycle": "multi_year", "years": 4}
+  },
+  "not_structured": {
+    "cb.csr.peloton-credit-and-10x": "10X applies only to purchases over $150 and up to 50,000 points; the earning block has no minimum purchase and no cap, so the rate is left as text rather than recorded without its limits. The $10/month credit shares the record with the rate.",
+    "cb.csr.doordash-dashpass-and-promos": "Several monthly promos of different amounts in one record; a credit block holds one amount per period.",
+    "cb.csr.points-boost-portal-redemption": "A redemption value that varies by inventory ('up to 2 cents per point'); there is no structure for redemption values.",
+    "cand-csr-transfer-*": "14 transfer rules: the source does not publish a ratio, so none is recorded and no transfer amount can be calculated."
+  }
+}

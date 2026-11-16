@@ -20,7 +20,8 @@ from .store import LEDGER_PATH, Store, append_audit, read_audit
 
 RANK = {"ESTABLISHED": 3, "CONDITIONAL": 2, "UNRESOLVED": 1, "NOT_AVAILABLE": 0}
 ENTITY_REVISABLE = ("name", "notes", "tags", "how", "economics", "program", "network", "card", "sources", "election")
-REVISABLE = ("valid_from", "valid_to", "restrictions", "open_questions", "value_note", "summary", "review_by", "retention_note")
+REVISABLE = ("valid_from", "valid_to", "restrictions", "open_questions", "value_note", "summary", "review_by", "retention_note",
+             "unchecked", "earning")
 MAX_REVIEW_DAYS = 400
 
 
