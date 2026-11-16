@@ -231,10 +231,146 @@ def phase1(spec):
     return {"lab": lab, "amendments": dict(counts), "credit_refused": refused, "rows": rows, "credits_json": cr, "by": by}
 
 
+# ------------------------------------------------------------------------------------------------ phase 2
+DEVON = [{"id": "h-vx", "entity": "card.capital-one-venture-x", "valid_from": "2025-05-20", "opened_on": "2025-05-20"},
+         {"id": "h-c1", "entity": "capitalone.miles", "valid_from": "2025-05-20", "quantity": 90000},
+         {"id": "h-hyatt", "entity": "hyatt.member", "valid_from": "2019-01-01"},
+         {"id": "h-united", "entity": "united.member", "valid_from": "2015-01-01"}]
+DEVON_METRICS = [{"id": "hyatt.2026.tier_qualifying_nights", "value": 34, "as_of": "2026-10-31"}, {"id": "hyatt.2026.base_points", "value": 21000, "as_of": "2026-10-31"},
+                 {"id": "hyatt.2026.meetings_events", "value": 0, "as_of": "2026-10-31"},
+                 {"id": "united.2026.pqp", "value": 6500, "as_of": "2026-10-31"}, {"id": "united.2026.pqf", "value": 10, "as_of": "2026-10-31"},
+                 {"id": "united.2026.united_segments", "value": 9, "as_of": "2026-10-31"}]
+EDEN = [{"id": "h-united", "entity": "united.member", "valid_from": "2020-01-01"}]
+
+
+def expand(rec):
+    """A sheet row -> the rule an operator would otherwise write out in full."""
+    if "rule" in rec:
+        return json.loads(json.dumps(rec["rule"]))
+    dest, ratio = rec["transfer"]
+    rule = {"id": "capitalone.miles-to-" + dest.split(".")[0], "kind": "transfer", "output": dest, "when": {"holds": "capitalone.miles"},
+            "summary": "Capital One miles transfer to %s at %s." % (dest, ratio),
+            "transfer": {"from": "capitalone.miles", "ratio": ratio, "note": "At least 1,000 miles are needed to transfer; the increment and timing are not stated."},
+            "restrictions": ["Requires a Capital One travel rewards or business rewards card",
+                             "The name on the Capital One account must match the name on the loyalty programme account",
+                             "A finished transfer cannot be reversed"]}
+    if rec.get("unchecked"):
+        rule["unchecked"] = rec["unchecked"]
+    return rule
+
+
+def intake(lab, sheet, batch):
+    """Enter a sheet through the pipeline exactly as it is frozen: add_entity, add_candidate, promote (in the copy)."""
+    from lab import _fields
+    lab.vocab({"spend_categories": sheet.get("spend_categories", {})})
+    outcome = collections.OrderedDict()
+    for e in sheet.get("entities", []):
+        out = lab.apply("add_entity", batch, e["id"], data={"entity": e})
+        if not out["ok"] and "sources" in e:                 # a card's own sources cannot be named before any rule has brought them in
+            first = out["errors"]
+            out = lab.apply("add_entity", batch, e["id"], data={"entity": {k: v for k, v in e.items() if k != "sources"}})
+            outcome["entity " + e["id"]] = {"attempts": 2, "accepted": out["ok"], "first_error": first, "sheet_fields": _fields(e)}
+        else:
+            outcome["entity " + e["id"]] = {"attempts": 1, "accepted": out["ok"], "first_error": out.get("errors") or None, "sheet_fields": _fields(e)}
+    for rec in sheet["records"]:
+        rule, tries, first = expand(rec), 0, None
+        while True:
+            tries += 1
+            cand = {"id": "c-" + rule["id"], "status": "proposed", "created_on": TODAY, "proposed_rule": rule,
+                    "evidence": [dict(sheet["sources"][i], id=i) for i in rec["evidence"]],
+                    "search_path": ["viability experiment: " + rec["mechanism"]], "open_questions": rec.get("open_questions", [])}
+            out = lab.apply("add_candidate", batch, rec["key"], data={"candidate": cand})
+            if out["ok"] or tries == 2 or "fallback" not in rec:
+                break
+            first = out["errors"]
+            fb = rec["fallback"]
+            rule = json.loads(json.dumps(fb["rule"])) if "rule" in fb else {k: v for k, v in rule.items() if k not in fb.get("drop", [])}
+        promoted = lab.promote(cand["id"], batch, rec["key"])["ok"] if out["ok"] else False
+        outcome[rec["key"]] = {"attempts": tries, "accepted": out["ok"], "promoted": promoted, "first_error": first or (None if out["ok"] else out["errors"]),
+                               "rule": rule["id"], "sheet_fields": _fields({k: v for k, v in rec.items() if k != "key"}),
+                               "changeset_fields": _fields(cand), "mechanism": rec["mechanism"]}
+    return outcome
+
+
+def phase2(lab):
+    sheet = load("batch2.json")
+    before = len(lab.log)
+    outcome = intake(lab, sheet, "batch2")
+    recs = {k: v for k, v in outcome.items() if not k.startswith("entity ")}
+    check("2.0 every batch 2 record ended up in the copy (accepted and promoted there), and the copy is sound",
+          all(v["accepted"] and v["promoted"] for v in recs.values()) and lab.lint_errors() == [],
+          "; ".join("%s: %s" % (k, v["first_error"]) for k, v in recs.items() if not v["accepted"])[:400] + " " + "; ".join(lab.lint_errors()[:2]))
+    lab.person("syn-devon", DEVON, DEVON_METRICS)
+    lab.person("syn-eden", EDEN)
+    D = ["--profile", "syn-devon", "--as-of", TODAY]
+    rows = []
+    rep = lab.js("status", *D)
+    st = {e: status_of(rep, e) for e in ("hyatt.discoverist", "hyatt.explorist", "hyatt.globalist", "benefit.hyatt.milestone-20", "united.silver", "united.gold",
+                                         "benefit.united.starter-pqp", "priority_pass.select", "benefit.venture-x.early-spend-bonus",
+                                         "benefit.venture-x.anniversary-miles", "benefit.venture-x.capital-one-lounges", "capitalone.miles")}
+    check("2.1 EVALUATED: 34 Hyatt nights in 2026 -> Discoverist and Explorist ESTABLISHED, Globalist not; the 20-night milestone ESTABLISHED",
+          (st["hyatt.discoverist"], st["hyatt.explorist"], st["hyatt.globalist"], st["benefit.hyatt.milestone-20"]) == ("ESTABLISHED", "ESTABLISHED", "NOT_AVAILABLE", "ESTABLISHED"), str(st))
+    check("2.2 EVALUATED compound threshold: 6,500 PQP, 10 PQF, 9 United segments -> Silver by the PQP-only route; not Gold; starter PQP follows",
+          (st["united.silver"], st["united.gold"], st["benefit.united.starter-pqp"]) == ("ESTABLISHED", "NOT_AVAILABLE", "ESTABLISHED"), str(st))
+    check("2.3 EVALUATED: Priority Pass is CONDITIONAL (enrolment needed); the early-spend bonus and anniversary miles are UNRESOLVED; lounges ESTABLISHED",
+          (st["priority_pass.select"], st["benefit.venture-x.early-spend-bonus"], st["benefit.venture-x.anniversary-miles"], st["benefit.venture-x.capital-one-lounges"])
+          == ("CONDITIONAL", "UNRESOLVED", "UNRESOLVED", "ESTABLISHED"), str(st))
+    eden = lab.js("status", "--profile", "syn-eden", "--as-of", TODAY)
+    check("2.4 UNCERTAINTY: a member with no figures recorded is UNRESOLVED for Silver, not refused and not assumed",
+          status_of(eden, "united.silver") == "UNRESOLVED")
+    late = lab.js("status", "--profile", "syn-devon", "--as-of", "2027-02-01")
+    check("2.5 LIMIT (gap G3): on 2027-02-01 the engine no longer shows the Silver that Devon qualified for in 2026; the validity of an earned "
+          "programme status is not represented", status_of(late, "united.silver") == "NOT_AVAILABLE")
+    q = {c: lab.js("earnings", *D, "--category", c, "--amount", a)["answers"][0] for c, a in
+         (("portal-hotels", 500), ("dining", 400), ("portal-travel", 1000), ("issuer-entertainment", 200))}
+    check("2.6 CALCULATED with unchanged code: $500 of portal hotels = 5,000 miles; $200 of entertainment = 1,000; $400 of dining = 800 at the "
+          "catch-all rate; 'portal travel' is too broad (10 and 5 are published)",
+          (q["portal-hotels"].get("points"), q["issuer-entertainment"].get("points"), q["dining"].get("points"), q["dining"].get("category_used"),
+           q["portal-travel"]["result"]) == (5000, 1000, 800, "other", "NOT_CALCULATED"), str({k: v.get("points", v["result"]) for k, v in q.items()}))
+    cv = {a["to"]: a for a in lab.js("convert", *D, "--from", "capitalone.miles", "--amount", 30000)["answers"]}
+    got = {k: cv[k].get("amount") for k in ("aeroplan.points", "jal.miles", "jetblue.points", "accor.points", "iprefer.points")}
+    check("2.7 CALCULATED with unchanged code: 30,000 Capital One miles -> 30,000 Aeroplan, 22,500 JAL (2:1.5), 18,000 JetBlue (5:3), "
+          "15,000 Accor (2:1), 60,000 I Prefer (1:2)",
+          got == {"aeroplan.points": 30000, "jal.miles": 22500, "jetblue.points": 18000, "accor.points": 15000, "iprefer.points": 60000}, str(got))
+    check("2.8 DECLINED: Choice Privileges is not calculated: 'U.S.-based accounts only' is not checked", cv["choice.points"]["result"] == "NOT_CALCULATED")
+    cr = {c["rule"]: c for acct in lab.js("credits", *D)["accounts"] for c in acct["credits"]}
+    check("2.9 the $300 Capital One Travel credit has no period (the source states no cycle, and the credit block cannot hold that): it is absent "
+          "from the credits report; the Global Entry credit is there with its period unresolved",
+          "cb.venture-x.travel-credit-300" not in cr and cr["cb.venture-x.trusted-traveler-credit-120"]["period"]["state"] == "UNRESOLVED")
+    both = dict(lab.js("earnings", "--profile", "syn-casey", "--as-of", TODAY, "--category", "dining", "--amount", 400))
+    answers(lab, rows, "Q10", "CALCULATED", "Devon books a $500 hotel through Capital One Travel. Miles? And what would 30,000 miles become at JAL?",
+            ["earnings", *D, "--category", "portal-hotels", "--amount", 500], "5,000 capitalone.miles")
+    answers(lab, rows, "Q11", "CALCULATED", "... and at JAL?", ["convert", *D, "--from", "capitalone.miles", "--amount", 30000, "--to", "jal.miles"], "22,500 jal.miles at 2:1.5")
+    answers(lab, rows, "Q12", "EVALUATED", "Has Devon qualified for United Premier Silver in 2026?", ["explain", *D, "united.silver"],
+            "ESTABLISHED from three recorded figures (PQP-only route)")
+    answers(lab, rows, "Q13", "DECLINED", "Has Eden, with nothing recorded?", ["explain", "--profile", "syn-eden", "--as-of", TODAY, "united.silver"],
+            "UNRESOLVED: the figures are not recorded")
+    answers(lab, rows, "Q14", "EVALUATED", "Is the Venture X early-spend bonus Devon's?", ["explain", *D, "benefit.venture-x.early-spend-bonus"],
+            "UNRESOLVED: the spend requirement and the 48-month rule are text, not checked")
+    assess = {k: v for k, v in sheet["assessment"].items() if k != "about"}
+    check("2.10 the assessment covers every record", sorted(assess) == sorted(recs))
+    ops = lab.log[before:]
+    m = {"records": len(recs), "entities": len(outcome) - len(recs),
+         "operations_attempted": len(ops), "operations_refused": sum(1 for o in ops if not o["ok"]),
+         "records_accepted_first_time": sum(1 for v in recs.values() if v["attempts"] == 1 and v["accepted"]),
+         "records_reshaped_to_fit": sorted(k for k, v in recs.items() if v["attempts"] > 1),
+         "sheet_fields_per_record": round(sum(v["sheet_fields"] for v in recs.values()) / len(recs), 1),
+         "changeset_fields_per_record": round(sum(v["changeset_fields"] for v in recs.values()) / len(recs), 1),
+         "pipeline_operations_per_record": round(len(ops) / len(recs), 2),
+         "by_level": dict(collections.Counter(v["level"] for v in assess.values())),
+         "by_path": dict(collections.Counter(v["path"] for v in assess.values())),
+         "fully_captured": sum(1 for v in assess.values() if v["full"]),
+         "fully_captured_by_data_alone": sum(1 for v in assess.values() if v["full"] and v["path"] == "data"),
+         "by_gap": dict(collections.Counter(v["gap"] or "none" for v in assess.values()))}
+    return {"outcome": outcome, "rows": rows, "measurements": m, "assessment": assess}
+
+
 def main():
     spec = load("batch1.json")
     p0 = phase0(spec)
     p1 = phase1(spec)
+    p2 = phase2(p1["lab"])
+    p1["p2"] = p2
     bad = [c for c in checks if not c["ok"]]
     for c in checks:
         print("%-4s %s%s" % ("ok" if c["ok"] else "FAIL", c["check"], ("   [" + c["detail"] + "]") if c["detail"] and not c["ok"] else ""))
