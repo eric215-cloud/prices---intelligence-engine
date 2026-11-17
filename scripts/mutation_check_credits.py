@@ -28,7 +28,7 @@ MUTS = [
  ("period not cut at the end of the offer", "prices/credits.py", '    if vt is not None and (p["end"] is None or p["end"] > vt):', '    if False:'),
  ("unconfirmed last use fixes the period", "prices/credits.py", '    if any(u["state"] != "confirmed" for u in live):', '    if False:'),
  ("no recorded use treated as available", "prices/credits.py", '    if not past:\n        return {"state": UNRESOLVED,', '    if not past:\n        return {"state": KNOWN, "label": None, "start": d, "end": None, "note":'),
- ("credit shown as applying regardless of the engine (elections bypassed)", "prices/credits.py", '            status = res.status(atom)', '            status = ESTABLISHED'),
+ ("credit shown as applying regardless of the engine (elections bypassed)", "prices/credits.py", '            status = toks["status"]', '            status = ESTABLISHED'),   # re-pointed 2026-11-17 (repair): the status now comes from Result.rule_applies
  ("candidate terms treated as in force", "prices/credits.py", '    if include_candidates:\n        for c in store.candidates.values():', '    if True:\n        for c in store.candidates.values():'),
  ("records of other periods counted in this one", "prices/credits.py", '        mine = [e for e in recs if e["cycle"] == p["label"]]', '        mine = list(recs)[:1]'),
  ("unconfirmed use reported as an established balance", "prices/credits.py", 'out["established"] = state in ("ACTIVE", "EXHAUSTED") and out["possibly_used"] == 0', 'out["established"] = True'),
