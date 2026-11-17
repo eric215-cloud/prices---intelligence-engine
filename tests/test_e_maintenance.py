@@ -100,8 +100,13 @@ class TestMaintenance(unittest.TestCase):
         self.assertEqual((r.have("gold"), r.have("perk")), (UNRESOLVED, UNRESOLVED))
 
     def test_revise_rule_dates(self):
+        # CHANGED 2026-11-17 (repair): adding a restriction to a rule that already answered for earlier dates changes those
+        # answers, so it is refused unless declared a correction (or made a successor rule). Before, it was accepted as a
+        # "first record". The end date alone is still an ordinary revision.
         c = cs("cs-4", "revise_rule", target="r-perk", data={"set": {"valid_to": "2026-12-31", "restrictions": ["Ends with the 2026 programme year"]}},
                evidence=[ev("ev-4", "official", "P", D)])
+        self.reject(c, "HISTORY_REWRITE")
+        c["data"]["correction"] = "the programme-year limit was in the source from the start and was left out"
         self.assertTrue(changes.apply(self.root, c)["ok"])
         s = Store.load(self.root)
         self.assertEqual(evaluate(s, "t", "2027-01-01").have("perk"), NOT_AVAILABLE)
@@ -109,7 +114,7 @@ class TestMaintenance(unittest.TestCase):
         # established through the rule until one records it. Before, this line expected ESTABLISHED straight away.
         self.assertEqual(evaluate(s, "t", D).have("perk"), UNRESOLVED)
         ok = changes.apply(self.root, cs("cs-4b", "classify_conditions", target="r-perk", attestation=OWNER,
-                                         data={"items": [{"text": "Ends with the 2026 programme year", "class": "enforced", "enforced_by": "dates"}]}))
+                                         data={"items": [{"text": "Ends with the 2026 programme year", "class": "enforced", "enforced_by": [{"valid_to": "2026-12-31"}]}]}))
         self.assertTrue(ok["ok"], ok["errors"])
         self.assertEqual(evaluate(Store.load(self.root), "t", D).have("perk"), ESTABLISHED)
 

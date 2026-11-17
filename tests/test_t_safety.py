@@ -84,7 +84,7 @@ class TestEveryDomain(unittest.TestCase):
     def test_airline_status_by_threshold(self):
         y26 = rule("r.silver-2026", "grants", "st.silver", {"all": [H("prog.member"), {"metric": "prog.2026.flights", "gte": 4}, {"metric": "prog.2026.points", "gte": 6000}]},
                    valid_from="2026-01-01", valid_to="2026-12-31", restrictions=["At least four flights on the airline"], open_questions=["How long the status lasts was not read"],
-                   condition_review=by_reviewer(("At least four flights on the airline", "enforced", "when:prog.2026.flights"), ("How long the status lasts was not read", "informational")))
+                   condition_review=by_reviewer(("At least four flights on the airline", "enforced", [{"metric": "prog.2026.flights", "gte": 4}]), ("How long the status lasts was not read", "informational")))
         y27 = rule("r.silver-2027", "grants", "st.silver", {"all": [H("prog.member"), {"metric": "prog.2027.points", "gte": 6000}]},
                    valid_from="2027-01-01", valid_to="2027-12-31", open_questions=[QUESTION], condition_review=by_reviewer((QUESTION, "affects_eligibility")))
         member = [holding("h1", "prog.member")]
@@ -117,18 +117,20 @@ class TestEveryDomain(unittest.TestCase):
         text = "Requires enrolment before first use"
         # checked: the rule itself asks for the action, so the class may say so
         acq = rule("r.gold", "acquire", "st.gold", {"all": [H("card.a"), H("act.enrol")]}, restrictions=[text], retention={"mode": "unknown"},
-                   condition_review=by_reviewer((text, "enforced", "when:act.enrol")))
+                   condition_review=by_reviewer((text, "enforced", [{"holds": "act.enrol"}])))
         self.assertEqual(status(world([acq], [holding("h1", "card.a")]), "st.gold"), CONDITIONAL)        # B: reachable, and it says by what action
         done = evaluate(world([acq], [holding("h1", "card.a"), holding("h2", "act.enrol")]), "t", DAY)
         self.assertEqual([x["entity"] for x in done.report()["eligible_to_acquire"]], ["st.gold"])
         # not checked: the same words on a rule that asks only for the card
         bare = rule("r.offer", "grants", "b.offer", H("card.a"), restrictions=[text])
-        self.assertTrue(review_issues(bare, [{"text": text, "class": "enforced", "enforced_by": "when:act.enrol"}]))   # a reviewer cannot claim a check that is not there
+        self.assertTrue(review_issues(bare, [{"text": text, "class": "enforced", "enforced_by": [{"holds": "act.enrol"}]}]))   # a reviewer cannot claim a check that is not there
+        self.assertTrue(review_issues(bare, [{"text": text, "class": "enforced", "enforced_by": "when:card.a"}]))   # the old presence-based form
         self.assertTrue(review_issues(bare, [{"text": text, "class": "enforced"}]))
         honest = dict(bare, condition_review=by_reviewer((text, "unchecked")))
         self.assertEqual(status(world([honest], [holding("h1", "card.a")]), "b.offer"), UNRESOLVED)       # A
-        forged = dict(bare, condition_review=by_reviewer((text, "enforced", "when:act.enrol")))           # written into the file by hand
+        forged = dict(bare, condition_review=by_reviewer((text, "enforced", [{"holds": "act.enrol"}])))   # written into the file by hand
         self.assertIn("BAD_CLASSIFICATION", issues(world([forged], [holding("h1", "card.a")])))
+        self.assertEqual(status(world([forged], [holding("h1", "card.a")]), "b.offer"), UNRESOLVED)     # and the engine does not rely on it
 
     def test_spending_threshold(self):
         def earn(*classes, restrictions=("Primary cardholder only",)):
@@ -147,7 +149,7 @@ class TestEveryDomain(unittest.TestCase):
         self.assertIn("Primary cardholder only", why)
         st, _why, have = state(earn(("Primary cardholder only", "unchecked")), 400)
         self.assertEqual((st, have), ("NOT_EARNED", NOT_AVAILABLE))                           # below the threshold is still a plain no
-        st, _why, have = state(earn(("Counts purchases in the calendar year", "enforced", "earn"), restrictions=("Counts purchases in the calendar year",)), 1500)
+        st, _why, have = state(earn(("Counts purchases in the calendar year", "enforced", [{"earn_threshold": 1000}]), restrictions=("Counts purchases in the calendar year",)), 1500)
         self.assertEqual(st, "EARNED_NOT_CONFIRMED")                                          # B: the condition is the threshold itself
         self.assertNotEqual(have, ESTABLISHED)                                                # ... and eligibility is still never possession
 
@@ -196,7 +198,8 @@ class TestMissingClassificationIsNeverApproval(unittest.TestCase):
         # the blocking condition is deleted from the rule by a later edit: the remaining text does NOT inherit approval
         removed = dict(ok, restrictions=[USAGE])
         s = self.blocked(removed)
-        self.assertEqual([cls for cls, _t in blockers(removed)], [None])
+        # CHANGED 2026-11-17 (repair): the stale review is now a blocker of its own, so it still blocks when no text is left
+        self.assertEqual([cls for cls, _t in blockers(removed)], ["stale", None])
         self.assertIn("STALE_CLASSIFICATION", issues(s, "WARNING"))
         self.blocked(dict(ok, restrictions=[USAGE, "New applicants"]))                         # reworded
         fine = rule("r.offer", "grants", "b.offer", H("card.a"), restrictions=[USAGE])
@@ -294,7 +297,8 @@ class TestClassificationThroughThePipeline(OnDisk):
         self.refused(self.promote(self.FULL[:2]), "BAD_CLASSIFICATION")                       # one left out
         self.refused(self.promote(self.FULL + [{"text": "Something else", "class": "usage"}]), "BAD_CLASSIFICATION")
         self.refused(self.promote([dict(self.FULL[0], **{"class": "enforced"})] + self.FULL[1:]), "BAD_CLASSIFICATION")      # enforced by nothing
-        self.refused(self.promote([dict(self.FULL[0], **{"class": "enforced", "enforced_by": "dates"})] + self.FULL[1:]), "BAD_CLASSIFICATION")   # the rule has no dates
+        self.refused(self.promote([dict(self.FULL[0], **{"class": "enforced", "enforced_by": [{"valid_to": "2027-12-31"}]})] + self.FULL[1:]), "BAD_CLASSIFICATION")   # the rule has no dates
+        self.refused(self.promote([dict(self.FULL[0], **{"class": "enforced", "enforced_by": "dates"})] + self.FULL[1:]), "BAD_CLASSIFICATION")   # the old form
         self.refused(self.promote(self.FULL[:2] + [{"text": "Is it renewed each year?", "class": "usage"}]), "BAD_CLASSIFICATION")   # wrong family
         self.refused(self.promote(self.FULL, by="Somebody Else"), "REVIEWER_NOT_AUTHORIZED")
         self.assertNotIn("r.offer", Store.load(self.root).rules)
@@ -370,9 +374,11 @@ class TestHistoricalTermsAreProtected(OnDisk):
     def test_what_an_ordinary_revision_may_still_do(self):
         self.ok(self.revise(valid_to="2026-12-31"))                                           # end the terms from a day still to come
         self.ok(self.revise(valid_to="2027-03-31"))                                           # ... and move that day while it has not come
-        self.ok(self.revise(target="r.lounge", restrictions=["Guests pay a fee"]))            # the first record of a term
+        # CHANGED 2026-11-17 (repair): recording a first restriction on a rule that already answered for earlier dates is no
+        # longer an ordinary revision (tests/test_u_repair.py)
+        self.refused(self.revise(target="r.lounge", restrictions=["Guests pay a fee"]), "HISTORY_REWRITE")
         self.ok(self.revise(review_by="2028-01-01"))
-        self.assertEqual(self.have("b.lounge"), UNRESOLVED)                                   # ... which then waits for a reviewer
+        self.assertEqual(self.have("b.lounge"), ESTABLISHED)
         self.assertEqual(self.points("2025-06-01"), [300])
 
     def test_new_terms_come_in_as_a_dated_successor_and_both_stay(self):

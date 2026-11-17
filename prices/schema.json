@@ -275,7 +275,7 @@
         "by": {"type": "string"}, "on": {"$ref": "#/$defs/date"}, "changeset": {"type": "string"},
         "items": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["text", "class"],
                   "properties": {"text": {"type": "string"}, "class": {"enum": ["enforced", "unchecked", "usage", "affects_eligibility", "informational"]},
-                                 "enforced_by": {"type": "string"}, "note": {"type": "string"}}}}
+                                 "enforced_by": {"type": ["array", "object", "string"], "x-doc": "a list of claims (prices/conditions.py, CLAIMS); any other shape is accepted by the schema so that lint and the engine can name it, and it never counts as enforced"}, "note": {"type": "string"}}}}
       }
     },
 
@@ -302,6 +302,7 @@
         "id": {"$ref": "#/$defs/id"},
         "entity": {"$ref": "#/$defs/id"},
         "state": {"enum": ["confirmed", "unconfirmed", "ended", "withdrawn"]},
+        "ended_from": {"enum": ["confirmed", "unconfirmed"], "x-doc": "The state the holding had when it was ended. It keeps that state for the dates up to valid_to."},
         "valid_from": {"$ref": "#/$defs/date"},
         "valid_to": {"$ref": "#/$defs/date_or_null"},
         "acquired_via": {"$ref": "#/$defs/id"},
@@ -312,6 +313,21 @@
         "confirmed_on": {"$ref": "#/$defs/date"},
         "confirmed_by": {"type": "string"},
         "quantity": {"type": "number"},
+        "notes": {"type": "string"}
+      }
+    },
+
+    "absence": {
+      "x-doc": "The owner's own statement that they do NOT hold an entity on these dates. The only thing that makes a negative condition ({\"not\": {\"holds\": ...}}) true: a missing holding is unknown, never absent.",
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "entity", "confirmed_by", "confirmed_on"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "entity": {"$ref": "#/$defs/id"},
+        "valid_from": {"$ref": "#/$defs/date"},
+        "valid_to": {"$ref": "#/$defs/date_or_null"},
+        "confirmed_by": {"type": "string"},
+        "confirmed_on": {"$ref": "#/$defs/date"},
         "notes": {"type": "string"}
       }
     },
@@ -432,7 +448,7 @@
         "op": {"enum": ["confirm_rule", "revise_rule", "flag_rule", "retire_rule", "add_evidence",
                         "add_entity", "revise_entity", "add_candidate", "promote_candidate", "reject_candidate",
                         "revert_changeset",
-                        "set_holding", "end_holding", "set_metric",
+                        "set_holding", "end_holding", "set_absence", "set_metric",
                         "record_progress", "record_entitlement", "revise_entitlement", "record_usage", "correct_entry", "set_credit_terms", "classify_conditions",
                         "record_discovery_run", "add_observation", "prune_observations"]},
         "author": {"$ref": "#/$defs/text"},

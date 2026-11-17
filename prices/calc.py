@@ -10,6 +10,13 @@ Every result is either CALCULATED, with the rule, its verification and every ass
 NOT_CALCULATED, with the reason. Nothing is estimated: a missing rate, a missing ratio, an unverified
 rule, an unconfirmed holding or a benefit the engine could not establish each stop the calculation.
 
+Whether a rule's rate or ratio may be used for this person is asked of the engine about THAT rule
+(Result.rule_applies), the same question status answers: its whole condition (any/all, figures, recorded absences,
+election gate), its verification and its reviewed conditions. Another rule establishing the same output does not
+make this rule's rate apply. Every answer carries that `eligibility`. CALCULATED is arithmetic on a published
+number for a rule that applies; it is not a transaction that can be executed (balances, minimums, increments,
+availability and posting are not checked, and are listed as assumptions).
+
 Earning rates live in an `earning` block on a grants rule {"holds": <card>}:
 
     "earning": {"currency": "<currency entity>",
@@ -25,8 +32,7 @@ A rate published for a broader category applies to the narrower ones under it. W
     2. else, if the card has rates only for NARROWER categories, no calculation (the question is too broad);
     3. else the source's catch-all rate ("other"), said to be the catch-all.
 """
-from .conditions import BLOCKING, blockers
-from .engine import ESTABLISHED, evaluate, in_effect, leaves, standing, to_date
+from .engine import ESTABLISHED, NOT_AVAILABLE, evaluate, in_effect, leaves, standing, to_date
 
 CATCH_ALL = "other"          # the category a source uses for "all other purchases"
 ALWAYS = ("the issuer decides how a purchase is categorised; PRICES does not know the merchant's coding",
@@ -127,9 +133,10 @@ def earn_quote(store, profile, as_of, category, amount, card=None):
                 waiting.append("%s is not in effect on %s" % (rule["id"], as_of))
             elif standing(rule) != "verified":
                 blocked.append("%s is %s" % (rule["id"], standing(rule)))
-            elif res.have(rule["output"]) != ESTABLISHED:
-                why = res.tokens("have:" + rule["output"])["unknowns"] or ["%s is %s" % (rule["output"], res.have(rule["output"]))]
-                blocked.append("%s could not be established for this person: %s" % (rule["id"], "; ".join(why)))
+            elif res.rule_applies(rule["id"])["status"] != ESTABLISHED:
+                ap = res.rule_applies(rule["id"])
+                why = ap["unknowns"] + ["needs: " + s["name"] for s in ap["steps"]] or [ap["reason"] or ap["status"]]
+                blocked.append("%s does not apply to this person (%s): %s" % (rule["id"], ap["status"], "; ".join(why)))
             else:
                 offers.append((rank == 2, hit["per_usd"], rule, hit))
         specific = [o for o in offers if o[0]]
@@ -157,7 +164,8 @@ def earn_quote(store, profile, as_of, category, amount, card=None):
             notes.append("not used: " + "; ".join(blocked))
         if stale:
             notes.append("the rule is past its review date %s: re-verify before relying on this" % rule["verification"]["review_by"])
-        out.append({"card": c, "result": "CALCULATED", "points": round(amount * per, 2), "currency": rule["earning"]["currency"],
+        out.append({"card": c, "result": "CALCULATED", "eligibility": _elig(res, rule["id"]),
+                    "points": round(amount * per, 2), "currency": rule["earning"]["currency"],
                     "per_usd": per, "category_used": hit["category"], "label": hit.get("label", ""), "basis": _basis(rule), "stale": stale,
                     "arithmetic": "%s x %s" % (_num(amount), _num(per)), "assumptions": notes,
                     "terms_not_evaluated": list(rule.get("restrictions", []))})
@@ -197,17 +205,16 @@ def convert_quote(store, profile, as_of, source, amount, to=None):
             continue
         if to is not None and rule["output"] != to:
             continue
-        row = {"to": rule["output"], "basis": _basis(rule)}
-        missing = sorted(i for k, i, neg in leaves(rule["when"]) if k == "holds" and not neg and res.have(i) != ESTABLISHED)
+        ap = res.rule_applies(rule["id"])
+        row = {"to": rule["output"], "basis": _basis(rule), "eligibility": _elig(res, rule["id"])}
         if not in_effect(rule, as_of):
             row.update(result="NOT_CALCULATED", reason="%s is not in effect on %s" % (rule["id"], as_of))
         elif standing(rule) != "verified":
             row.update(result="NOT_CALCULATED", reason="%s is %s" % (rule["id"], standing(rule)))
-        elif blockers(rule):
-            row.update(result="NOT_CALCULATED", reason="who may use this transfer is not established: "
-                                                       + "; ".join("%s: %s" % (BLOCKING[cls], text) for cls, text in blockers(rule)))
-        elif missing:
-            row.update(result="NOT_CALCULATED", reason="this person is not established as holding: " + ", ".join(missing))
+        elif ap["status"] != ESTABLISHED:
+            why = ap["unknowns"] + ["needs: " + s["name"] for s in ap["steps"]] or [ap["reason"] or "its condition is not met"]
+            row.update(result="NOT_CALCULATED", reason="this person is not established as able to use this transfer (%s): %s"
+                                                       % (ap["status"], "; ".join(why)))
         elif parse_ratio(rule["transfer"].get("ratio")) is None:
             row.update(result="NOT_CALCULATED", reason="no transfer ratio is recorded" if not rule["transfer"].get("ratio")
                        else "the recorded ratio %r is not of the form a:b" % rule["transfer"]["ratio"],
@@ -225,6 +232,12 @@ def convert_quote(store, profile, as_of, source, amount, to=None):
                        open_questions=list(rule.get("open_questions", [])))
         out.append(row)
     return {"question": "%s %s transferred" % (_num(amount), source), "profile": profile, "as_of": as_of.isoformat(), "answers": out}
+
+
+def _elig(res, rule_id):
+    """The engine's answer to "does this rule apply to this person?", carried on every calculation."""
+    ap = res.rule_applies(rule_id)
+    return {"rule": rule_id, "status": ap["status"], "unknowns": ap["unknowns"], "steps": [s["name"] for s in ap["steps"]], "reason": ap["reason"]}
 
 
 def _num(x):

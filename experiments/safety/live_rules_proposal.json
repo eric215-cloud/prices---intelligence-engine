@@ -27,7 +27,7 @@
       {"text": "No official American Express page was read", "class": "informational", "note": "Strength of evidence, which the evidence policy decides; the rule met it with independent secondary sources."}
     ],
     "hyatt-challenge-via-aeroplan-elite": [
-      {"text": "Register by December 31, 2026", "class": "enforced", "enforced_by": "dates", "note": "The rule ends on 2026-12-31."},
+      {"text": "Register by December 31, 2026", "class": "enforced", "enforced_by": [{"holds": "hyatt.link_aeroplan"}, {"valid_to": "2026-12-31"}], "note": "CHANGED 2026-11-17 (repair). Was enforced by \"dates\" alone, which shows only that the window is open, not that anyone registered. The rule's condition requires the action 'link the accounts and register for the challenge' (hyatt.link_aeroplan) on every path, so without the owner's record of it the challenge is at most CONDITIONAL; and the rule ends on 2026-12-31."},
       {"text": "One challenge per calendar year for Aeroplan elites", "class": "unchecked", "note": "Who may register: someone who already used a challenge this year may not. Nothing records that."},
       {"text": "Hyatt may withdraw the offer without notice", "class": "usage", "note": "A standing caveat about the offer."},
       {"text": "Is Aeroplan status obtained through the Marriott match accepted? Official terms list tiers only; one secondary source believes it is.", "class": "affects_eligibility", "note": "Decides whether a matched 25K qualifies at all."},

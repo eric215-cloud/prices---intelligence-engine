@@ -59,6 +59,21 @@ def standing(rule):
     return v["status"]
 
 
+def holding_state(h, day):
+    """What one holding record says on one day: "confirmed", "unconfirmed", or None (it says nothing about that day).
+
+    An ENDED holding still answers for the days it was in force, up to its valid_to, with the state it had when it was
+    ended (ended_from; for older records, confirmed if the owner had confirmed it). Ending a card in May must not
+    erase that it was held in March. A WITHDRAWN holding was recorded in error and answers for no day."""
+    if h["state"] == "withdrawn" or not in_effect(h, day):
+        return None
+    if h["state"] == "ended":
+        if not h.get("valid_to"):
+            return None
+        return h.get("ended_from") or ("confirmed" if h.get("confirmed_by") else "unconfirmed")
+    return h["state"]
+
+
 def leaves(cond, neg=False):
     """Yield (kind, id, negated) for every leaf of a condition."""
     if "holds" in cond:
@@ -81,6 +96,8 @@ class Result:
         self.rules = {}                       # internal rule id -> internal rule dict
         self.flags = []
         self.entities = store.entities
+        self.absent = set()                   # entities the owner has recorded as NOT held on the as-of date
+        self.bad = set()                      # rules ignored because they negate their own consequences
 
     # ----- construction helpers -----
     def flag(self, code, severity, subject, detail):
@@ -121,9 +138,20 @@ class Result:
                 tok = ("unknown", "metric %s is unconfirmed" % key)
             return (frozenset([tok]), ["metric:" + key]) if "unknown" in ALLOWED[L] else None
         if "not" in c:
-            a = "have:" + c["not"]["holds"]
-            ref = P if L in (E, C) else E   # strict levels need "definitely not held"
-            return None if a in self.best[ref] else (NONE, ["not:" + a])
+            # Absence of a record is not a record of absence. "Not held" is established only from the owner's recorded
+            # absence (profiles/<p>/absences/) with nothing that could make it held; otherwise it is unknown, never proven
+            ent = c["not"]["holds"]
+            a = "have:" + ent
+            if a in self.best[E]:
+                return None                                         # definitely held: the condition is false
+            proven = ent in self.absent and a not in self.best[P]
+            if proven:
+                return (NONE, ["absent:" + ent])
+            if "unknown" not in ALLOWED[L]:
+                return None
+            why = ("%s is recorded as absent, but a record or rule says it may be held" % ent if ent in self.absent
+                   else "no record says %s is NOT held (a missing record is not proof of absence)" % ent)
+            return (frozenset([("unknown", why)]), ["not:" + a])
         if "all" in c:
             toks, sup = NONE, []
             for sub in c["all"]:
@@ -175,8 +203,60 @@ class Result:
     def tokens(self, atom):
         """Assumptions behind the atom's status: steps (things to do) and unknowns (things to confirm)."""
         L = self.level_of(atom)
+        return self._describe(self.best[L][atom] if L else NONE)
+
+    def rule_applies(self, rule_id):
+        """Does THIS rule apply to the person on the date? The one question every calculator asks about a rule.
+
+        The rule's own condition (with its election gate) is evaluated with the same levels and tokens the solver
+        uses for it, so OR, metrics, negation, verification and blocking conditions all count exactly as they do
+        for status. Another rule establishing the same output does not make this rule apply.
+        Returns {"status", "steps", "unknowns", "reason"}."""
+        ru = self.rules.get(rule_id)
+        if ru is None or rule_id in self.bad:
+            src = self.store.rules.get(rule_id)
+            if rule_id in self.bad:
+                why = "the rule negates something that depends on its own output and is ignored"
+            elif src is None:
+                why = "no rule %s" % rule_id
+            elif standing(src) == "retired":
+                why = "%s is retired" % rule_id
+            elif not in_effect(src, self.as_of):
+                why = "%s is not in effect on %s" % (rule_id, self.as_of)
+            else:
+                why = "rules of kind %s are not evaluated by the solver" % src["kind"]
+            return {"status": NOT_AVAILABLE, "steps": [], "unknowns": [], "reason": why}
+        for L, st in ((E, ESTABLISHED), (C, CONDITIONAL), (U, UNRESOLVED)):
+            if L not in ru["levels"]:
+                continue
+            got = self._cond(ru["when"], L)
+            if got is not None:
+                out = self._describe(got[0] | ru["tokens"])
+                out.update(status=st, reason="")
+                return out
+        return {"status": NOT_AVAILABLE, "steps": [], "unknowns": [],
+                "reason": "the rule's condition is not met for this person: " + "; ".join(self._unmet(ru["when"]))}
+
+    def _unmet(self, c):
+        """Words for the parts of a condition that fail even with every assumption allowed (for messages only)."""
+        if self._cond(c, U) is not None:
+            return []
+        if "holds" in c:
+            return ["%s is not held" % c["holds"]]
+        if "metric" in c:
+            m = self._metrics.get(c["metric"])
+            return ["%s is %s, below %s" % (c["metric"], m["value"] if m else "not recorded", c["gte"])]
+        if "not" in c:
+            return ["%s is held" % c["not"]["holds"]]
+        if "all" in c:
+            return [w for sub in c["all"] for w in self._unmet(sub)]
+        if "any" in c:
+            return ["none of: " + " / ".join(", ".join(self._unmet(sub)) or "?" for sub in c["any"])]
+        return ["the condition is malformed"]
+
+    def _describe(self, toks):
         steps, unknowns = [], []
-        for t in sorted(self.best[L][atom]) if L else []:
+        for t in sorted(toks):
             if t[0] == "action":
                 ent = self.entities.get(t[1], {})
                 steps.append({"type": "action", "entity": t[1], "name": ent.get("name", t[1]), "how": ent.get("how", "")})
@@ -231,7 +311,8 @@ class Result:
 
     def report(self):
         """The four epistemic categories, kept apart."""
-        from .conditions import blockers
+        from .conditions import blockers, context
+        ctx = context(self.store)
         rep = {"profile": self.profile, "as_of": self.as_of.isoformat(),
                "synthetic": bool(self.store.profile(self.profile).meta.get("synthetic")),
                "sourced_rules": [], "personal_qualifications": [], "derived_entitlements": [],
@@ -240,10 +321,12 @@ class Result:
             rep["sourced_rules"].append({"id": r["id"], "kind": r["kind"], "output": r["output"],
                                          "verification": r["verification"]["status"],
                                          "in_effect": in_effect(r, self.as_of), "summary": r["summary"],
-                                         "blocked_by": len(blockers(r))})
+                                         "blocked_by": len(blockers(r, ctx))})
         for h in sorted(self.store.profile(self.profile).holdings.values(), key=lambda h: h["id"]):
             rep["personal_qualifications"].append({"holding": h["id"], "entity": h["entity"], "state": h["state"],
                                                    "valid_to": h.get("valid_to"), "effective": self.have(h["entity"])})
+        if self.absent:                       # key exists only when the owner has recorded an absence in effect
+            rep["recorded_absences"] = sorted(self.absent)
         for atom in self.atoms():
             kind, ent = atom.split(":", 1)
             st = self.status(atom)
@@ -281,8 +364,9 @@ def evaluate(store, profile, as_of, include_candidates=False):
     rules = []
     # cardholder elections: a governed rule also needs the person's election of its option (elections.py)
     from .elections import gate, governed
-    from .conditions import tokens as condition_tokens
+    from .conditions import context, tokens as condition_tokens
     gov = governed(store)
+    ctx = context(store)
 
     # 1. sourced rules -> internal rules, with the levels at which each may be used
     for rule in sorted(store.rules.values(), key=lambda x: x["id"]):
@@ -298,7 +382,7 @@ def evaluate(store, profile, as_of, include_candidates=False):
             levels, toks = (P, U), frozenset([("unknown", "rule %s is unverified" % rule["id"])])
         if rule["kind"] in NON_DERIVING or rule["kind"] in PERSONAL_KINDS:
             continue   # baseline/excludes: applicability matrix only (cards.py). earns: personal records only (earned.py)
-        blocked = condition_tokens(rule)
+        blocked = condition_tokens(rule, ctx)
         if blocked:
             # a restriction or open question on this rule is an unchecked condition, could change who is eligible, or has
             # no class from a reviewer (conditions.py). Text is not enforcement and silence is not approval: nothing is
@@ -318,32 +402,45 @@ def evaluate(store, profile, as_of, include_candidates=False):
                           "src": pr})
 
     # 2. personal qualifications -> base facts (and retention rules for acquired holdings)
-    by_entity = {}
+    by_entity, state_of = {}, {}
     for h in sorted(prof.holdings.values(), key=lambda x: x["id"]):
-        if h["state"] in ("ended", "withdrawn"):
+        if h["state"] == "withdrawn":
             continue
         if store.entities.get(h["entity"], {}).get("kind") == "election":
             continue   # elections are decided per group in step 2c, never one holding at a time
-        if not in_effect(h, as_of):
+        st = holding_state(h, as_of)
+        if st is None:
             vt = to_date(h.get("valid_to"))
-            if vt is not None and vt < as_of:
+            if h["state"] != "ended" and vt is not None and vt < as_of:
                 r.flag("EXPIRED_HOLDING", "review", h["id"], "%s expired on %s" % (h["entity"], vt))
             continue
+        state_of[h["id"]] = st
         by_entity.setdefault(h["entity"], []).append(h)
+    # recorded absences: the owner says an entity is NOT held on these dates. A conflicting holding voids both sides
+    for x in sorted(prof.absences.values(), key=lambda x: x["id"]):
+        if not in_effect(x, as_of) or not x.get("confirmed_by"):
+            continue
+        if x["entity"] in by_entity:
+            r.flag("CONFLICTING_HOLDINGS", "review", x["entity"], "absence %s contradicts holding(s) %s; neither is relied on"
+                   % (x["id"], ", ".join(h["id"] for h in by_entity[x["entity"]])))
+            for h in by_entity[x["entity"]]:
+                state_of[h["id"]] = "unconfirmed"
+            continue
+        r.absent.add(x["entity"])
     contested = []
     for ent, hs in sorted(by_entity.items()):
         atom = "have:" + ent
-        states = {h["state"] for h in hs}
+        states = {state_of[h["id"]] for h in hs}
         if len(states) > 1:
             r.flag("CONFLICTING_HOLDINGS", "review", ent, "records disagree (%s); treated as unconfirmed"
                    % ", ".join(sorted(h["id"] + "=" + h["state"] for h in hs)))
         for h in hs:
             hid = "holding:" + h["id"]
-            if h["state"] == "unconfirmed" or len(states) > 1:
+            if state_of[h["id"]] == "unconfirmed" or len(states) > 1:
                 tok = frozenset([("unknown", "holding %s (%s) is not confirmed" % (h["id"], ent))])
                 for L in (P, U):
                     r._offer(atom, L, tok, hid, [])
-                if len(states) == 1:
+                if len(states) == 1 and h["state"] == "unconfirmed":
                     r.flag("UNCONFIRMED_HOLDING", "review", h["id"], "%s is recorded but not confirmed" % ent)
                 continue
             src = store.rules.get(h.get("acquired_via", ""))
@@ -397,6 +494,7 @@ def evaluate(store, profile, as_of, include_candidates=False):
             if s > strat.get(ru["output"], 0):
                 if s > limit:
                     bad.add(ru["id"])
+                    r.bad.add(ru["id"])
                     r.flag("NEGATIVE_CYCLE", "review", ru["id"], "rule negates something that depends on its own output; rule ignored")
                     continue
                 strat[ru["output"]] = s

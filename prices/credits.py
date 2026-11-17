@@ -18,7 +18,7 @@ import datetime
 
 from .earned import credit as arithmetic, day, instance_state, num
 from .elections import governed, groups
-from .engine import ESTABLISHED, NOT_AVAILABLE, evaluate, in_effect, to_date
+from .engine import ESTABLISHED, NOT_AVAILABLE, evaluate, holding_state, in_effect, to_date
 from .lint import single_holds
 
 ONE_DAY = datetime.timedelta(days=1)
@@ -379,14 +379,15 @@ def survey(store, profile, as_of, include_candidates=False, card=None):
     rules = credit_rules(store, include_candidates)
     for h in sorted(prof.holdings.values(), key=lambda h: h["id"]):
         mine = [x for x in rules if single_holds(x[0]["when"]) == h["entity"]]
-        if not mine or (card and h["entity"] != card) or h["state"] in ("ended", "withdrawn") or not in_effect(h, as_of):
+        if not mine or (card and h["entity"] != card) or holding_state(h, as_of) is None:
             continue
         rows = []
         for rule, state, cand in mine:
-            c, atom = rule["credit"], "have:" + rule["output"]
+            c, rid = rule["credit"], ("candidate:" + cand if cand else rule["id"])
             row = _public(store, rule, state, cand, as_of)
-            status = res.status(atom)
-            toks = res.tokens(atom) if status != NOT_AVAILABLE else {"steps": [], "unknowns": []}
+            # does THIS rule apply to the person (Result.rule_applies), not whether something else gives the same benefit
+            toks = res.rule_applies(rid)
+            status = toks["status"]
             needs = ["CONFIRM: " + u for u in toks.get("unknowns", [])] + [
                 "%s %s" % ("DO" if s["type"] == "action" else "ACQUIRE", s.get("name", s.get("entity"))) for s in toks.get("steps", [])]
             row["applies"] = {"status": status, "needs": needs}
@@ -412,9 +413,9 @@ def survey(store, profile, as_of, include_candidates=False, card=None):
                     after = p["end"] + ONE_DAY
                     row["next"] = {"date": after.isoformat(), "what": "offer ends" if p.get("last") else "new period, allowance resets",
                                    "unused": unused_text(c)}
-                    if status == ESTABLISHED and p["end"] > as_of and result(p["end"]).status(atom) != ESTABLISHED:
+                    if status == ESTABLISHED and p["end"] > as_of and result(p["end"]).rule_applies(rid)["status"] != ESTABLISHED:
                         row["applies"]["needs"].append("on %s, the last day of this period, this benefit is %s for this person: "
-                                                       "the period may be cut short (see the timeline)" % (p["end"], result(p["end"]).status(atom)))
+                                                       "the period may be cut short (see the timeline)" % (p["end"], result(p["end"]).rule_applies(rid)["status"]))
             row["personal"] = _personal(rule, _records(prof, rule["id"], h["id"]), p, as_of, flag)
             rows.append(row)
         accounts.append({"account": h["id"], "card": h["entity"], "card_name": store.entities.get(h["entity"], {}).get("name", h["entity"]),
@@ -429,13 +430,13 @@ def events(store, profile, start, until, include_candidates=False):
     start, until = to_date(start), to_date(until)
     prof, out, cache = store.profile(profile), [], {}
 
-    def applies(d, atom):
+    def applies(d, rule_id):
         if d not in cache:
             cache[d] = evaluate(store, profile, d, include_candidates=include_candidates)
-        return cache[d].status(atom)
+        return cache[d].rule_applies(rule_id)["status"]
 
     for h in sorted(prof.holdings.values(), key=lambda h: h["id"]):
-        if h["state"] in ("ended", "withdrawn"):
+        if h["state"] == "withdrawn":
             continue
         for rule, _state, _cand in credit_rules(store, include_candidates):
             if single_holds(rule["when"]) != h["entity"]:
@@ -453,8 +454,8 @@ def events(store, profile, start, until, include_candidates=False):
                 p = clip(period(c, d, h, recs), rule)
                 if p["state"] != KNOWN or p["end"] is None:
                     break
-                if p["end"] <= until and in_effect(h, p["end"]):
-                    status = applies(p["end"], "have:" + rule["output"])
+                if p["end"] <= until and holding_state(h, p["end"]) is not None:
+                    status = applies(p["end"], "candidate:" + _cand if _cand else rule["id"])
                     if status != NOT_AVAILABLE:
                         out.append({"date": p["end"].isoformat(), "rule": rule["id"], "benefit": rule["output"], "account": h["id"],
                                     "period": p["label"], "period_start": p["start"].isoformat(), "amount": c["amount"], "unit": c["unit"],

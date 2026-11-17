@@ -73,7 +73,7 @@ class Lab:
         `conditions` are the items to record. Left out, they come from engineering's reading of the REAL candidates
         (restriction_classes.json); a candidate that file does not cover cannot be promoted this way."""
         c = self.store().candidates[cand_id]
-        data = {"review_by": "2027-11-16", "conditions": scratch_real(c) if conditions is None else conditions}
+        data = {"review_by": "2027-11-16", "conditions": scratch_real(c, store=self.store()) if conditions is None else conditions}
         if c["open_questions"]:
             data["accept_open_questions"] = True
         return self.apply("promote_candidate", batch, record or cand_id, target=cand_id, data=data, attestation=self.attest())

@@ -15,7 +15,7 @@ import os
 from .engine import evaluate, standing, to_date
 from .lint import errors, evidence_ok, lint, signature, windows_overlap
 from .review import diff, new_flags
-from .schema import Schema
+from .schema import Schema, is_date
 from .store import LEDGER_PATH, Store, append_audit, read_audit
 
 RANK = {"ESTABLISHED": 3, "CONDITIONAL": 2, "UNRESOLVED": 1, "NOT_AVAILABLE": 0}
@@ -157,11 +157,24 @@ def _rewrites_history(rule, changes, today):
             if old is not None and old > today and v is not None and v > today:
                 continue                    # the rule has not started yet and still will not have
             out.append("valid_from (%s -> %s)" % (old, v))
+        elif k == "restrictions":
+            # a condition on who has the output, added, removed or reworded on a rule that has already answered for
+            # earlier dates. Recording it "for the first time" is no exception: if the source added it from a date,
+            # that is a successor rule; if it always applied, the omission is corrected and the correction declared.
+            # On a rule that has not started yet nothing in the past changes. Either way the rule then needs a fresh
+            # review of its conditions before it establishes anything (conditions.stale / unclassified)
+            if set(v or []) != set(rule.get(k) or []) and answered_before(rule, today):
+                out.append("restrictions (on a rule in force before %s)" % today)
         elif rule.get(k) in (None, [], ""):
             continue                        # the first record of this term
         else:
             out.append(k)
     return out
+
+
+def answered_before(rule, today):
+    """Has this rule answered for any date before `today`? (No valid_from means it has always applied.)"""
+    return rule.get("valid_from") is None or rule["valid_from"] < today
 
 
 def _correction(cs, what):
@@ -174,14 +187,14 @@ def _correction(cs, what):
 
 def op_classify_conditions(store, cs):
     """A reviewer records, for every restriction and open question on a rule, which kind it is (conditions.py)."""
-    from .conditions import review_issues
-    from .elections import governed
+    from .conditions import context, review_issues
     r = _rule(store, cs)
     _need(r["verification"]["status"] != "retired", "RETIRED", "retired rules are history; they are not revised")
     a = _attested(cs)
     _reviewer(store, a)
-    items = _data(cs, "items", list)
-    issues = review_issues(r, items, r["id"] in governed(store))
+    items = (cs.get("data") or {}).get("items")
+    _need(isinstance(items, list), "MISSING_DATA", "data.items (a list; empty for a rule with no restriction and no open question) is required")
+    issues = review_issues(r, items, context(store))
     _need(not issues, "BAD_CLASSIFICATION", "; ".join(issues))
     r["condition_review"] = {"by": a["by"], "on": cs["date"], "changeset": cs["id"], "items": [dict(i) for i in items]}
 
@@ -356,8 +369,7 @@ def op_promote_candidate(store, cs):
               "candidate has open questions; resolve them or set data.accept_open_questions=true (they stay on the rule)")
     rb = _review_by(cs)
     # the reviewer's class for every restriction and open question (conditions.py). Without one, nothing is promoted
-    from .conditions import review_issues, texts
-    from .elections import governed
+    from .conditions import context, review_issues, texts
     proposed = dict(c["proposed_rule"])
     if c["open_questions"]:
         proposed["open_questions"] = list(c["open_questions"])
@@ -367,7 +379,9 @@ def op_promote_candidate(store, cs):
               "this candidate has %d restriction(s) and open question(s). The reviewer must give each one a class in data.conditions "
               "(restrictions: enforced, unchecked or usage; open questions: affects_eligibility or informational). See OP-14."
               % len(texts(proposed)))
-        issues = review_issues(proposed, items, proposed["id"] in governed(store))
+        ctx = context(store)
+        ctx["entities"] = dict(ctx["entities"], **{e["id"]: e for e in c.get("proposed_entities", []) if isinstance(e, dict) and "id" in e})
+        issues = review_issues(proposed, items, ctx)
         _need(not issues, "BAD_CLASSIFICATION", "; ".join(issues))
     for e in c.get("proposed_entities", []):
         cur = store.entities.get(e["id"])
@@ -430,7 +444,25 @@ def op_end_holding(store, cs):
         h["state"], h["withdrawn_on"] = "withdrawn", cs["date"]
         return
     _attested(cs, by=prof.meta["owner"])
-    h["state"], h["valid_to"] = "ended", _data(cs, "ended_on", str)
+    ended = _data(cs, "ended_on", str)
+    _need(is_date(ended), "BAD_DATA", "ended_on must be a date (YYYY-MM-DD)")
+    _need(not h.get("valid_from") or ended >= h["valid_from"], "BAD_DATES", "ended_on %s is before the holding began (%s)" % (ended, h.get("valid_from")))
+    _need(not h.get("valid_to") or ended <= h["valid_to"], "BAD_DATES",
+          "ended_on %s is after the holding's own end %s: ending a holding never extends it" % (ended, h.get("valid_to")))
+    # the holding keeps answering for the days it was in force, with the state it had (engine.holding_state)
+    h["ended_from"], h["state"], h["valid_to"] = h["state"], "ended", ended
+
+
+def op_set_absence(store, cs):
+    """The owner records that they do NOT hold an entity on these dates. Only this makes {"not": {"holds": ...}} true."""
+    prof = _profile(store, cs)
+    x = dict(_data(cs, "absence", dict))
+    _need(isinstance(x.get("id"), str) and isinstance(x.get("entity"), str), "BAD_DATA", "absence.id and absence.entity are required")
+    _need(x["entity"] in store.entities, "UNKNOWN_REFERENCE", "entity %r does not exist" % x["entity"])
+    _need(store.entities[x["entity"]].get("kind") != "election", "BAD_DATA", "an election is decided per group; record the one that was made")
+    a = _attested(cs, by=prof.meta["owner"])
+    x["confirmed_by"], x["confirmed_on"] = a["by"], a["on"]
+    store.files[store.path("absences", x["id"], prof.name)] = x
 
 
 def op_set_metric(store, cs):

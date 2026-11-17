@@ -14,7 +14,7 @@ one of those benefits applies to a given card is decided only by card-level rule
     neither                                                              => UNPROVEN (not an entitlement)
 """
 from .engine import NOT_AVAILABLE, evaluate, in_effect, to_date
-from .conditions import blockers
+from .conditions import blockers, context
 from .engine import standing as rule_standing
 from .lint import ROLES, single_holds
 
@@ -98,7 +98,7 @@ def matrix(store, as_of=None, profile=None):
             return PENDING, ", ".join(waiting)
         return UNPROVEN, ""
 
-    rows = []
+    rows, ctx = [], context(store)
     for card in sorted((e for e in ents.values() if e["kind"] == "card"), key=lambda e: e["id"]):
         if res is not None and res.have(card["id"]) == NOT_AVAILABLE:
             continue
@@ -115,14 +115,16 @@ def matrix(store, as_of=None, profile=None):
                    "benefit": benefit, "benefit_name": ents.get(benefit, {}).get("name", benefit),
                    "basis": basis, "standing": standing, "meaning": MEANING[standing], "detail": detail}
             confirming = next((r for r in card_rules.get((card["id"], benefit), []) if r["id"] == detail), None)
-            if standing == CONFIRMED and confirming is not None and blockers(confirming):
+            if standing == CONFIRMED and confirming is not None and blockers(confirming, ctx):
                 # the card carries the benefit, but who among its holders has it is not settled (conditions.py)
                 row["detail"] = "%s; %d condition(s) on who has it are unchecked, open or unclassified: not established for a holder" % (
-                    detail, len(blockers(confirming)))
+                    detail, len(blockers(confirming, ctx)))
             if brule is not None and brule["verification"]["status"] != "verified":
                 row["detail"] = (detail + "; " if detail else "") + "baseline rule %s is itself unverified" % brule["id"]
             if res is not None:
                 row["card_status"] = res.have(card["id"])
-                row["holder_status"] = res.have(benefit)
+                row["holder_status"] = res.have(benefit)            # from any source the person has
+                if confirming is not None:                          # through THIS card's own rule (Result.rule_applies)
+                    row["via_this_card"] = res.rule_applies(confirming["id"])["status"]
             rows.append(row)
     return rows

@@ -17,7 +17,7 @@ Ask of each **restriction**: *could a person who meets the rule's `when` still n
 | Answer | Class | Also give |
 |---|---|---|
 | No. It says how the benefit is used: a limit, where to book, how to claim, a caveat | `usage` | |
-| Yes, and the rule already checks it | `enforced` | `enforced_by`: `when:<id>` (an entity or figure the rule's condition requires), `dates` (the rule's validity dates), `earn` (the threshold in its `earn` block) or `election` (a cardholder election governs the rule) |
+| Yes, and the rule checks it **on every route to the benefit** | `enforced` | `enforced_by`: a list of claims, each the exact machine condition: `{"holds": id}`, `{"not": {"holds": id}}`, `{"metric": id, "gte": N}` (N = the number the text states), `{"valid_to": date}`, `{"valid_from": date}`, `{"earn_threshold": N}`, `{"earn_activation": true}`, `{"earn_term": true}`, `{"acquire": true}`, `{"election": true}`. The program refuses a claim that is not true on every route (`any` alternatives included) |
 | Yes, and nothing checks it | `unchecked` | |
 
 Ask of each **open question**: *could the answer change who has this?*
@@ -32,9 +32,12 @@ Examples from real content:
 | Text | Class | Why |
 |---|---|---|
 | "New applicants only" | `unchecked` | Nothing records whether the holder was a new applicant |
-| "Register by December 31, 2026", on a rule with `valid_to` 2026-12-31 | `enforced` by `dates` | The rule stops on that day |
-| "Requires enrolment", on a rule whose `when` includes the enrolment action | `enforced` by `when:<the action>` | |
+| "Register by December 31, 2026", on a rule whose `when` requires the registration action and which ends 2026-12-31 | `enforced` by `[{"holds": "<the action>"}, {"valid_to": "2026-12-31"}]` | The date shows only that registering was possible; the action must be recorded too. Dates alone are refused |
+| "Register by December 31, 2026", on a rule whose `when` is the status alone | `unchecked` | Nothing records the registration |
+| "Requires enrolment", on a rule whose `when` includes the enrolment action | `enforced` by `[{"holds": "<the action>"}]` | |
 | "Requires enrolment", on a rule whose `when` is the card alone | `unchecked` | You cannot mark it enforced: the program refuses |
+| "At least 1,000 qualifying nights", on a rule checking nights ≥ 1 | `unchecked` | The rule checks less than the text says; `{"metric": ..., "gte": 1000}` is refused |
+| "Card A holders only", on a rule that accepts card A OR card B | `unchecked` | Not every route requires card A |
 | "Two-night minimum stay" | `usage` | A term of using the credit |
 | "Whether a minimum number of flights still applies was not established" | `affects_eligibility` | If it does, the points alone do not qualify |
 | "How long the status lasts was not read" | `informational` | |
@@ -60,7 +63,7 @@ For a rule already in the store:
 ```json
 {"id": "cs-YYYYMMDD-NNN-classify-conditions", "op": "classify_conditions", "author": "...", "date": "YYYY-MM-DD",
  "reason": "Reviewed the restrictions and open questions against the source.", "target": "<rule id>",
- "data": {"items": [{"text": "Register by December 31, 2026", "class": "enforced", "enforced_by": "dates"},
+ "data": {"items": [{"text": "Register by December 31, 2026", "class": "enforced", "enforced_by": [{"holds": "hyatt.link_aeroplan"}, {"valid_to": "2026-12-31"}]},
                     {"text": "One challenge per calendar year", "class": "unchecked", "note": "optional: why"}]},
  "attestation": {"by": "<your name>", "on": "YYYY-MM-DD", "statement": "What you read and checked."}}
 ```

@@ -77,7 +77,7 @@ class TestUncheckedConditions(unittest.TestCase):
 
     def test_a_class_that_claims_a_check_the_rule_does_not_have_is_an_error(self):
         s = world([rule("r.offer", "grants", "b.offer", H("card.a"), restrictions=["New applicants only"],
-                        condition_review=review(("New applicants only", "enforced", "when:act.enrol")))], [])
+                        condition_review=review(("New applicants only", "enforced", [{"holds": "act.enrol"}])))], [])
         self.assertIn("BAD_CLASSIFICATION", codes(lint(s)))
 
 
@@ -223,6 +223,11 @@ class TestPipeline(unittest.TestCase):
             cs = {"id": "cs-20260601-r-01-revise-rule", "op": "revise_rule", "target": "r.offer", "author": "test", "date": DAY,
                   "reason": "invented", "data": {"set": {"restrictions": ["New applicants only"]}}}
             self.assertFalse(changes.apply(tmp, cs)["ok"])
+            # CHANGED 2026-11-17 (repair): the rule has applied since before today, so a new restriction on it is a declared
+            # correction (or a successor rule); without the declaration it is refused as a history rewrite
+            refused = changes.apply(tmp, dict(cs, evidence=[ev("ev2", retrieved_on=DAY)]))
+            self.assertTrue(any(e.startswith("HISTORY_REWRITE") for e in refused["errors"]), refused["errors"])
+            cs["data"]["correction"] = "the new-applicant condition was in the source and was left out"
             out = changes.apply(tmp, dict(cs, evidence=[ev("ev2", retrieved_on=DAY)]))
             self.assertTrue(out["ok"], out.get("errors"))
             from prices.store import Store

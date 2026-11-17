@@ -37,7 +37,7 @@ holding of the card records `anniversary_on`, a card anniversary date as the iss
 """
 import datetime
 
-from .engine import LEVELS, P, U, in_effect, standing, to_date
+from .engine import LEVELS, P, U, holding_state, in_effect, standing, to_date
 
 ONE_DAY = datetime.timedelta(days=1)
 TERM_KEYS = ("opened_before", "default_before_anniversary", "starts_at_anniversary", "elect_before_anniversary",
@@ -254,7 +254,7 @@ def decide(prof, group, options, day, linked=None):
     """
     card = options[0]["election"]["card"]
     ids = {o["id"]: o for o in options}
-    cards = [h for h in prof.holdings.values() if h["entity"] == card and h["state"] != "ended" and in_effect(h, day)]
+    cards = [h for h in prof.holdings.values() if h["entity"] == card and holding_state(h, day) is not None]
     picks = [h for h in prof.holdings.values() if h["entity"] in ids and h["state"] != "withdrawn"]
     live = [(h, presence(h, day)) for h in sorted(picks, key=lambda h: h["id"])]
     live = [(h, p) for h, p in live if p is not None]

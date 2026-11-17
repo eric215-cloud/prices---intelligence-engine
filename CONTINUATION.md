@@ -2,6 +2,8 @@
 
 Update this file at the end of every work session. Last updated 2026-11-17 by Claude Fable 5.2 after the foundation safety correction (branch `dev/foundation-safety-correction`, from `exp/foundation-viability` at `c3b96a9`; not merged anywhere). Read `docs/CONDITION_REVIEW.md` first.
 
+**After the consolidated repair (branch `dev/foundation-safety-repair`, from `22bca1a`).** An `enforced` class now names exact claims that must hold on every path; "not held" needs the owner's recorded absence (`profiles/<p>/absences/`); calculators ask `Result.rule_applies` about the rule they use; ended holdings keep their past; condition changes on rules that already answered are declared or successors. The project's records and answers are unchanged by it. Read `docs/CONDITION_REVIEW.md` sections 2 to 4.
+
 **State after the safety correction, in three lines.** (1) Every restriction and open question on a rule needs a class from a promotion reviewer; without one the rule establishes nothing (OP-14). (2) The nine rules verified earlier are NOT classified, on purpose: the project's derived answers read UNRESOLVED until a reviewer applies or edits `experiments/safety/live_rules_proposal.json`. (3) Recorded terms cannot be changed in place without a declared correction; retirement keeps history.
 
 ## Coordinator continuity
@@ -27,11 +29,12 @@ Added 2026-11-14 (second commission): earned benefits. A public `earns` rule, a 
 Needs Python 3.9+ only. From the project root:
 
 ```
-python3 -m unittest discover -s tests      # expect: Ran 412 tests ... OK
+python3 -m unittest discover -s tests      # expect: Ran 450 tests ... OK
 python3 -m prices lint                     # expect: lint: 0 error(s), 10 warning(s)  (nine rules wait for a reviewer's classification, OP-14; Eric's Aeroplan 25K has no expiry date yet)
 python3 experiments/viability/run.py       # expect: 52 checks, 0 failed  (real content, in a throwaway copy)
 python3 experiments/safety/before_after.py # expect: Result: every line is as expected.  (needs git; runs commit c3b96a9 beside this checkout)
-python3 scripts/mutation_check_safety.py   # expect: 25 mutations, 0 not caught
+python3 experiments/safety/repair_before_after.py  # expect: Result: every line is as expected.  (needs git; runs 22bca1a beside this checkout)
+python3 scripts/mutation_check_safety.py   # expect: 51 mutations, 0 not caught
 python3 -m prices status --profile synthetic-demo --as-of 2026-11-12
 python3 -m prices tables status            # expect: "no" twice
 python3 -m prices --root fixtures/synthetic-cards cards --profile synthetic-alex --as-of 2026-11-14

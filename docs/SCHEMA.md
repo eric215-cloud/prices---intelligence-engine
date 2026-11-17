@@ -36,7 +36,7 @@ Ids are lowercase letters, digits, `.`, `_`, `-`. A record's `id` equals its fil
 | `transfer` | `transfer` only, mandatory | `{from, ratio?, note?}` |
 | `valid_from`, `valid_to` | no | When the rule is in effect |
 | `restrictions`, `open_questions` | no | Lists of sentences. The engine does not evaluate them; see `condition_review` |
-| `condition_review` | no, but without it a rule that has restrictions or open questions establishes nothing | `{by, on, changeset, items: [{text, class, enforced_by?, note?}]}`: a promotion reviewer's class for every restriction (`enforced`, `unchecked`, `usage`) and open question (`affects_eligibility`, `informational`). Written only by `promote_candidate` and `classify_conditions`. `docs/CONDITION_REVIEW.md` |
+| `condition_review` | no, but without it a rule that has restrictions or open questions establishes nothing | `{by, on, changeset, items: [{text, class, enforced_by?, note?}]}`; `enforced_by` is a list of claims (`docs/CONDITION_REVIEW.md`, "Enforcement claims"): a promotion reviewer's class for every restriction (`enforced`, `unchecked`, `usage`) and open question (`affects_eligibility`, `informational`). Written only by `promote_candidate` and `classify_conditions`. `docs/CONDITION_REVIEW.md` |
 | `value_note` | no | Plain-language worth and caveats |
 | `evidence` | yes | List of evidence ids (may be empty only if unverified) |
 | `verification` | yes | `{status: verified | unverified | retired, last_verified, review_by}`. A rule retired because it ended also has `retired_from` (the status it had): it keeps answering for dates up to its `valid_to` |
@@ -84,6 +84,8 @@ Exactly one of:
 {"not": {"holds": "entity.id"}}
 ```
 
+`not` is true only when the owner has recorded the entity's absence (see Absence) and nothing says it may be held; with no record it is unknown (UNRESOLVED), never true (2026-11-17 repair).
+
 ## Evidence — `data/kb/evidence/<id>.json`
 
 `id`, `url`, `title`, `publisher`, `source_type` (`official`, `reputable_secondary`, `community`, `owner_document`, `synthetic`), `retrieved_on`, `summary` (own words), optional `notes`, optional `applies_to` (entity ids the document is specifically about, e.g. the card whose guide it is). Evidence is never edited after creation.
@@ -93,11 +95,16 @@ Exactly one of:
 | Field | Required | Notes |
 |---|---|---|
 | `id`, `entity` | yes | |
-| `state` | yes | `confirmed` (needs `confirmed_on`, `confirmed_by` = owner), `unconfirmed`, `ended`, `withdrawn` (entered by mistake: kept, never in effect; `withdrawn_on` set by `end_holding` with `withdrawn: true`) |
+| `state` | yes | `confirmed` (needs `confirmed_on`, `confirmed_by` = owner), `unconfirmed`, `ended` (keeps answering for its own days, up to `valid_to`, with the state in `ended_from`), `withdrawn` (entered by mistake: kept, never in effect; `withdrawn_on` set by `end_holding` with `withdrawn: true`) |
+| `ended_from` | no | Set by `end_holding`: `confirmed` or `unconfirmed`, the state the holding had when it ended |
 | `valid_from`, `valid_to` | no | `valid_to` is the expiry. Give it for every status |
 | `opened_on` | no | Cards only: the account opening date. Card anniversaries (election terms) are computed from it, never from `valid_from` |
 | `acquired_via`, `acquired_on` | no | Rule id through which it was obtained; activates retention checks |
 | `quantity` | no | Balance, for currencies |
+
+## Absence — `profiles/<p>/absences/<id>.json`
+
+The owner's statement that they do NOT hold an entity: `id`, `entity`, optional `valid_from` / `valid_to`, `confirmed_by` (= owner), `confirmed_on`, optional `notes`. Written by `set_absence` (owner attestation). It is what makes a `not` condition true. Not allowed for elections. A holding of the same entity on overlapping dates is a contradiction: lint warns and the engine relies on neither.
 
 ## Metric — `profiles/<p>/metrics/<id>.json`
 

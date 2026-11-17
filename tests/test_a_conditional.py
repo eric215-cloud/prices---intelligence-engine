@@ -104,7 +104,12 @@ class TestConditional(unittest.TestCase):
     def test_exclusion(self):
         es = [ent("card", "card"), ent("blocker"), ent("x", "benefit")]
         rs = [rule("r", "grants", "x", {"all": [H("card"), {"not": H("blocker")}]})]
-        self.assertEqual(evaluate(make_store(es, rs, [holding("h", "card")]), "t", D).have("x"), ESTABLISHED)
+        # CHANGED 2026-11-17 (repair): with no record about the blocker, "not held" is unknown, not proven. This line expected
+        # ESTABLISHED; that was the defect. Only the owner's recorded absence establishes it (tests/test_u_repair.py)
+        self.assertEqual(evaluate(make_store(es, rs, [holding("h", "card")]), "t", D).have("x"), UNRESOLVED)
+        absent = make_store(es, rs, [holding("h", "card")])
+        absent.files["profiles/t/absences/a1.json"] = {"id": "a1", "entity": "blocker", "confirmed_by": "Test Owner", "confirmed_on": D}
+        self.assertEqual(evaluate(absent, "t", D).have("x"), ESTABLISHED)
         blocked = make_store(es, rs, [holding("h", "card"), holding("b", "blocker")])
         self.assertEqual(evaluate(blocked, "t", D).have("x"), NOT_AVAILABLE)
         maybe = make_store(es, rs, [holding("h", "card"), holding("b", "blocker", "unconfirmed")])

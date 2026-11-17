@@ -114,6 +114,24 @@ Full record: `docs/commissions/results/2026-11-15-fable-eng-02b-bilt-election-co
 
 412 tests. Full record: `docs/commissions/results/2026-11-17-fable-foundation-safety-correction-RESULTS.md`.
 
+### Consolidated foundation safety repair (2026-11-17) — branch `dev/foundation-safety-repair`, from `dev/foundation-safety-correction` at `22bca1a`
+
+**The six further defects reproduced by Bradley and Astra are corrected; each is shown on `22bca1a` and now by `python3 experiments/safety/repair_before_after.py` (18 cases, every one as expected).** Mechanism: `docs/CONDITION_REVIEW.md` (sections 2 to 4).
+
+| Defect | Result | Evidence observed |
+|---|---|---|
+| 1 "Enforced" accepted on presence of a leaf | **Corrected** | Claims are exact structured conditions that must hold on every path (OR, nested, thresholds); re-checked on every read. A-or-B and 1,000-vs-1 cases: ESTABLISHED before, refused and UNRESOLVED now |
+| 2 Missing fact read as a negative fact | **Corrected** | "Not a member" with no record: ESTABLISHED before, UNRESOLVED now; ESTABLISHED only from the owner's recorded absence (new record type) |
+| 3 Calculators interpreting eligibility themselves | **Corrected** | One question, `Result.rule_applies`, for status, earnings, transfers and credits. A-or-B transfer now calculated; figure and "not" requirements no longer ignored; a blocked rate or credit no longer used because another rule gives the same benefit. 150 random condition shapes: status and calculators agree on every one |
+| 4 Date window read as activation | **Corrected** | Date claims cannot enforce an action; proposal entry for "Register by December 31, 2026" corrected |
+| 5 Ending a holding erased its past | **Corrected** | Card held January to May: March answer kept (was NOT_AVAILABLE) |
+| 6 Condition changes on rules that already answered | **Corrected** | First restriction on a past rule: declared correction or successor; removing the last reviewed restriction leaves a stale review that blocks |
+| Existing protections | **Kept** | All 412 earlier tests pass; 6 have a changed expectation or input, each marked; experiment 52 of 52; the comparison with `c3b96a9` still holds |
+| Mutation suite | **51 of 51 caught** | `scripts/mutation_check_safety.py` (25 before, 26 added) |
+| Real profiles | **Unchanged** | Every report for every profile on three dates is identical to `22bca1a`; `data/`, `profiles/`, `tables/` untouched |
+
+450 tests. Full record: `docs/commissions/results/2026-11-17-fable-foundation-safety-repair-RESULTS.md`.
+
 ## Capability status
 
 ### Complete

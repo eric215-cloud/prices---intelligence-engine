@@ -28,6 +28,8 @@ def record_kind(path):
             return "qualification"
         if len(parts) == 4 and parts[2] == "entitlements":
             return "entitlement"
+        if len(parts) == 4 and parts[2] == "absences":
+            return "absence"
     return None
 
 
@@ -215,6 +217,7 @@ def lint(store):
     sigs = {}
     governed_rules = {rid for e in ents.values() if e.get("kind") == "election" and isinstance(e.get("election"), dict)
                       for rid in e["election"].get("governs", [])}
+    review_ctx = {"entities": ents, "governed": governed_rules}
     for r in rules.values():
         p = store.path("rules", r["id"])
         if r["output"] not in ents:
@@ -227,7 +230,7 @@ def lint(store):
             for cat in unknown_categories(r, store.vocab):
                 err("UNKNOWN_CATEGORY", p, "earning category %r is not in vocab.json spend_categories; add it there first" % cat)
         # reviewed conditions (conditions.py): the record must be well formed; a text without a class is reported, and blocks
-        from .conditions import RESTRICTION_CLASSES, enforcers, texts, unclassified
+        from .conditions import RESTRICTION_CLASSES, item_issues, stale, texts, unclassified
         review = r.get("condition_review")
         if isinstance(review, dict):
             reviewers = store.vocab.get("promotion_reviewers") or []
@@ -242,9 +245,12 @@ def lint(store):
                     warn("STALE_CLASSIFICATION", p, "condition_review classifies a text that is no longer on the rule as a %s: %r. The rule "
                          "was edited after it was reviewed, so the review is set aside until a reviewer classifies it again (OP-14)"
                          % (kind.replace("_", " "), item.get("text")))
-                elif item.get("class") == "enforced" and item.get("enforced_by") not in enforcers(r, r["id"] in governed_rules):
-                    err("BAD_CLASSIFICATION", p, "%r is marked enforced by %r, which this rule does not have (it offers: %s)"
-                        % (item.get("text"), item.get("enforced_by"), ", ".join(sorted(enforcers(r, r["id"] in governed_rules))) or "nothing"))
+                elif item.get("class") == "enforced" and item_issues(r, item, review_ctx):
+                    err("BAD_CLASSIFICATION", p, "%r is marked enforced, but %s. Until a reviewer corrects it, it blocks (OP-14)"
+                        % (item.get("text"), "; ".join(item_issues(r, item, review_ctx))))
+            if stale(r) and not current:
+                warn("STALE_CLASSIFICATION", p, "every reviewed text was removed from the rule after review; it establishes nothing until a "
+                     "reviewer classifies it again (classify_conditions with an empty items list, OP-14)")
         if r["verification"]["status"] != "retired" and unclassified(r):
             warn("CONDITIONS_NOT_CLASSIFIED", p, "%d restriction(s) or open question(s) have no class from a reviewer, so nothing is "
                  "established through this rule until they do (classify_conditions, OP-14): %s"
@@ -319,6 +325,21 @@ def lint(store):
             continue
         prof = store.profile(name)
         seen = {}
+        for x in prof.absences.values():
+            p = store.path("absences", x["id"], name)
+            if x["entity"] not in ents:
+                err("UNKNOWN_REFERENCE", p, "entity %r does not exist" % x["entity"])
+            if ents.get(x["entity"], {}).get("kind") == "election":
+                err("BAD_DATA", p, "an election is decided per group; record the election that was made, not one that was not")
+            if not (x.get("confirmed_on") and x.get("confirmed_by")):
+                err("UNATTESTED_CONFIRMATION", p, "an absence is the owner's own statement and needs confirmed_on and confirmed_by")
+            if x.get("confirmed_by") == "synthetic" and not prof.meta["synthetic"]:
+                err("SYNTHETIC_IN_REAL_PROFILE", p, "synthetic confirmation in a non-synthetic profile")
+            if x.get("valid_from") and x.get("valid_to") and x["valid_to"] < x["valid_from"]:
+                err("BAD_DATES", p, "valid_to is before valid_from")
+            for h in prof.holdings.values():
+                if h["entity"] == x["entity"] and h["state"] != "withdrawn" and windows_overlap(h, x):
+                    warn("CONFLICTING_HOLDINGS", p, "says %s is not held, but holding %s covers some of the same dates" % (x["entity"], h["id"]))
         for h in prof.holdings.values():
             p = store.path("holdings", h["id"], name)
             if h["entity"] not in ents:

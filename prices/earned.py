@@ -354,7 +354,8 @@ def _benefit(store, prof, h, held, acct_note, rule, label, q, insts, as_of, flag
         elig, detail = ACTIVATION_REQUIRED, "eligible; the separate activation step is not recorded as done"
     else:
         elig, detail = EARNED_NOT_CONFIRMED, "eligible; not yet confirmed as present on the account"
-    blocked = blockers(rule)
+    from .conditions import context
+    blocked = blockers(rule, context(store))
     if blocked and elig in (ACTIVATION_REQUIRED, EARNED_NOT_CONFIRMED):
         # the threshold is met on the figures recorded, but a condition on who earns this is unchecked, open or unclassified
         elig, detail = UNRESOLVED, ("threshold reached, but eligibility is not established: "

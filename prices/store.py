@@ -33,12 +33,13 @@ def dumps(obj):
     return json.dumps(obj, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
 
-PERSONAL = ("holdings", "metrics", "qualifications", "entitlements")
+PERSONAL = ("holdings", "metrics", "qualifications", "entitlements", "absences")
 
 
 class Profile:
-    def __init__(self, name, meta, holdings, metrics, qualifications=None, entitlements=None):
+    def __init__(self, name, meta, holdings, metrics, qualifications=None, entitlements=None, absences=None):
         self.name, self.meta, self.holdings, self.metrics = name, meta, holdings, metrics
+        self.absences = absences or {}               # the owner's record that an entity is NOT held on given dates
         self.qualifications = qualifications or {}   # progress toward earned benefits, per account and cycle
         self.entitlements = entitlements or {}       # earned benefits actually on the account
 
@@ -131,7 +132,8 @@ class Store:
         mets = {v["id"]: v for p, v in self.files.items() if p.startswith(base + "metrics/")}
         qual = {v["id"]: v for p, v in self.files.items() if p.startswith(base + "qualifications/")}
         ents = {v["id"]: v for p, v in self.files.items() if p.startswith(base + "entitlements/")}
-        return Profile(name, meta, hold, mets, qual, ents)
+        absn = {v["id"]: v for p, v in self.files.items() if p.startswith(base + "absences/")}
+        return Profile(name, meta, hold, mets, qual, ents, absn)
 
     # ---------- paths ----------
     @staticmethod

@@ -57,6 +57,7 @@ ok &= run([sys.executable, "scripts/mutation_check_elections.py"], dst)
 # foundation safety correction: real content in a throwaway copy, the earlier commit side by side, and the guards
 ok &= run([sys.executable, "experiments/viability/run.py"], dst)
 ok &= run([sys.executable, "experiments/safety/before_after.py"], dst, dict(ENV, GIT_CONFIG_NOSYSTEM="1"))
+ok &= run([sys.executable, "experiments/safety/repair_before_after.py"], dst, dict(ENV, GIT_CONFIG_NOSYSTEM="1"))
 ok &= run([sys.executable, "scripts/mutation_check_safety.py"], dst)
 ok &= run(["git", "status", "--porcelain"], dst, dict(os.environ))   # the run must not have modified the checkout
 left = subprocess.run(["git", "status", "--porcelain"], cwd=dst, capture_output=True, text=True).stdout.strip()

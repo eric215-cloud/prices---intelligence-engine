@@ -154,11 +154,11 @@ class TestLiveRulesAwaitReview(unittest.TestCase):
         self.assertEqual(evaluate(self.s, "synthetic-demo", "2026-11-12").have("jal.miles"), ESTABLISHED)
 
     def test_the_proposal_covers_exactly_the_texts_now_on_the_rules(self):
-        from prices.conditions import review_issues, texts
+        from prices.conditions import context, review_issues, texts
         rules = self.proposal.load()
         self.assertEqual(sorted(rules), sorted(r["id"] for r in self.s.rules.values() if texts(r)))
         for rule_id, items in rules.items():
-            self.assertEqual(review_issues(self.s.rules[rule_id], items), [], rule_id)
+            self.assertEqual(review_issues(self.s.rules[rule_id], items, context(self.s)), [], rule_id)
 
     def test_the_proposal_refuses_to_run_on_the_project(self):
         with self.assertRaises(RuntimeError):

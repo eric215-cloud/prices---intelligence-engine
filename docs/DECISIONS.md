@@ -279,7 +279,7 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 **Why.** Before the correction the store reported a JAL award pathway as established although its rule says the account must be 60 days old. The cost of the default is visible and temporary: answers read UNRESOLVED until one review pass is done.
 
 ## D-59  `enforced` must name something the rule checks, and an edit after review sets the review aside
-**Decision.** `enforced_by` is validated against the rule: a positive leaf of `when`, its dates, its `earn` block, or a governing election. Adding a text leaves it unclassified; removing or rewording a classified text voids the whole record until a reviewer classifies the rule again. `revise_rule` cannot write the record and a candidate cannot carry one.
+**Superseded in part 2026-11-17 by D-62:** presence of a leaf is no longer enough. **Decision.** `enforced_by` is validated against the rule: a positive leaf of `when`, its dates, its `earn` block, or a governing election. Adding a text leaves it unclassified; removing or rewording a classified text voids the whole record until a reviewer classifies the rule again. `revise_rule` cannot write the record and a candidate cannot carry one.
 **Why.** Each is a way approval could otherwise appear without a reviewer: a claimed check that does not exist, a blocking sentence deleted by a routine edit, a review copied in with the content.
 
 ## D-60  An ordinary revision may not change a past answer; a correction is declared
@@ -290,6 +290,32 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 ## D-61  Retirement ends a rule; it does not erase it
 **Decision.** `retire_rule` takes `ended_on` and records the standing the rule had (`verification.retired_from`). The rule answers for dates up to `ended_on` and not after; it still counts for the duplicate check on those dates. `void: true` with a declared correction withdraws a rule from every date.
 **Why.** A retired rule used to disappear from every date, so retiring an ended offer changed the answer for the period when it was in force.
+
+## D-62  An enforcement claim is a structured condition that must hold on every path
+**Decision.** `enforced_by` lists claims (`{"holds"}`, `{"not"}`, `{"metric", "gte"}`, dates, earn fields, acquire, election). A claim is demonstrated only if every way the rule's `when` can be met satisfies it (`any` needs every alternative; a leaf must be the claim or stricter). The engine re-checks on every read; an undemonstrated item blocks. A restriction naming an action needs a claim that records the action; a figure claim must carry a number the text states. The old forms (`when:<id>`, `dates`, `earn`, `election`) are refused.
+**Alternatives considered.** Keep presence-based references and tighten them (still cannot express thresholds or OR). Parse restriction text into conditions (a guess presented as a check). Trust the reviewer's word (the commission rules it out).
+**Why.** Bradley and Astra reproduced two false positives under D-59: a restriction on A accepted on a rule that establishes through A OR B, and "at least 1,000" accepted against a leaf checking at least 1. On real content the same check found a Hyatt restriction claimed against one of three alternatives and three Chase "link to activate" restrictions claimed against the spend threshold.
+
+## D-63  A missing record is unknown; only a recorded absence proves "not held"
+**Decision.** `{"not": {"holds": X}}` is true only from the owner's recorded absence (`profiles/<p>/absences/`, op `set_absence`) with nothing that could make X held; false when X is established; otherwise unknown (UNRESOLVED). A contradiction between an absence and a holding relies on neither.
+**Alternatives considered.** Treat every missing positive fact as unknown too (would turn every unrecorded card into "possibly held" and erase NOT_AVAILABLE as a useful answer; not required by the defect). Infer absence from a "complete profile" flag (no such completeness is recorded).
+**Why.** Absence of a positive record was being read as proof of a negative.
+
+## D-64  Every calculator asks the engine about the specific rule it uses
+**Decision.** `Result.rule_applies(rule_id)` evaluates one rule's own condition (with its election gate, verification and blockers) at the solver's levels. Earnings, transfers and recurring credits use it; every calculation carries the answer as `eligibility`. CALCULATED remains arithmetic, with execution caveats listed.
+**Why.** The transfer calculator scanned positive leaves (wrong on OR, blind to figures and `not`); the earnings calculator and credits asked whether the OUTPUT was established, so a rate or allowance from a blocked rule was used because another rule gave the same benefit.
+
+## D-65  A date window is never evidence that an action was taken
+**Decision.** Date claims cannot enforce a restriction that names an action; the action must be in the rule's condition (an `action` entity), or the rule is an acquire rule, an election, or an earned benefit whose activation is required. The proposal entry for "Register by December 31, 2026" is corrected accordingly.
+**Why.** "Inside the window" was being reported as "activated".
+
+## D-66  Ending a holding keeps what was true while it was held
+**Decision.** `end_holding` records `ended_from`; an ended holding keeps that state for dates up to its `valid_to` (`engine.holding_state`, used by the engine, elections and credits). `ended_on` must lie within the holding's own dates. Withdrawn holdings still answer for no date.
+**Why.** A card held January to May lost its March answers once it was ended.
+
+## D-67  Condition changes on a rule that has already answered are corrections or successors, and stale reviews block
+**Decision.** Adding, removing or rewording a restriction on a rule with `valid_from` before today (or none) is `HISTORY_REWRITE` unless declared a correction; on a rule not yet started it is allowed. A review that classifies a text no longer on the rule is stale and blocks by itself, even when no text remains; `classify_conditions` accepts an empty list for that case.
+**Why.** The first restriction on an existing rule counted as a harmless "first record", and deleting the last reviewed restriction left the rule unrestricted and ESTABLISHED under a review of texts it no longer had.
 
 ## Limits of the safety correction (2026-11-17), stated plainly
 

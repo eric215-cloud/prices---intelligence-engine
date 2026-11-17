@@ -204,8 +204,10 @@ class TestRolesAndHolders(unittest.TestCase):
         self.assertEqual({m["card"] for m in matrix(s, D, "t")}, {"card.a"})
         self.assertEqual({m["card"] for m in matrix(s, D, "u")}, {"card.b"})
         # ending one person's card changes nothing for the other
+        # CHANGED 2026-11-17 (repair): ended_on is the last day the card was held, and an ended holding now keeps answering
+        # for its own days. Ending it ON the date asked about therefore changes nothing on that date; it ends the day before
         out = changes.stage(s, {"id": "cs", "op": "end_holding", "author": "m", "date": D, "reason": "r", "profile": "t", "target": "h-a",
-                                "data": {"ended_on": D}, "attestation": {"by": "Test Owner", "on": D, "statement": "closed"}})
+                                "data": {"ended_on": "2026-05-31"}, "attestation": {"by": "Test Owner", "on": D, "statement": "closed"}})
         self.assertTrue(out["ok"], out["errors"])
         self.assertEqual(list(out["impact"]), ["t"])
         self.assertEqual(evaluate(out["store"], "u", D).have("b.lounge"), ESTABLISHED)

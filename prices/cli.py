@@ -111,12 +111,17 @@ def cmd_explain(args):
         if o["conditions"]:
             print("  restrictions and open questions on %s, as a reviewer classed them (text is shown, not evaluated):" % o["chain"].get("via", "the rule"))
             for c in o["conditions"]:
-                label = "not classified" if c["class"] is None else c["class"].replace("_", " ") + (" by " + c["enforced_by"] if c["enforced_by"] else "")
+                by = c["enforced_by"]
+                by = json.dumps(by) if isinstance(by, (list, dict)) else by
+                label = "not classified" if c["class"] is None else c["class"].replace("_", " ") + (" by " + by if by else "")
                 print("    - [%s%s] %s" % (label, ": BLOCKS" if c["blocks"] else "", c["text"]))
+                for why in c.get("unproven") or []:
+                    print("        not demonstrated: " + why)
             if o["condition_review"]:
                 print("    classed by %s on %s" % (o["condition_review"]["by"], o["condition_review"]["on"]))
     via = store.rules.get(obj["chain"].get("via", ""), {})
-    obj["conditions"] = describe_conditions(via) if via else []
+    from .conditions import context as review_context
+    obj["conditions"] = describe_conditions(via, review_context(store)) if via else []
     obj["condition_review"] = {k: via["condition_review"][k] for k in ("by", "on")} if via.get("condition_review") else None
     obj["terms_not_evaluated"] = [c["text"] for c in obj["conditions"] if c["kind"] == "restriction" and c["class"] != "enforced"]
     _emit(args, obj, text)
