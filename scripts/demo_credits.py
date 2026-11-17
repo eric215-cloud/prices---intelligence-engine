@@ -90,6 +90,10 @@ sh("tables", "import", "--author", "junior maintainer", "--date", "2027-07-10", 
 print("\n(refused: a rule in force is never changed without naming the source. Nothing was applied.)")
 table("sources", "add the source that was re-read", add=[source("ev-demo-hotel-terms-2027-07", "Curated hotel credit: 500 per calendar year, 200 per booking, two-night minimum.")])
 table("credits", "name it in _evidence", change={"voyager.curated-hotel-credit": {"_evidence": "ev-demo-hotel-terms-2027-07"}})
+sh("tables", "import", "--author", "junior maintainer", "--date", "2027-07-10", expect=2)
+print("\n(refused again: changing recorded terms also changes the answers for past dates. If the issuer had CHANGED the terms, the old rule"
+      "\n would be ended and the new terms added from their date. Here the entry was wrong from the start, so it is declared a correction.)")
+table("credits", "declare the correction", change={"voyager.curated-hotel-credit": {"_action": "correct"}})
 sh("tables", "import", "--author", "junior maintainer", "--date", "2027-07-10")
 sh("credits", "--profile", ERIN, "--as-of", "2027-07-10", keep=HOTEL)
 print("\n--- the record as it was is kept (before-snapshot), and the change is in the log")

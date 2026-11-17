@@ -14,6 +14,7 @@ Foundation built 2026-11-12 by Claude Fable 5.2 (commissioning build). Relationa
 | F Portability | **Pass** | `scripts/verify_export.py`: export, unpack to an empty directory with a clean environment, run all tests, lint, status, goal and harness setup there |
 | G Lower-model operation | **Pass on one run of one model; otherwise unverified** | Claude Haiku 5.5, 4 tasks, 21/21 objective checks after one harness correction (20/21 before). Details and caveats in `successor_test/README.md`. Models weaker than this tier: **untested** |
 | H Practical query | **Pass on synthetic data** | Japan business-class report: 2 established capabilities, 1 conditional pathway, 1 unresolved lead, 3 external research tasks, 0 promotions, 0 availability. No prices or availability invented |
+| H after the safety correction (2026-11-17) | **Unresolved until reviewed** | The same report now lists 0 established and 0 conditional pathways: none of the rules behind them has a reviewer's classification. With the proposed classes applied in a copy: 1 established (ANA via Aeroplan); the JAL pathway stays unresolved (60-day account condition) |
 | I Circular dependency integrity | **Pass** | `tests/test_c_i_evidence_cycles.py`, 11 tests: cycles, self-loops, acquire loops, mutual retention, contradictory conditions, conflicting records, exclusion cycles |
 
 ### Relational foundation (2026-11-14) — all demonstrated on invented cards only
@@ -95,6 +96,24 @@ Full record: `docs/commissions/results/2026-11-15-fable-eng-02b-bilt-election-co
 
 358 automated tests from earlier commissions still pass unchanged; 382 in all. Run: `python3 -m unittest discover -s tests`.
 
+### Foundation safety correction (2026-11-17) — branch `dev/foundation-safety-correction`, from `exp/foundation-viability` at `c3b96a9`
+
+**Established and unresolved eligibility are now told apart by a reviewer's recorded class for every restriction and open question; a missing class blocks.** Description: `docs/CONDITION_REVIEW.md`. Before and after on real content: `experiments/safety/results/BEFORE_AFTER.md`.
+
+| Test | Result | Evidence observed |
+|---|---|---|
+| The known false positives | **Corrected** | United Silver 2027 on 6,100 PQP: ESTABLISHED before, UNRESOLVED now (reason shown: the open flight minimum). Sapphire Reserve welcome offer for a 2024 account: promotion as written is refused; once classed it is UNRESOLVED. `python3 experiments/safety/before_after.py` runs commit `c3b96a9` and this checkout side by side |
+| Correct eligibility remains | **Pass** | United Silver 2026 (flight minimum checked by the rule), Amex points to the ANA award via Aeroplan, nine Capital One transfers, usage-only card benefits: all still ESTABLISHED or CALCULATED. A clear "no" stays NOT_AVAILABLE |
+| Across kinds of content | **Pass** | `tests/test_t_safety.py`, 24 tests on invented data: card benefits, status by threshold, transfers, activation, spending thresholds, account eligibility; seven ways a review can fall short; the pipeline; history |
+| Real-content regression | **Pass** | `experiments/viability/run.py`: 52 checks (46 before; the checks that recorded defects now assert the corrected answers) |
+| Historical terms | **Corrected** | In-place change of a recorded term is refused unless declared a correction; retirement keeps the answers for earlier dates; dated successors as before |
+| Safeguards actually guarded | **Pass** | `scripts/mutation_check_safety.py`: 25 of 25 caught |
+| The project's records | **Untouched** | `data/`, `profiles/`, `tables/` byte-identical to `c3b96a9`; 113 candidates still proposed |
+| The project's answers | **Changed on purpose** | The nine verified rules have no classification yet, so 38 derived answers across the three profiles (three dates each) moved from ESTABLISHED or CONDITIONAL to UNRESOLVED. None moved up. A proposal for a reviewer is in `experiments/safety/live_rules_proposal.json` (OP-14) |
+| Existing tests | **8 of the 358 earlier tests have a changed expectation, each marked in the file** | Listed in the results record. None was weakened: each change replaces an expectation that encoded a defect (retirement erasing history; a new restriction establishing at once; live answers resting on unclassified text) or follows the rule that a correction is declared |
+
+412 tests. Full record: `docs/commissions/results/2026-11-17-fable-foundation-safety-correction-RESULTS.md`.
+
 ## Capability status
 
 ### Complete
@@ -155,10 +174,13 @@ Full record: `docs/commissions/results/2026-11-15-fable-eng-02b-bilt-election-co
 - A stale verified rule keeps applying (flagged). See decision D-08.
 - The successor harness was corrected once after seeing a result. Both evaluations are kept.
 
+- A reviewer's class for a restriction or open question is a judgement; the engine records it and cannot check it. Blocked benefits stay unresolved until the condition is modelled (account age, primary cardholder, new applicant and the like are not recorded anywhere).
+
 ## Recurring costs
 None are built in. No subscription, hosting or API is required to run, test, query or validate. The only ongoing cost is research: re-verifying rules before `review_by` and running discovery passes, which need a model with web search or a person's time. With 10 rules that is minutes per quarter. It grows in proportion to the number of rules kept, which is a reason to keep only rules connected to real holdings.
 
 ## Open items a person should decide
+0. **(Safety correction)** A promotion reviewer to classify the 27 restrictions and open questions on the nine verified rules (OP-14; proposal ready). Until then nothing is established through them.
 1. Spot-check the 10 rules, then remove "Commissioning build" from `promotion_reviewers` in `data/kb/vocab.json`.
 2. Reconcile and record the remaining holdings in `profiles/eric/` through owner attestations (OP-07).
 3. Choose where the repository lives.

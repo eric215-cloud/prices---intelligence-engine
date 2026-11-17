@@ -57,6 +57,9 @@ ok &= run([sys.executable, "scripts/demo_credits.py"], proj)
 ok &= run([sys.executable, "scripts/mutation_check_credits.py"], proj)
 ok &= run([sys.executable, "scripts/demo_elections.py"], proj)
 ok &= run([sys.executable, "scripts/mutation_check_elections.py"], proj)
+ok &= run([sys.executable, "experiments/viability/run.py"], proj)                 # real content, in a throwaway copy
+ok &= run([sys.executable, "experiments/safety/before_after.py"], proj)           # without git history only the AFTER column is checked
+ok &= run([sys.executable, "scripts/mutation_check_safety.py"], proj)
 print("zip: %s (%d bytes)" % (out, os.path.getsize(out)))
 print("TEST F:", ("PASS" if ok else "FAIL") + (" (mutation checks skipped)" if SKIP else ""))
 sys.exit(0 if ok else 1)

@@ -1,9 +1,0 @@
-{
-  "changeset": "cs-20261115-tbl-0c0455e5-02-add-entity",
-  "records": {
-    "data/kb/entities/benefit.voyager.dining-credit.json": {
-      "after": "c0e351436c971eaf",
-      "before": null
-    }
-  }
-}

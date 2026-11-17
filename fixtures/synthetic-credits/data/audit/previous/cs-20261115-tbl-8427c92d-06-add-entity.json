@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-tbl-8427c92d-06-add-entity",
+  "records": {
+    "data/kb/entities/benefit.voyager.traveler-fee-credit.json": {
+      "after": "0acd5319b2b6e8cb",
+      "before": null
+    }
+  }
+}

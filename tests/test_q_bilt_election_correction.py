@@ -22,6 +22,7 @@ import tempfile
 import unittest
 
 from util import H, ent, flag_codes, holding, make_store, rule
+from condition_classes import scratch_real
 from prices import changes
 from prices.elections import anniversary_window, before_anniversary, card_window
 from prices.engine import ESTABLISHED, NOT_AVAILABLE, UNRESOLVED, evaluate
@@ -104,7 +105,8 @@ class Live(unittest.TestCase):
         reviewer = Store.load(cls.tmp).vocab["promotion_reviewers"][0]
         out = changes.apply_many(cls.tmp, [
             {"id": "cs-20261115-scratch-q%d" % i, "op": "promote_candidate", "target": "c-cb.bilt-palladium." + k, "author": "test",
-             "date": "2026-11-15", "reason": "scratch copy only", "data": {"review_by": "2027-12-15"},
+             "date": "2026-11-15", "reason": "scratch copy only",
+             "data": {"review_by": "2027-12-15", "conditions": scratch_real(Store.load(cls.tmp).candidates["c-cb.bilt-palladium." + k], governed=True)},
              "attestation": {"by": reviewer, "on": "2026-11-15", "statement": "scratch copy only"}} for i, k in enumerate(FIVE)])
         assert out["ok"], out["errors"]
         for name, hs in PEOPLE.items():

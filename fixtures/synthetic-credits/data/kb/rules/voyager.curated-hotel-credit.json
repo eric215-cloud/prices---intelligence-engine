@@ -1,4 +1,15 @@
 {
+  "condition_review": {
+    "by": "Synthetic Reviewer",
+    "changeset": "cs-20261115-credit-01-promote-candidate",
+    "items": [
+      {
+        "class": "usage",
+        "text": "Prepaid bookings through the (invented) Northwind travel desk only"
+      }
+    ],
+    "on": "2026-11-15"
+  },
   "credit": {
     "amount": 500,
     "cycle": "calendar_year",

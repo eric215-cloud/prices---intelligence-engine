@@ -76,6 +76,7 @@ class TestMaintenance(unittest.TestCase):
         self.assertEqual(read_audit(self.root), [])
 
     def test_retire_rule_keeps_history_and_reports_downstream(self):
+        was = evaluate(Store.load(self.root), "t", "2026-01-01").have("gold")
         c = cs("cs-2", "retire_rule", target="r-gold", data={"ended_on": "2026-05-31"}, evidence=[ev("ev-3", "official", "P", D)])
         out = changes.apply(self.root, c)
         self.assertTrue(out["ok"], out["errors"])
@@ -85,7 +86,11 @@ class TestMaintenance(unittest.TestCase):
         s = Store.load(self.root)
         self.assertEqual(s.rules["r-gold"]["verification"]["status"], "retired")   # record preserved
         self.assertEqual(s.rules["r-gold"]["valid_to"], "2026-05-31")
-        self.assertEqual(evaluate(s, "t", "2026-01-01").have("gold"), NOT_AVAILABLE)
+        # CHANGED 2026-11-17 (safety correction): the relationship ended on 2026-05-31, so a question about 2026-01-01 keeps
+        # the answer it had. Before, a retired rule was dropped from every date and this line expected NOT_AVAILABLE.
+        self.assertEqual((was, evaluate(s, "t", "2026-01-01").have("gold")), (ESTABLISHED, ESTABLISHED))
+        self.assertEqual(evaluate(s, "t", "2026-06-01").have("gold"), NOT_AVAILABLE)
+        self.assertEqual(s.rules["r-gold"]["verification"]["retired_from"], "verified")
 
     def test_flag_rule_downgrades_and_flags_dependents(self):
         out = changes.apply(self.root, cs("cs-3", "flag_rule", target="r-gold", data={"open_questions": ["Terms page moved; is enrollment now required?"]}))
@@ -100,7 +105,13 @@ class TestMaintenance(unittest.TestCase):
         self.assertTrue(changes.apply(self.root, c)["ok"])
         s = Store.load(self.root)
         self.assertEqual(evaluate(s, "t", "2027-01-01").have("perk"), NOT_AVAILABLE)
-        self.assertEqual(evaluate(s, "t", D).have("perk"), ESTABLISHED)
+        # CHANGED 2026-11-17 (safety correction): the restriction just added has no class from a reviewer, so nothing is
+        # established through the rule until one records it. Before, this line expected ESTABLISHED straight away.
+        self.assertEqual(evaluate(s, "t", D).have("perk"), UNRESOLVED)
+        ok = changes.apply(self.root, cs("cs-4b", "classify_conditions", target="r-perk", attestation=OWNER,
+                                         data={"items": [{"text": "Ends with the 2026 programme year", "class": "enforced", "enforced_by": "dates"}]}))
+        self.assertTrue(ok["ok"], ok["errors"])
+        self.assertEqual(evaluate(Store.load(self.root), "t", D).have("perk"), ESTABLISHED)
 
     def test_candidate_is_quarantined_until_promoted(self):
         self.assertTrue(changes.apply(self.root, cs("cs-5", "add_candidate", data={"candidate": candidate()}))["ok"])

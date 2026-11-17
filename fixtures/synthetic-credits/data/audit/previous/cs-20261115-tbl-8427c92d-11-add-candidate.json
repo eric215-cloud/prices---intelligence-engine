@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-tbl-8427c92d-11-add-candidate",
+  "records": {
+    "data/candidates/c-voyager.ride-credit.json": {
+      "after": "efa56b0aa35925aa",
+      "before": null
+    }
+  }
+}

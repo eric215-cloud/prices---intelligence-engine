@@ -1,0 +1,48 @@
+{
+  "changeset": "cs-20261115-tbl-8427c92d-15-revise-rule",
+  "records": {
+    "data/kb/evidence/ev-syn-voyager-credit-terms.json": {
+      "after": "b72f1386acf59e67",
+      "before": null
+    },
+    "data/kb/rules/voyager.travel-credit.json": {
+      "after": "8ca1ae7b48c282e3",
+      "before": {
+        "condition_review": {
+          "by": "Synthetic Reviewer",
+          "changeset": "cs-20261114-fix-04-promote-candidate",
+          "items": [
+            {
+              "class": "usage",
+              "text": "Travel purchases only"
+            },
+            {
+              "class": "usage",
+              "text": "Resets on the account anniversary"
+            }
+          ],
+          "on": "2026-11-14"
+        },
+        "evidence": [
+          "ev-syn-voyager-guide"
+        ],
+        "id": "voyager.travel-credit",
+        "kind": "grants",
+        "output": "benefit.voyager.travel-credit",
+        "restrictions": [
+          "Travel purchases only",
+          "Resets on the account anniversary"
+        ],
+        "summary": "200 annual travel credit per cardmember year.",
+        "verification": {
+          "last_verified": "2026-11-14",
+          "review_by": "2027-05-14",
+          "status": "verified"
+        },
+        "when": {
+          "holds": "card.northwind-voyager"
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,15 @@
 {
+  "condition_review": {
+    "by": "Synthetic Reviewer",
+    "changeset": "cs-20261115-credit-04-promote-candidate",
+    "items": [
+      {
+        "class": "usage",
+        "text": "The four years run from the date the credit was last applied"
+      }
+    ],
+    "on": "2026-11-15"
+  },
   "credit": {
     "amount": 120,
     "anchor": "last_use",

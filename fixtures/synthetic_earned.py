@@ -34,6 +34,7 @@ sys.path.insert(0, HERE)
 import synthetic_cards                       # noqa: E402
 from prices import changes, tables           # noqa: E402
 from prices.store import dumps               # noqa: E402
+from condition_classes import invented                  # noqa: E402
 
 CARD, ACCOUNT, MEASURE = "card.northwind-voyager", "h-card-northwind-voyager", "voyager.qualifying-spend"
 AUTHOR, REVIEWER = "fixture author (synthetic)", "Synthetic Reviewer"
@@ -119,7 +120,7 @@ def build(dst):
         cand = {"id": "c-" + r["id"], "status": "proposed", "created_on": "2026-11-14", "proposed_rule": r, "evidence": [SOURCE],
                 "search_path": ["fixture"], "open_questions": []}
         b.apply("2026-11-14", "add_candidate", data={"candidate": cand})
-        b.apply("2026-11-14", "promote_candidate", target=cand["id"], data={"review_by": "2027-11-14"}, attestation=review)
+        b.apply("2026-11-14", "promote_candidate", target=cand["id"], data={"review_by": "2027-11-14", "conditions": invented(cand)}, attestation=review)
     # ---- two more invented people, each with their own Voyager account
     for person in ("synthetic-casey", "synthetic-devon"):
         path = os.path.join(dst, "profiles", person, "profile.json")

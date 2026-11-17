@@ -1,8 +1,7 @@
 {
  "batch1_amendments": {
   "credit ok": 7,
-  "earning ok": 2,
-  "unchecked ok": 10
+  "earning ok": 2
  },
  "batch2": {
   "by_gap": {
@@ -25,6 +24,7 @@
    "data-workaround": 9
   },
   "changeset_fields_per_record": 25.1,
+  "classes_recorded_per_record": 2.0,
   "entities": 23,
   "fully_captured": 5,
   "fully_captured_by_data_alone": 5,
@@ -44,6 +44,7 @@
    "accepted": true,
    "attempts": 2,
    "changeset_fields": 27,
+   "classes_recorded": 2,
    "first_error": "['BAD_EARN_SHAPE: data/candidates/c-hyatt.earn-discoverist-nights.json: an earns rule is exactly: when {\"holds\": <card>} -> output <benefit or status>']",
    "mechanism": "programme status by threshold, with alternative measures",
    "promoted": true,
@@ -54,6 +55,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 27,
+   "classes_recorded": 2,
    "first_error": null,
    "mechanism": "programme status by threshold, with alternative measures",
    "promoted": true,
@@ -64,6 +66,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 27,
+   "classes_recorded": 2,
    "first_error": null,
    "mechanism": "programme status by threshold, with alternative measures",
    "promoted": true,
@@ -74,6 +77,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 25,
+   "classes_recorded": 2,
    "first_error": null,
    "mechanism": "threshold reward with a member's choice of award",
    "promoted": true,
@@ -84,6 +88,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 23,
+   "classes_recorded": 3,
    "first_error": null,
    "mechanism": "transfer with a published ratio",
    "promoted": true,
@@ -94,6 +99,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 23,
+   "classes_recorded": 3,
    "first_error": null,
    "mechanism": "transfer with a published ratio",
    "promoted": true,
@@ -104,6 +110,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 24,
+   "classes_recorded": 4,
    "first_error": null,
    "mechanism": "transfer with an eligibility restriction",
    "promoted": true,
@@ -114,6 +121,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 23,
+   "classes_recorded": 3,
    "first_error": null,
    "mechanism": "transfer with a published ratio",
    "promoted": true,
@@ -124,6 +132,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 23,
+   "classes_recorded": 3,
    "first_error": null,
    "mechanism": "transfer with a published ratio",
    "promoted": true,
@@ -134,6 +143,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 23,
+   "classes_recorded": 3,
    "first_error": null,
    "mechanism": "transfer with a published ratio",
    "promoted": true,
@@ -144,6 +154,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 23,
+   "classes_recorded": 3,
    "first_error": null,
    "mechanism": "transfer with a published ratio",
    "promoted": true,
@@ -154,6 +165,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 23,
+   "classes_recorded": 3,
    "first_error": null,
    "mechanism": "transfer with a published ratio",
    "promoted": true,
@@ -164,6 +176,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 23,
+   "classes_recorded": 3,
    "first_error": null,
    "mechanism": "transfer with a published ratio",
    "promoted": true,
@@ -174,6 +187,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 23,
+   "classes_recorded": 3,
    "first_error": null,
    "mechanism": "transfer with a published ratio",
    "promoted": true,
@@ -184,6 +198,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 34,
+   "classes_recorded": 1,
    "first_error": null,
    "mechanism": "airline status by a compound threshold (two measures, or one)",
    "promoted": true,
@@ -194,6 +209,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 34,
+   "classes_recorded": 1,
    "first_error": null,
    "mechanism": "airline status by a compound threshold (two measures, or one)",
    "promoted": true,
@@ -204,6 +220,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 34,
+   "classes_recorded": 1,
    "first_error": null,
    "mechanism": "airline status by a compound threshold (two measures, or one)",
    "promoted": true,
@@ -214,6 +231,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 34,
+   "classes_recorded": 1,
    "first_error": null,
    "mechanism": "airline status by a compound threshold (two measures, or one)",
    "promoted": true,
@@ -224,6 +242,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 19,
+   "classes_recorded": 0,
    "first_error": null,
    "mechanism": "a grant of qualifying points that depends on status held",
    "promoted": true,
@@ -234,6 +253,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 17,
+   "classes_recorded": 1,
    "first_error": null,
    "mechanism": "an earning formula",
    "promoted": true,
@@ -244,6 +264,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 38,
+   "classes_recorded": 2,
    "first_error": null,
    "mechanism": "card earning rates, incl. portal",
    "promoted": true,
@@ -254,6 +275,7 @@
    "accepted": true,
    "attempts": 2,
    "changeset_fields": 26,
+   "classes_recorded": 2,
    "first_error": "[\"SCHEMA: $.proposed_rule.credit: missing required field 'cycle'\"]",
    "mechanism": "recurring credit, cycle not stated by the source",
    "promoted": true,
@@ -264,6 +286,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 25,
+   "classes_recorded": 1,
    "first_error": null,
    "mechanism": "recurring grant of points on the account anniversary",
    "promoted": true,
@@ -274,6 +297,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 22,
+   "classes_recorded": 1,
    "first_error": null,
    "mechanism": "recurring credit, multi-year",
    "promoted": true,
@@ -284,6 +308,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 26,
+   "classes_recorded": 2,
    "first_error": null,
    "mechanism": "welcome offer with eligibility restrictions",
    "promoted": true,
@@ -294,6 +319,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 21,
+   "classes_recorded": 4,
    "first_error": null,
    "mechanism": "card benefit with usage terms",
    "promoted": true,
@@ -304,6 +330,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 20,
+   "classes_recorded": 0,
    "first_error": null,
    "mechanism": "membership acquired by enrolment",
    "promoted": true,
@@ -314,6 +341,7 @@
    "accepted": true,
    "attempts": 1,
    "changeset_fields": 17,
+   "classes_recorded": 0,
    "first_error": null,
    "mechanism": "card gives access to a transferable currency",
    "promoted": true,
@@ -461,23 +489,33 @@
  },
  "checks": [
   {
-   "check": "0.0 the evidence policy holds on real content: a candidate with one secondary source cannot be promoted, even in the copy",
-   "detail": "c-ana-business-award-via-ana-miles",
-   "ok": true
-  },
-  {
    "check": "0.1 the restriction classification covers every restriction (124 strings on the 73 real non-transfer candidates)",
    "detail": "{'U': 68, 'G': 24, 'M': 9, 'g': 12, 'T': 11}",
    "ok": true
   },
   {
-   "check": "0.2 BASELINE DEFECT reproduced: an account opened in 2024 is shown the new-applicant welcome offer as ESTABLISHED",
+   "check": "0.2 NO SILENT APPROVAL: a real candidate that states any restriction or open question is refused when no class is recorded for each; only candidates that state none are promoted that way",
+   "detail": "58 refused of 59",
+   "ok": true
+  },
+  {
+   "check": "0.3 AFTER: the new-applicant welcome offer and the IHG Platinum 'benefit' are not reported for a 2024 account (before the correction both were ESTABLISHED on text nothing checked)",
    "detail": "",
    "ok": true
   },
   {
-   "check": "0.3 BASELINE DEFECT reproduced: IHG Platinum 'benefit' ESTABLISHED while the status itself still needs enrolment",
+   "check": "0.4 AFTER: the verified rules, not yet classified by a reviewer, establish nothing: Aeroplan points from Amex points and the Japan award built on them are UNRESOLVED",
    "detail": "",
+   "ok": true
+  },
+  {
+   "check": "0.5 LIMIT kept visible: the class is the reviewer's word. Promoted with 'new applicants only' recorded as a usage term, the welcome offer IS established for the 2024 account; the record names who classed it so",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "0.0 the evidence policy holds on real content: a candidate with one secondary source cannot be promoted, even in the copy and even with every condition classified",
+   "detail": "c-ana-business-award-via-ana-miles",
    "ok": true
   },
   {
@@ -486,12 +524,12 @@
    "ok": true
   },
   {
-   "check": "1.1 EVALUATED chain: Marriott Titanium -> JAL Crystal -> oneworld Ruby is CONDITIONAL (an action is needed), not established",
-   "detail": "{'jal.crystal': 'CONDITIONAL', 'oneworld.ruby': 'CONDITIONAL', 'aeroplan.25k': 'CONDITIONAL', 'aeroplan.points': 'ESTABLISHED', 'cap.japan-business.ana-via-aeroplan': 'ESTABLISHED', 'benefit.csr.public-welcome-offer': 'UNRESOLVED', 'benefit.csr.ihg-platinum-elite-status': 'UNRESOLVED', 'ihg.platinum': 'UNRESOLVED', 'benefit.csr.annual-travel-credit-300': 'ESTABLISHED', 'benefit.csr.trip-delay-reimbursement': 'ESTABLISHED', 'hyatt.explorist': 'NOT_AVAILABLE'}",
+   "check": "1.1 EVALUATED chain: Marriott Titanium -> JAL Crystal -> oneworld Ruby is UNRESOLVED: Crystal depends on FLY ON Points the rule does not check, so the link alone is not reported as enough",
+   "detail": "{'jal.crystal': 'UNRESOLVED', 'oneworld.ruby': 'UNRESOLVED', 'aeroplan.25k': 'UNRESOLVED', 'aeroplan.points': 'ESTABLISHED', 'cap.japan-business.ana-via-aeroplan': 'ESTABLISHED', 'benefit.csr.public-welcome-offer': 'UNRESOLVED', 'benefit.csr.ihg-platinum-elite-status': 'UNRESOLVED', 'ihg.platinum': 'UNRESOLVED', 'benefit.csr.annual-travel-credit-300': 'ESTABLISHED', 'benefit.csr.trip-delay-reimbursement': 'ESTABLISHED', 'hyatt.explorist': 'NOT_AVAILABLE'}",
    "ok": true
   },
   {
-   "check": "1.2 EVALUATED chain: Amex points -> Aeroplan points -> ANA business award to Japan is ESTABLISHED",
+   "check": "1.2 EVALUATED chain, unaffected: Amex points -> Aeroplan points -> ANA business award to Japan stays ESTABLISHED (its restrictions are usage terms and its open questions are about price and evidence, all classed so)",
    "detail": "",
    "ok": true
   },
@@ -621,8 +659,8 @@
    "ok": true
   },
   {
-   "check": "2.8 DECLINED: Choice Privileges is not calculated: 'U.S.-based accounts only' is not checked",
-   "detail": "",
+   "check": "2.8 DECLINED: Choice Privileges is not calculated: 'U.S.-based accounts only' is a condition on the account that nothing checks; the other nine transfers, whose card requirement is met by holding the miles, are unaffected",
+   "detail": "{'accor.points': 'CALCULATED', 'aeroplan.points': 'CALCULATED', 'choice.points': 'NOT_CALCULATED', 'emirates.skywards': 'CALCULATED', 'flyingblue.miles': 'CALCULATED', 'iprefer.points': 'CALCULATED', 'jal.miles': 'CALCULATED', 'jetblue.points': 'CALCULATED', 'krisflyer.miles': 'CALCULATED', 'wyndham.points': 'CALCULATED'}",
    "ok": true
   },
   {
@@ -651,7 +689,17 @@
    "ok": true
   },
   {
-   "check": "3.4 ... and 6,100 PQP is Silver through the 2027 rule",
+   "check": "3.4 ... and 6,100 PQP is NOT reported as Silver: it is UNRESOLVED, and the reason given is the open question about the minimum of United-operated flights (this check expected ESTABLISHED before the safety correction)",
+   "detail": "UNRESOLVED",
+   "ok": true
+  },
+  {
+   "check": "3.4b ... while a clear 'no' stays a 'no': 5,400 PQP on 2027-10-01 is NOT_AVAILABLE, not UNRESOLVED",
+   "detail": "",
+   "ok": true
+  },
+  {
+   "check": "3.4c ... and the 2026 answer, whose flight minimum the rule checks, is still ESTABLISHED",
    "detail": "",
    "ok": true
   },
@@ -661,13 +709,13 @@
    "ok": true
   },
   {
-   "check": "3.6 DEFECT reproduced: revising a term in place rewrites the answer for a date BEFORE the change (1,200 becomes 800 for 2026-11-16)",
-   "detail": "1200.0 -> 800.0",
+   "check": "3.6 HISTORY PROTECTED: revising a term in place is refused (HISTORY_REWRITE) and the answer for 2026-11-16 is unchanged; before the safety correction it was accepted and 1,200 became 800 for a date before the change",
+   "detail": "False 1200.0",
    "ok": true
   },
   {
-   "check": "3.7 the audit trail holds the record as it was, and the revision can be undone exactly",
-   "detail": "",
+   "check": "3.7 a DECLARED correction is the only way to change a past answer: it is accepted (1,200 becomes 800), the declaration and the record as it was are kept in the audit trail, and it can be undone exactly",
+   "detail": "True True True 800.0",
    "ok": true
   },
   {
@@ -686,6 +734,16 @@
    "ok": true
   },
   {
+   "check": "3.11 RETIREMENT KEEPS HISTORY: a rule retired as ended on 2026-11-10 still answers for 2026-11-01 ($60 of Lyft = 300 points) and no longer for 2026-11-16 (60, the catch-all rate); before the safety correction retiring it erased both",
+   "detail": "(300.0, 300.0) 300.0 60.0",
+   "ok": true
+  },
+  {
+   "check": "3.12 withdrawing a rule from EVERY date (it was never true) is refused unless it is declared as a correction",
+   "detail": "",
+   "ok": true
+  },
+  {
    "check": "3.10 the copy is sound after every maintenance step (lint: no errors)",
    "detail": "",
    "ok": true
@@ -697,17 +755,6 @@
   "schema+code": 20
  },
  "phase0": {
-  "established_despite_gate": [
-   "benefit.csr.apple-tv-apple-music",
-   "benefit.csr.doordash-dashpass-and-promos",
-   "benefit.csr.ihg-platinum-elite-status",
-   "benefit.csr.lyft-in-app-credit-120",
-   "benefit.csr.priority-pass-select",
-   "benefit.csr.public-welcome-offer",
-   "benefit.csr.sapphire-lounge-by-the-club",
-   "benefit.csr.spend-75k-unlock-suite",
-   "benefit.csr.stubhub-viagogo-credit-300"
-  ],
   "gates": {
    "aligned": true,
    "candidates": 73,
@@ -763,7 +810,70 @@
     "csr.acquire-ihg-platinum"
    ]
   },
-  "promoted": 58
+  "promoted_without_conditions": [
+   "cand-csr-grants-chase-ur"
+  ],
+  "refused_unclassified": [
+   "c-ana-business-award-via-ana-miles",
+   "c-baseline.visa-inf.concierge",
+   "c-baseline.visa-inf.luxury-hotel-collection",
+   "c-baseline.visa-inf.secondary-auto-cdw",
+   "c-cb.csr.air-canada-maple-leaf-lounge",
+   "c-cb.csr.annual-travel-credit-300",
+   "c-cb.csr.apple-tv-apple-music",
+   "c-cb.csr.baggage-delay-lost-luggage",
+   "c-cb.csr.category-earning-structure",
+   "c-cb.csr.doordash-dashpass-and-promos",
+   "c-cb.csr.emergency-evacuation-medical",
+   "c-cb.csr.exclude-secondary-cdw",
+   "c-cb.csr.exclusive-tables-dining-credit-300",
+   "c-cb.csr.ihg-platinum-elite-status",
+   "c-cb.csr.lyft-5x-multiplier",
+   "c-cb.csr.lyft-in-app-credit-120",
+   "c-cb.csr.peloton-credit-and-10x",
+   "c-cb.csr.points-boost-portal-redemption",
+   "c-cb.csr.primary-auto-rental-cdw",
+   "c-cb.csr.priority-pass-select",
+   "c-cb.csr.public-welcome-offer",
+   "c-cb.csr.purchase-return-extended-warranty",
+   "c-cb.csr.reserve-travel-designers",
+   "c-cb.csr.sapphire-lounge-by-the-club",
+   "c-cb.csr.select-hotel-credit-250-2026",
+   "c-cb.csr.spend-75k-unlock-suite",
+   "c-cb.csr.stubhub-viagogo-credit-300",
+   "c-cb.csr.the-edit-hotel-credit-500",
+   "c-cb.csr.transfer-partner-access",
+   "c-cb.csr.trip-cancellation-interruption",
+   "c-cb.csr.trip-delay-reimbursement",
+   "c-cb.csr.trusted-traveler-credit-120",
+   "c-cb.csr.visa-inf-concierge",
+   "c-cb.csr.visa-inf-luxury-hotel-collection",
+   "c-united-silver-via-marriott-top-tier",
+   "cand-csr-acquire-ihg-platinum",
+   "cand-csr-acquire-priority-pass-select",
+   "cand-csr-earn-hyatt-explorist-75k",
+   "cand-csr-earn-ihg-diamond-75k",
+   "cand-csr-earn-shops-at-chase-credit-75k",
+   "cand-csr-earn-southwest-a-list-75k",
+   "cand-csr-earn-southwest-chase-travel-credit-75k",
+   "cand-csr-grants-air-canada-lounge-access",
+   "cand-csr-grants-sapphire-lounge-access",
+   "cand-csr-transfer-aerlingus",
+   "cand-csr-transfer-aeroplan",
+   "cand-csr-transfer-ba",
+   "cand-csr-transfer-flyingblue",
+   "cand-csr-transfer-hyatt",
+   "cand-csr-transfer-iberia",
+   "cand-csr-transfer-ihg",
+   "cand-csr-transfer-jetblue",
+   "cand-csr-transfer-krisflyer",
+   "cand-csr-transfer-marriott",
+   "cand-csr-transfer-southwest",
+   "cand-csr-transfer-united",
+   "cand-csr-transfer-virgin-atlantic",
+   "cand-csr-transfer-wyndham"
+  ],
+  "selected": 59
  },
  "scope": {
   "reusable": 23

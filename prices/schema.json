@@ -237,6 +237,7 @@
       "properties": {
         "status": {"enum": ["verified", "unverified", "retired"]},
         "last_verified": {"$ref": "#/$defs/date"},
+        "retired_from": {"enum": ["verified", "unverified"], "x-doc": "Set by retire_rule when the relationship ENDED on a date: the status the rule had. The rule keeps answering, with that status, for dates up to its valid_to. Absent on a retired rule: it was withdrawn as never true and answers for no date."},
         "review_by": {"$ref": "#/$defs/date"}
       }
     },
@@ -251,7 +252,6 @@
         "when": {"$ref": "#/$defs/condition"},
         "summary": {"$ref": "#/$defs/text"},
         "superseded_by": {"$ref": "#/$defs/id"},
-        "unchecked": {"type": "array", "items": {"$ref": "#/$defs/text"}, "x-doc": "Conditions on WHO has this, stated by the source, that `when` does not check (new applicants only, enrollment required). While any is listed the engine never establishes the output through this rule: it stays UNRESOLVED with these texts as the reason. Usage terms (how the benefit is used) stay in `restrictions`."},
         "earning": {"$ref": "#/$defs/earning"},
         "earn": {"$ref": "#/$defs/earn"},
         "credit": {"$ref": "#/$defs/credit"},
@@ -264,7 +264,18 @@
         "open_questions": {"type": "array", "items": {"type": "string"}},
         "value_note": {"type": "string"},
         "evidence": {"type": "array", "items": {"$ref": "#/$defs/id"}},
-        "verification": {"$ref": "#/$defs/verification"}
+        "verification": {"$ref": "#/$defs/verification"},
+        "condition_review": {"$ref": "#/$defs/condition_review"}
+      }
+    },
+    "condition_review": {
+      "x-doc": "A reviewer's classification of every restriction and open question on the rule (prices/conditions.py). Written only by promote_candidate and classify_conditions. A text with no class here is never relied on.",
+      "type": "object", "additionalProperties": false, "required": ["by", "on", "items"],
+      "properties": {
+        "by": {"type": "string"}, "on": {"$ref": "#/$defs/date"}, "changeset": {"type": "string"},
+        "items": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["text", "class"],
+                  "properties": {"text": {"type": "string"}, "class": {"enum": ["enforced", "unchecked", "usage", "affects_eligibility", "informational"]},
+                                 "enforced_by": {"type": "string"}, "note": {"type": "string"}}}}
       }
     },
 
@@ -350,7 +361,6 @@
             "when": {"$ref": "#/$defs/condition"},
             "summary": {"$ref": "#/$defs/text"},
             "superseded_by": {"$ref": "#/$defs/id"},
-            "unchecked": {"type": "array", "items": {"$ref": "#/$defs/text"}, "x-doc": "Conditions on WHO has this, stated by the source, that `when` does not check (new applicants only, enrollment required). While any is listed the engine never establishes the output through this rule: it stays UNRESOLVED with these texts as the reason. Usage terms (how the benefit is used) stay in `restrictions`."},
             "earning": {"$ref": "#/$defs/earning"},
             "earn": {"$ref": "#/$defs/earn"},
             "credit": {"$ref": "#/$defs/credit"},
@@ -423,7 +433,7 @@
                         "add_entity", "revise_entity", "add_candidate", "promote_candidate", "reject_candidate",
                         "revert_changeset",
                         "set_holding", "end_holding", "set_metric",
-                        "record_progress", "record_entitlement", "revise_entitlement", "record_usage", "correct_entry", "set_credit_terms",
+                        "record_progress", "record_entitlement", "revise_entitlement", "record_usage", "correct_entry", "set_credit_terms", "classify_conditions",
                         "record_discovery_run", "add_observation", "prune_observations"]},
         "author": {"$ref": "#/$defs/text"},
         "date": {"$ref": "#/$defs/date"},

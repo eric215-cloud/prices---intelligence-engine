@@ -2,6 +2,11 @@
 
 Nothing here writes to the project's own data/, profiles/ or tables/. Real candidates are promoted ONLY in the
 copy, by the first listed reviewer, with a statement that says it is an experiment and not a content review.
+
+Since the safety correction (2026-11-17) a promotion must record a class for every restriction and open question
+(prices/conditions.py). In the copy those classes are engineering's reading: restriction_classes.json for the real
+candidates, the `condition_classes` map of a sheet for its records, and experiments/safety/live_rules_proposal.json
+for the rules already verified in the store. None of it is a content review.
 """
 import json
 import os
@@ -13,9 +18,13 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, ROOT)
+sys.path.insert(1, os.path.join(ROOT, "fixtures"))
+sys.path.insert(1, os.path.join(ROOT, "experiments", "safety"))
 
 from prices import changes                      # noqa: E402
 from prices.store import Store                  # noqa: E402
+from condition_classes import scratch_real      # noqa: E402
+import proposal                                 # noqa: E402
 
 TODAY = "2026-11-16"
 AUTHOR = "viability experiment (scratch copy)"
@@ -30,7 +39,7 @@ def load(name):
 class Lab:
     """A scratch copy of the live store, plus a log of every pipeline operation attempted in it."""
 
-    def __init__(self, keep=None):
+    def __init__(self, keep=None, classify_live=True):
         self.root = keep or tempfile.mkdtemp(prefix="prices-viability-")
         for sub in ("data", "profiles", "tables"):
             dst = os.path.join(self.root, sub)
@@ -38,6 +47,8 @@ class Lab:
             shutil.copytree(os.path.join(ROOT, sub), dst)
         self.reviewer = self.store().vocab["promotion_reviewers"][0]
         self.log, self.n = [], 0
+        if classify_live:           # the verified rules predate condition review: apply the proposal, in the copy only
+            proposal.apply_to_copy(self.root, TODAY)
 
     def store(self):
         return Store.load(self.root)
@@ -56,13 +67,24 @@ class Lab:
     def attest(self):
         return {"by": self.reviewer, "on": TODAY, "statement": STATEMENT}
 
-    def promote(self, cand_id, batch, record=None):
-        """Promote a candidate in the scratch copy. Open questions are accepted explicitly and stay on the rule."""
+    def promote(self, cand_id, batch, record=None, conditions=None):
+        """Promote a candidate in the scratch copy, recording a class for each of its restrictions and open questions.
+
+        `conditions` are the items to record. Left out, they come from engineering's reading of the REAL candidates
+        (restriction_classes.json); a candidate that file does not cover cannot be promoted this way."""
+        c = self.store().candidates[cand_id]
+        data = {"review_by": "2027-11-16", "conditions": scratch_real(c) if conditions is None else conditions}
+        if c["open_questions"]:
+            data["accept_open_questions"] = True
+        return self.apply("promote_candidate", batch, record or cand_id, target=cand_id, data=data, attestation=self.attest())
+
+    def promote_bare(self, cand_id, batch):
+        """The promotion as it was before the safety correction: no class recorded for anything."""
         c = self.store().candidates[cand_id]
         data = {"review_by": "2027-11-16"}
         if c["open_questions"]:
             data["accept_open_questions"] = True
-        return self.apply("promote_candidate", batch, record or cand_id, target=cand_id, data=data, attestation=self.attest())
+        return self.apply("promote_candidate", batch, cand_id, target=cand_id, data=data, attestation=self.attest())
 
     def evidence_of(self, rule_id):
         s = self.store()
@@ -114,6 +136,18 @@ class Lab:
     def lint_errors(self):
         code, text = self.cli("lint")
         return [ln for ln in text.splitlines() if ln.startswith("ERROR")]
+
+
+def items(rule, questions, classes):
+    """Classification items for a sheet record: {text: class} or {text: {"class": ..., "enforced_by": ...}} -> items.
+
+    A text the map does not mention gets no item, so the pipeline refuses the promotion: nothing is defaulted."""
+    out = []
+    for text in list(rule.get("restrictions") or []) + list(questions or []):
+        if text in classes:
+            given = classes[text]
+            out.append(dict({"text": text}, **(given if isinstance(given, dict) else {"class": given})))
+    return out
 
 
 def _fields(obj):

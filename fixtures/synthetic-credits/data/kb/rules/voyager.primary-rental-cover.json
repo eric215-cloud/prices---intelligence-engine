@@ -1,4 +1,15 @@
 {
+  "condition_review": {
+    "by": "Synthetic Reviewer",
+    "changeset": "cs-20261114-fix-06-promote-candidate",
+    "items": [
+      {
+        "class": "usage",
+        "text": "Rentals up to 31 days"
+      }
+    ],
+    "on": "2026-11-14"
+  },
   "evidence": [
     "ev-syn-voyager-guide"
   ],

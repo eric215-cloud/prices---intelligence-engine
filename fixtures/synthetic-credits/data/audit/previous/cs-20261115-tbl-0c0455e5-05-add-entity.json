@@ -1,9 +1,0 @@
-{
-  "changeset": "cs-20261115-tbl-0c0455e5-05-add-entity",
-  "records": {
-    "data/kb/entities/benefit.voyager.streaming-credit.json": {
-      "after": "ab81570e22672b8b",
-      "before": null
-    }
-  }
-}

@@ -233,7 +233,9 @@ def _from_last_use(c, d, holding, uses):
 def offer(rule, d):
     """Is the published offer in effect on d?  (state, text)"""
     vf, vt = to_date(rule.get("valid_from")), to_date(rule.get("valid_to"))
-    if rule.get("verification", {}).get("status") == "retired":
+    v = rule.get("verification", {})
+    if v.get("status") == "retired" and not (v.get("retired_from") and vt is not None and d <= vt):
+        # withdrawn as never true, or ended before this date. A rule retired because the offer ENDED still answers for earlier dates
         return "ENDED", "the rule is retired" + (" (ended %s)" % vt if vt else "")
     if vf is not None and d < vf:
         return "NOT_YET_EFFECTIVE", "the offer starts on %s" % vf

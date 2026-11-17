@@ -18,6 +18,8 @@ import sys
 import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path[:0] = [ROOT, os.path.join(ROOT, "fixtures")]
+from condition_classes import scratch_real      # noqa: E402  (engineering's reading of the real restrictions, for scratch copies only)
 tmp = tempfile.mkdtemp(prefix="prices-demo-elections-")
 work = os.path.join(tmp, "store")
 for d in ("data", "profiles", "tables"):
@@ -86,7 +88,8 @@ print("=== 0. Scratch setup: promote the five governed Bilt candidates (scratch 
 reviewer = json.load(open(os.path.join(work, "data/kb/vocab.json")))["promotion_reviewers"][0]
 for k in FIVE:
     change("2026-11-15", "promote_candidate", (reviewer, "Scratch-copy promotion for the election demonstration only."), show_file=False,
-           target="c-cb.bilt-palladium." + k, data={"review_by": "2027-11-15"})
+           target="c-cb.bilt-palladium." + k,
+           data={"review_by": "2027-11-15", "conditions": scratch_real(json.load(open(os.path.join(work, "data/candidates/c-cb.bilt-palladium.%s.json" % k))), governed=True)})
 person(P, OWNER, "Invented Bilt Palladium cardholder, account opened before 2027")
 person(P2, OWNER2, "Invented Bilt Palladium cardholder, account opened in 2027")
 

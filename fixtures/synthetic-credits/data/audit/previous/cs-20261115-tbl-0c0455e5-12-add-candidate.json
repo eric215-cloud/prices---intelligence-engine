@@ -1,9 +1,0 @@
-{
-  "changeset": "cs-20261115-tbl-0c0455e5-12-add-candidate",
-  "records": {
-    "data/candidates/c-voyager.streaming-credit.json": {
-      "after": "e0cc5f793f06812c",
-      "before": null
-    }
-  }
-}

@@ -12,7 +12,7 @@ import hashlib
 import json
 import os
 
-from .engine import evaluate, to_date
+from .engine import evaluate, standing, to_date
 from .lint import errors, evidence_ok, lint, signature, windows_overlap
 from .review import diff, new_flags
 from .schema import Schema
@@ -20,8 +20,12 @@ from .store import LEDGER_PATH, Store, append_audit, read_audit
 
 RANK = {"ESTABLISHED": 3, "CONDITIONAL": 2, "UNRESOLVED": 1, "NOT_AVAILABLE": 0}
 ENTITY_REVISABLE = ("name", "notes", "tags", "how", "economics", "program", "network", "card", "sources", "election")
-REVISABLE = ("valid_from", "valid_to", "restrictions", "open_questions", "value_note", "summary", "review_by", "retention_note",
-             "unchecked", "earning")
+REVISABLE = ("valid_from", "valid_to", "restrictions", "open_questions", "value_note", "summary", "review_by", "retention_note", "earning")
+# Published terms: what the rule says is true, and from when. Changing one in place would change answers about earlier dates.
+TERMS = ("valid_from", "valid_to", "restrictions", "summary", "earning")
+HOW_TO_CHANGE_TERMS = ("If the terms changed on a date: end this rule (revise_rule, valid_to on or after today) and add a successor rule with a "
+                       "later valid_from, so both stay on record. If the record was wrong from the start: repeat the change with "
+                       "data.correction, a sentence saying what was entered wrongly (in the tables: put `correct` in _action).")
 MAX_REVIEW_DAYS = 400
 
 
@@ -118,6 +122,9 @@ def op_revise_rule(store, cs):
     _need(cs.get("evidence"), "EVIDENCE_REQUIRED", "a revision needs evidence")
     _need(evidence_ok(store.vocab["evidence_policy"], cs["evidence"]), "INSUFFICIENT_EVIDENCE",
           "revision evidence must satisfy the evidence policy")
+    rewrites = _rewrites_history(r, changes, cs["date"])
+    if rewrites:
+        _correction(cs, "%s of rule %s" % (", ".join(rewrites), r["id"]))
     _add_evidence(store, cs, r)
     for k, v in changes.items():
         if k == "review_by":
@@ -129,6 +136,54 @@ def op_revise_rule(store, cs):
             r[k] = v
     if r["verification"]["status"] == "verified":
         r["verification"]["last_verified"] = cs["date"]
+
+
+def _rewrites_history(rule, changes, today):
+    """Which of these changes would alter an answer about a date before the change? [] when none.
+
+    Recording a term where none was recorded is not a rewrite, and neither is ending a rule from today on. Replacing or
+    removing a recorded term is, and so is moving a date that has already passed."""
+    out = []
+    for k, v in changes.items():
+        if k not in TERMS or rule.get(k) == v:
+            continue
+        if k == "valid_to":
+            old = rule.get("valid_to")
+            if (v is None or v >= today) and (old is None or old >= today):
+                continue                    # ends, or re-dates the end of, a rule whose end has not come: the past is untouched
+            out.append("valid_to (%s -> %s, before %s)" % (old, v, today))
+        elif k == "valid_from":
+            old = rule.get("valid_from")
+            if old is not None and old > today and v is not None and v > today:
+                continue                    # the rule has not started yet and still will not have
+            out.append("valid_from (%s -> %s)" % (old, v))
+        elif rule.get(k) in (None, [], ""):
+            continue                        # the first record of this term
+        else:
+            out.append(k)
+    return out
+
+
+def _correction(cs, what):
+    """A change that rewrites the past is accepted only as a declared correction of an entry error. The declaration is
+    the changeset's own data.correction, so the audit log says in so many words that history was corrected."""
+    why = (cs.get("data") or {}).get("correction")
+    _need(isinstance(why, str) and len(why.strip()) >= 10, "HISTORY_REWRITE",
+          "this would change the recorded terms (%s) for dates that have already passed. %s" % (what, HOW_TO_CHANGE_TERMS))
+
+
+def op_classify_conditions(store, cs):
+    """A reviewer records, for every restriction and open question on a rule, which kind it is (conditions.py)."""
+    from .conditions import review_issues
+    from .elections import governed
+    r = _rule(store, cs)
+    _need(r["verification"]["status"] != "retired", "RETIRED", "retired rules are history; they are not revised")
+    a = _attested(cs)
+    _reviewer(store, a)
+    items = _data(cs, "items", list)
+    issues = review_issues(r, items, r["id"] in governed(store))
+    _need(not issues, "BAD_CLASSIFICATION", "; ".join(issues))
+    r["condition_review"] = {"by": a["by"], "on": cs["date"], "changeset": cs["id"], "items": [dict(i) for i in items]}
 
 
 def op_set_credit_terms(store, cs):
@@ -149,6 +204,8 @@ def op_set_credit_terms(store, cs):
                                                        "the source they come from, retrieved again or new")
         _need(evidence_ok(store.vocab["evidence_policy"], cs["evidence"]), "INSUFFICIENT_EVIDENCE",
               "the evidence must satisfy the evidence policy")
+        if "credit" in r:                          # replacing or removing terms that were in force rewrites earlier answers
+            _correction(cs, "credit terms of rule %s" % r["id"])
         _add_evidence(store, cs, r)
     else:
         for e in cs.get("evidence", []):          # a candidate keeps its sources with it; more may be added, never replaced
@@ -180,9 +237,24 @@ def op_flag_rule(store, cs):
 def op_retire_rule(store, cs):
     r = _rule(store, cs)
     _need(r["verification"]["status"] != "retired", "RETIRED", "rule is already retired")
-    ended = _data(cs, "ended_on", str)
+    d = cs.get("data") or {}
     _need(cs.get("evidence") or cs.get("attestation"), "EVIDENCE_REQUIRED", "retirement needs evidence or an attestation")
+    if d.get("void") is True:
+        # the rule was never true. It is withdrawn from every date; this is the only retirement that changes past answers
+        _need("ended_on" not in d, "BAD_DATA", "give data.ended_on (the relationship ended that day) or data.void: true (it was never true), not both")
+        _correction(cs, "rule %s on every date" % r["id"])
+        _add_evidence(store, cs, r)
+        r["verification"]["status"] = "retired"
+        return
+    ended = _data(cs, "ended_on", str)
+    from .schema import is_date
+    _need(is_date(ended), "BAD_DATA", "data.ended_on must be a date YYYY-MM-DD")
+    _need(not r.get("valid_from") or ended >= r["valid_from"], "BAD_DATES", "ended_on %s is before the rule's valid_from %s" % (ended, r.get("valid_from")))
+    _need(not r.get("valid_to") or ended <= r["valid_to"], "BAD_DATES",
+          "ended_on %s is after the rule's valid_to %s: retirement ends a rule, it never extends one" % (ended, r.get("valid_to")))
     _add_evidence(store, cs, r)
+    # the relationship ENDED: the rule keeps answering for dates up to ended_on with the status it had (engine.standing)
+    r["verification"]["retired_from"] = r["verification"]["status"]
     r["verification"]["status"] = "retired"
     r["valid_to"] = ended
 
@@ -262,7 +334,7 @@ def op_add_candidate(store, cs):
     _need(c["status"] == "proposed", "BAD_DATA", "new candidates must have status 'proposed'")
     sig = signature(c["proposed_rule"])
     for r in store.rules.values():
-        _need(r["verification"]["status"] == "retired" or signature(r) != sig or not windows_overlap(r, c["proposed_rule"]),
+        _need(standing(r) == "retired" or signature(r) != sig or not windows_overlap(r, c["proposed_rule"]),
               "DUPLICATE_RELATIONSHIP", "rule %s already records %s for overlapping dates. To supersede it, end it first "
               "(revise_rule: valid_to) and give the new rule a later valid_from" % (r["id"], sig))
     for o in store.candidates.values():
@@ -283,6 +355,20 @@ def op_promote_candidate(store, cs):
         _need(cs.get("data", {}).get("accept_open_questions") is True, "OPEN_QUESTIONS",
               "candidate has open questions; resolve them or set data.accept_open_questions=true (they stay on the rule)")
     rb = _review_by(cs)
+    # the reviewer's class for every restriction and open question (conditions.py). Without one, nothing is promoted
+    from .conditions import review_issues, texts
+    from .elections import governed
+    proposed = dict(c["proposed_rule"])
+    if c["open_questions"]:
+        proposed["open_questions"] = list(c["open_questions"])
+    items = cs.get("data", {}).get("conditions")
+    if texts(proposed) or items is not None:
+        _need(isinstance(items, list), "CONDITIONS_NOT_CLASSIFIED",
+              "this candidate has %d restriction(s) and open question(s). The reviewer must give each one a class in data.conditions "
+              "(restrictions: enforced, unchecked or usage; open questions: affects_eligibility or informational). See OP-14."
+              % len(texts(proposed)))
+        issues = review_issues(proposed, items, proposed["id"] in governed(store))
+        _need(not issues, "BAD_CLASSIFICATION", "; ".join(issues))
     for e in c.get("proposed_entities", []):
         cur = store.entities.get(e["id"])
         _need(cur is None or cur == e, "ID_EXISTS", "entity %r exists with different content" % e["id"])
@@ -294,11 +380,14 @@ def op_promote_candidate(store, cs):
         store.files[store.path("evidence", e["id"])] = e
         ev_ids.append(e["id"])
     rule = dict(c["proposed_rule"])
+    rule.pop("condition_review", None)          # a class is the reviewer's to give at promotion, never the candidate author's
     _need(rule["id"] not in store.rules, "ID_EXISTS", "rule %r already exists" % rule["id"])
     rule["evidence"] = ev_ids
     rule["verification"] = {"status": "verified", "last_verified": cs["date"], "review_by": rb}
     if c["open_questions"]:
         rule["open_questions"] = list(c["open_questions"])
+    if items:
+        rule["condition_review"] = {"by": a["by"], "on": cs["date"], "changeset": cs["id"], "items": [dict(i) for i in items]}
     store.files[store.path("rules", rule["id"])] = rule
     c["status"] = "promoted"
     c["review"] = {"decided_on": cs["date"], "decided_by": a["by"], "reason": cs["reason"], "rule": rule["id"]}

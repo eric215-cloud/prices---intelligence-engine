@@ -1,5 +1,5 @@
 {
-  "about": "Batch 1: existing sourced research only. The ten rules already verified in the store (airline and hotel loyalty links, Amex transfers) plus Michaela's Chase Sapphire Reserve packet as converted by Argon (candidates in data/candidates). Nothing here adds a source term: every structured value below is transcribed from the named candidate's own summary or restriction text.",
+  "about": "Batch 1: existing sourced research only. The ten rules already verified in the store (airline and hotel loyalty links, Amex transfers) plus Michaela's Chase Sapphire Reserve packet as converted by Argon (candidates in data/candidates). Nothing here adds a source term: every structured value below is transcribed from the named candidate's own summary or restriction text. Which restrictions decide who has a benefit is no longer listed here: since the safety correction each restriction and open question is classified at promotion (in the copy, from restriction_classes.json).",
   "select_prefixes": ["c-cb.csr.", "cand-csr-", "c-baseline.visa-inf."],
   "select_ids": ["c-ana-business-award-via-ana-miles", "c-united-silver-via-marriott-top-tier"],
   "spend_categories": {
@@ -10,18 +10,6 @@
     "hotels-direct": {"name": "Hotels booked directly with the hotel", "parent": "travel"},
     "portal-travel": {"name": "Travel booked through the card issuer's own travel portal", "parent": "travel"},
     "rideshare-lyft": {"name": "Lyft rides"}
-  },
-  "unchecked": {
-    "cb.csr.public-welcome-offer": ["New applicants only; unavailable to current Sapphire cardholders or previous Sapphire bonus recipients within eligibility window"],
-    "cb.csr.ihg-platinum-elite-status": ["Primary cardholder only", "Requires linking IHG One Rewards number in Chase Benefits (allow up to 3 weeks for status activation)"],
-    "cb.csr.priority-pass-select": ["Requires one-time enrollment activation in Chase Benefits"],
-    "cb.csr.sapphire-lounge-by-the-club": ["Requires active Priority Pass Select card/digital membership from CSR"],
-    "cb.csr.apple-tv-apple-music": ["Requires one-time activation per service through chase.com or the Chase Mobile app"],
-    "cb.csr.doordash-dashpass-and-promos": ["Requires DashPass enrollment with CSR set as default payment method"],
-    "cb.csr.stubhub-viagogo-credit-300": ["Requires benefit activation prior to purchase"],
-    "cb.csr.lyft-in-app-credit-120": ["Requires CSR saved as payment method in Lyft app"],
-    "cb.csr.spend-75k-unlock-suite": ["Measured on calendar-year qualifying purchases (Jan 1-Dec 31)", "Statuses require partner account linking in Chase Benefits; credits apply automatically"],
-    "csr.acquire-ihg-platinum": ["Primary cardholder only"]
   },
   "earning": {
     "cb.csr.category-earning-structure": {

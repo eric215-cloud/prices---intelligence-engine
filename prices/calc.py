@@ -25,7 +25,8 @@ A rate published for a broader category applies to the narrower ones under it. W
     2. else, if the card has rates only for NARROWER categories, no calculation (the question is too broad);
     3. else the source's catch-all rate ("other"), said to be the catch-all.
 """
-from .engine import ESTABLISHED, evaluate, in_effect, leaves, to_date
+from .conditions import BLOCKING, blockers
+from .engine import ESTABLISHED, evaluate, in_effect, leaves, standing, to_date
 
 CATCH_ALL = "other"          # the category a source uses for "all other purchases"
 ALWAYS = ("the issuer decides how a purchase is categorised; PRICES does not know the merchant's coding",
@@ -110,7 +111,7 @@ def earn_quote(store, profile, as_of, category, amount, card=None):
             continue
         offers, blocked, waiting, too_broad = [], [], [], []
         for rule in sorted(store.rules.values(), key=lambda r: r["id"]):
-            if "earning" not in rule or card_of(rule, kind_of) != c or rule["verification"]["status"] == "retired":
+            if "earning" not in rule or card_of(rule, kind_of) != c or standing(rule) == "retired":
                 continue
             rates = {r["category"]: r for r in rule["earning"]["rates"]}
             hit = next((rates[c] for c in up if c in rates), None)
@@ -124,8 +125,8 @@ def earn_quote(store, profile, as_of, category, amount, card=None):
                 continue
             if not in_effect(rule, as_of):
                 waiting.append("%s is not in effect on %s" % (rule["id"], as_of))
-            elif rule["verification"]["status"] != "verified":
-                blocked.append("%s is %s" % (rule["id"], rule["verification"]["status"]))
+            elif standing(rule) != "verified":
+                blocked.append("%s is %s" % (rule["id"], standing(rule)))
             elif res.have(rule["output"]) != ESTABLISHED:
                 why = res.tokens("have:" + rule["output"])["unknowns"] or ["%s is %s" % (rule["output"], res.have(rule["output"]))]
                 blocked.append("%s could not be established for this person: %s" % (rule["id"], "; ".join(why)))
@@ -192,7 +193,7 @@ def convert_quote(store, profile, as_of, source, amount, to=None):
                                                              "" if total >= amount else "; LESS than the amount asked about")
     out = []
     for rule in sorted(store.rules.values(), key=lambda r: r["id"]):
-        if rule["kind"] != "transfer" or rule["transfer"].get("from") != source or rule["verification"]["status"] == "retired":
+        if rule["kind"] != "transfer" or rule["transfer"].get("from") != source or standing(rule) == "retired":
             continue
         if to is not None and rule["output"] != to:
             continue
@@ -200,11 +201,11 @@ def convert_quote(store, profile, as_of, source, amount, to=None):
         missing = sorted(i for k, i, neg in leaves(rule["when"]) if k == "holds" and not neg and res.have(i) != ESTABLISHED)
         if not in_effect(rule, as_of):
             row.update(result="NOT_CALCULATED", reason="%s is not in effect on %s" % (rule["id"], as_of))
-        elif rule["verification"]["status"] != "verified":
-            row.update(result="NOT_CALCULATED", reason="%s is %s" % (rule["id"], rule["verification"]["status"]))
-        elif rule.get("unchecked"):
-            row.update(result="NOT_CALCULATED", reason="conditions on who may use this transfer are recorded as text and not checked: "
-                                                       + "; ".join(rule["unchecked"]))
+        elif standing(rule) != "verified":
+            row.update(result="NOT_CALCULATED", reason="%s is %s" % (rule["id"], standing(rule)))
+        elif blockers(rule):
+            row.update(result="NOT_CALCULATED", reason="who may use this transfer is not established: "
+                                                       + "; ".join("%s: %s" % (BLOCKING[cls], text) for cls, text in blockers(rule)))
         elif missing:
             row.update(result="NOT_CALCULATED", reason="this person is not established as holding: " + ", ".join(missing))
         elif parse_ratio(rule["transfer"].get("ratio")) is None:

@@ -1,4 +1,15 @@
 {
+  "condition_review": {
+    "by": "Synthetic Reviewer",
+    "changeset": "cs-20261115-credit-07-promote-candidate",
+    "items": [
+      {
+        "class": "usage",
+        "text": "Cardholders choose either the lifestyle credit or the wellness credit, not both"
+      }
+    ],
+    "on": "2026-11-15"
+  },
   "credit": {
     "amount": 25,
     "cycle": "calendar_month",

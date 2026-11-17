@@ -20,7 +20,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 
 from prices import changes, tables          # noqa: E402
-from prices.store import dumps              # noqa: E402
+from prices.store import Store, dumps       # noqa: E402
+from condition_classes import invented     # noqa: E402
 
 DATE = "2026-11-14"
 AUTHOR = "fixture author (synthetic)"
@@ -63,7 +64,8 @@ def build(dst):
     for n, rule_id in enumerate(PROMOTE_ORDER, start=1):
         _must(changes.apply(dst, {"id": "cs-20261114-fix-%02d-promote-candidate" % n, "op": "promote_candidate", "author": REVIEWER,
                                   "date": DATE, "reason": "Fixture promotion", "target": "c-" + rule_id,
-                                  "data": {"review_by": "2027-05-14"}, "attestation": att}), rule_id)
+                                  "data": {"review_by": "2027-05-14", "conditions": invented(Store.load(dst).candidates["c-" + rule_id])},
+                                  "attestation": att}), rule_id)
     for n, (pid, owner, card) in enumerate(PEOPLE, start=1):
         _must(changes.apply(dst, {"id": "cs-20261114-fix-%02d-set-holding" % (20 + n), "op": "set_holding", "author": AUTHOR,
                                   "date": DATE, "reason": "Synthetic holding", "profile": pid,

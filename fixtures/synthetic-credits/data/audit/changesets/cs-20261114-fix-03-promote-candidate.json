@@ -6,6 +6,16 @@
   },
   "author": "Synthetic Reviewer",
   "data": {
+    "conditions": [
+      {
+        "class": "usage",
+        "text": "Secondary to other insurance"
+      },
+      {
+        "class": "usage",
+        "text": "Rentals up to 15 days"
+      }
+    ],
     "review_by": "2027-05-14"
   },
   "date": "2026-11-14",

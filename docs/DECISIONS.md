@@ -253,6 +253,8 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 **Alternatives considered.** Cap every rule that has any restriction (makes nearly everything unresolved: 68 of 124 real restrictions are usage terms); a prefix convention inside `restrictions` (survives the tables but is easy to get wrong); leave it to review (the defect is that review did not catch it: 20 of 73 real candidates).
 **Why.** Promoted as written, real candidates reported a new-applicant welcome offer as established for a 2024 account. The guard is deliberately blunt: to resolve such a benefit, model the condition as something a person can attest and put it in `when`.
 
+**Superseded 2026-11-17 by D-57.** The `unchecked` list is gone. It covered restrictions only, and a text nobody moved into it was read as harmless.
+
 ## D-54  Calculations are a separate kind of answer (`prices/calc.py`) — experimental branch
 **Decision.** `earnings` and `convert` return CALCULATED with rule, verification, evidence, arithmetic, assumptions and unevaluated terms, or NOT_CALCULATED with the reason. They use only verified rules in effect whose benefit the engine established for that person. Rates are published totals and are never added. Spend categories form a tree in the vocabulary; a question broader than the published rates is declined, not answered with the catch-all.
 **Why.** A number looks more certain than a sentence. Every stop (no ratio, no rate, unverified, unconfirmed, unchecked condition) is a place where an estimate would otherwise appear.
@@ -265,6 +267,39 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 ## D-56  Real content is tested in a throwaway copy, with the code frozen between batches — experimental branch
 **Decision.** `experiments/viability/run.py` promotes real candidates only in a copy, and its end-to-end test proves the project's data is untouched. The second batch was entered at a recorded commit with `prices/` unchanged.
 **Why.** Both defects found here had survived 358 tests on invented data.
+
+## D-57  Every restriction and open question is classified by a reviewer; no class means no reliance
+**Decision.** A rule's `condition_review` records, for each restriction, `enforced` (with what enforces it), `unchecked` or `usage`, and for each open question `affects_eligibility` or `informational`. `unchecked`, `affects_eligibility` and a missing class all block: nothing is established through the rule, and the output is UNRESOLVED with the texts as the reason (`prices/conditions.py`, `docs/CONDITION_REVIEW.md`).
+**Alternatives considered.** Keep the `unchecked` list and add a second list for questions (still approves by omission). Block every rule that has any open question (indiscriminate: on real content most questions are about ratios, prices and validity). Infer the class from the wording (a guess presented as a check). Leave it to promotion review without recording it (that is what failed).
+**Why.** The viability experiment's own check 3.4 expected United Silver to be established on 6,100 PQP while the same sheet said the flight minimum for 2027 was not settled. The distinction between "could change who qualifies" and "would not" is a judgement about content, so it is recorded as one, by a named reviewer, per text.
+
+## D-58  The default is fail-safe, including for the rules already verified
+**Decision.** A text with no class blocks. This applies to the nine rules verified before the mechanism existed: until a reviewer classifies their 27 texts, they establish nothing. Engineering did not classify them; a proposal with reasons is in `experiments/safety/live_rules_proposal.json` and is applied only in throwaway copies.
+**Alternatives considered.** Grandfather the existing rules as reviewed (turns "missing" into "approved", which the commission forbids, and three of them carry conditions nothing checks). Classify them in this change (content authority is Argon's and the reviewers', and the classes change real answers).
+**Why.** Before the correction the store reported a JAL award pathway as established although its rule says the account must be 60 days old. The cost of the default is visible and temporary: answers read UNRESOLVED until one review pass is done.
+
+## D-59  `enforced` must name something the rule checks, and an edit after review sets the review aside
+**Decision.** `enforced_by` is validated against the rule: a positive leaf of `when`, its dates, its `earn` block, or a governing election. Adding a text leaves it unclassified; removing or rewording a classified text voids the whole record until a reviewer classifies the rule again. `revise_rule` cannot write the record and a candidate cannot carry one.
+**Why.** Each is a way approval could otherwise appear without a reviewer: a claimed check that does not exist, a blocking sentence deleted by a routine edit, a review copied in with the content.
+
+## D-60  An ordinary revision may not change a past answer; a correction is declared
+**Decision.** `revise_rule` and `set_credit_terms` refuse (`HISTORY_REWRITE`) to replace or remove a recorded term or move a date already passed. Changed terms are a dated successor (D-55). A genuine entry error is corrected with `data.correction` (tables: `_action = correct`), which the audit trail keeps.
+**Alternatives considered.** Version terms inside the rule (every reader of rules changes). Forbid corrections (wrong entries would then be permanent). Allow them silently (the defect).
+**Why.** In the experiment, changing a dining rate in place turned 1,200 points into 800 for a date before the change.
+
+## D-61  Retirement ends a rule; it does not erase it
+**Decision.** `retire_rule` takes `ended_on` and records the standing the rule had (`verification.retired_from`). The rule answers for dates up to `ended_on` and not after; it still counts for the duplicate check on those dates. `void: true` with a declared correction withdraws a rule from every date.
+**Why.** A retired rule used to disappear from every date, so retiring an ended offer changed the answer for the period when it was in force.
+
+## Limits of the safety correction (2026-11-17), stated plainly
+
+- The class is the reviewer's judgement. A wrong class gives a wrong answer; the record shows who gave it.
+- Blocked benefits stay unresolved until their condition is modelled. Account age, primary or authorised cardholder, the country of an account and "new applicant" are not recorded anywhere.
+- The nine verified rules await classification, so the project's own derived answers are UNRESOLVED until a reviewer acts (OP-14).
+- `baseline` and `excludes` rules are not gated (they establish nothing).
+- A successor entered through the tables takes two imports (end the old row, then add the new one).
+- No lower-capability model has run OP-14.
+- Full description: `docs/CONDITION_REVIEW.md`.
 
 ## Limits of the Argon intake and election work (2026-11-15), stated plainly
 

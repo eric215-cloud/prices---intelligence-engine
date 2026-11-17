@@ -12,7 +12,7 @@ It keeps sourced rules about loyalty programs, one person's actual holdings, and
 ## Start here
 
 ```
-python3 -m unittest discover -s tests          # 382 tests, under a minute
+python3 -m unittest discover -s tests          # 412 tests, under a minute
 python3 -m prices lint                         # must print: 0 error(s)
 python3 -m prices status --profile synthetic-demo --as-of 2026-11-12
 python3 -m prices goal "Find promising ways for me to fly business class to Japan" --profile synthetic-demo --as-of 2026-11-12
@@ -44,6 +44,7 @@ Run every command from this directory (the one containing `prices/`, `data/` and
 | `tests/` | Automated tests, including acceptance tests A–I, the card/table tests J–K and the earned-benefit tests L–M |
 | `tables/` | CSV view of cards, benefits and sources; also the input to `tables import`. The store in `data/` remains the system of record |
 | `docs/RELATIONAL_TABLES.md` | Card roles, network-tier baselines, applicability, and the table rules |
+| `docs/CONDITION_REVIEW.md` | Established or unresolved: how a reviewer's class for each restriction and open question decides what the engine may rely on, and how past terms are protected |
 | `docs/RECURRING_CREDITS.md` | Credits that reset on a schedule: structured terms, the allowance period for a date, and why a published allowance is never a personal balance |
 | `docs/ELECTIONS.md` | Mutually exclusive cardholder options (Bilt housing rewards, Bilt annual credits): how an election is recorded and why nothing is assumed without one |
 | `docs/EARNED_ENTITLEMENTS.md` | Benefits earned by reaching a threshold: public rule, personal achievement, current entitlement, and time |

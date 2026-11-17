@@ -1,4 +1,15 @@
 {
+  "condition_review": {
+    "by": "Synthetic Reviewer",
+    "changeset": "cs-20261115-credit-02-promote-candidate",
+    "items": [
+      {
+        "class": "usage",
+        "text": "The two halves are separate; an unused amount does not carry over"
+      }
+    ],
+    "on": "2026-11-15"
+  },
   "credit": {
     "amount": 150,
     "cycle": "calendar_half",

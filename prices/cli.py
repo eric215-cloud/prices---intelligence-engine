@@ -7,6 +7,7 @@ import sys
 import zipfile
 
 from . import calc, cards, changes, discovery, earned, goals, review, tables
+from .conditions import describe as describe_conditions
 from .engine import evaluate
 from .lint import lint
 from .store import Store, read_audit
@@ -57,7 +58,8 @@ def cmd_status(args):
         print("PRICES status  profile=%s  as-of=%s%s" % (r["profile"], r["as_of"], "  [SYNTHETIC DATA]" if r["synthetic"] else ""))
         print("\n1. SOURCED RULES (%d)" % len(r["sourced_rules"]))
         for x in r["sourced_rules"]:
-            print("   %-10s %-8s %s%s" % (x["verification"], x["kind"], x["id"], "" if x["in_effect"] else "  (not in effect)"))
+            print("   %-10s %-8s %s%s%s" % (x["verification"], x["kind"], x["id"], "" if x["in_effect"] else "  (not in effect)",
+                                          "  (establishes nothing: %d condition(s) block; see explain)" % x["blocked_by"] if x.get("blocked_by") else ""))
         print("\n2. PERSONAL QUALIFICATIONS (%d)" % len(r["personal_qualifications"]))
         for x in r["personal_qualifications"]:
             print("   %-11s %-28s to %-10s -> %s" % (x["state"], x["entity"], x["valid_to"] or "open", x["effective"]))
@@ -106,12 +108,17 @@ def cmd_explain(args):
         if o["steps"] or o["unknowns"]:
             print("  needs: " + _steps(o))
         print("  downstream: " + (", ".join(o["downstream"]) or "none"))
-        if o["terms_not_evaluated"]:
-            print("  terms recorded as text (shown, not evaluated by the engine):")
-            for t in o["terms_not_evaluated"]:
-                print("    - " + t)
-    via = obj["chain"].get("via", "")
-    obj["terms_not_evaluated"] = list(store.rules.get(via, {}).get("restrictions", []))
+        if o["conditions"]:
+            print("  restrictions and open questions on %s, as a reviewer classed them (text is shown, not evaluated):" % o["chain"].get("via", "the rule"))
+            for c in o["conditions"]:
+                label = "not classified" if c["class"] is None else c["class"].replace("_", " ") + (" by " + c["enforced_by"] if c["enforced_by"] else "")
+                print("    - [%s%s] %s" % (label, ": BLOCKS" if c["blocks"] else "", c["text"]))
+            if o["condition_review"]:
+                print("    classed by %s on %s" % (o["condition_review"]["by"], o["condition_review"]["on"]))
+    via = store.rules.get(obj["chain"].get("via", ""), {})
+    obj["conditions"] = describe_conditions(via) if via else []
+    obj["condition_review"] = {k: via["condition_review"][k] for k in ("by", "on")} if via.get("condition_review") else None
+    obj["terms_not_evaluated"] = [c["text"] for c in obj["conditions"] if c["kind"] == "restriction" and c["class"] != "enforced"]
     _emit(args, obj, text)
     return 0
 

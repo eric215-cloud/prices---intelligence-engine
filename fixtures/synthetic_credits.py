@@ -38,7 +38,8 @@ sys.path.insert(0, HERE)
 
 import synthetic_cards                       # noqa: E402
 from prices import changes, tables           # noqa: E402
-from prices.store import dumps               # noqa: E402
+from prices.store import Store, dumps        # noqa: E402
+from condition_classes import invented                  # noqa: E402
 
 CARD, ACCOUNT = "card.northwind-voyager", "h-card-northwind-voyager"
 AUTHOR, REVIEWER, DATE = "fixture author (synthetic)", "Synthetic Reviewer", "2026-11-15"
@@ -132,8 +133,8 @@ def build(dst):
     edit_table(dst, "card_benefits",
                add=[{"id": "voyager." + s, "card": CARD, "benefit": "benefit.voyager." + s, "applicability": "confirmed", "summary": summary,
                      "restrictions": restr, "valid_to": valid_to, "evidence": SOURCE} for s, _n, summary, restr, valid_to, _c in CREDITS],
-               change={"voyager.travel-credit": {"summary": "300 annual travel credit per cardmember year.",
-                                                 "evidence": "ev-syn-voyager-guide;" + SOURCE}})
+               change={"voyager.travel-credit": {"summary": "300 annual travel credit per cardmember year.", "_action": "correct",
+                                                 "evidence": "ev-syn-voyager-guide;" + SOURCE}})     # a corrected wording, declared as one
     edit_table(dst, "credits",
                add=[dict(c, id="voyager." + s) for s, _n, _s, _r, _v, c in CREDITS] +
                    [dict(id="voyager.travel-credit", amount="300", unit="USD", cycle="anniversary_year", _evidence=SOURCE)])
@@ -143,7 +144,8 @@ def build(dst):
     b = Builder(dst)
     review = {"by": REVIEWER, "on": DATE, "statement": "Synthetic review: the cited synthetic source supports the row and its credit terms."}
     for s, *_rest in CREDITS:
-        b.apply(DATE, "promote_candidate", target="c-voyager." + s, data={"review_by": "2027-11-15"}, attestation=review)
+        b.apply(DATE, "promote_candidate", target="c-voyager." + s, attestation=review,
+                data={"review_by": "2027-11-15", "conditions": invented(Store.load(b.root).candidates["c-voyager." + s])})
     # ---- the two credits a cardholder chooses between (ENG-02 election options)
     for s in ("lifestyle-credit", "wellness-credit"):
         b.apply(DATE, "add_entity", data={"entity": {

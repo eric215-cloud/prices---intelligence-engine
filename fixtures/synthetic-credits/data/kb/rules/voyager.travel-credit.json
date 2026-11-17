@@ -1,4 +1,19 @@
 {
+  "condition_review": {
+    "by": "Synthetic Reviewer",
+    "changeset": "cs-20261114-fix-04-promote-candidate",
+    "items": [
+      {
+        "class": "usage",
+        "text": "Travel purchases only"
+      },
+      {
+        "class": "usage",
+        "text": "Resets on the account anniversary"
+      }
+    ],
+    "on": "2026-11-14"
+  },
   "credit": {
     "amount": 300,
     "cycle": "anniversary_year",

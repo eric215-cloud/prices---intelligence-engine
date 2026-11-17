@@ -19,6 +19,13 @@ Change only these fields, inside `data.set`:
 | `summary`, `value_note`, `retention_note` | Wording |
 | `review_by` | Next check date |
 
+**Past answers are protected (CHANGED 2026-11-17).** This operation may: end a rule on a day that has not come yet (`valid_to` today or later); move that day while it has not come; record a `summary`, `restrictions` or `earning` where none was recorded; change `review_by`, notes and `open_questions`. It is refused with `HISTORY_REWRITE` if it would replace or remove a recorded `summary`, `restrictions` or `earning`, or move a date that has already passed, because that would change what the engine says about earlier dates.
+
+- **The source changed its terms from a date:** end this rule (`valid_to` = the last day of the old terms) and add the new terms as a new rule with `valid_from` = the next day (OP-03). Both stay on file.
+- **The entry was wrong from the start:** make the change with `"correction": "<what was wrong, in a sentence>"` inside `data`, next to `set`. It is logged as a correction of history.
+
+**After any change to `restrictions` or `open_questions`, the rule establishes nothing until a reviewer classifies its texts again (OP-14).** Tell a reviewer.
+
 You may **not** change `kind`, `output`, `when`, `retention.mode`, `evidence` or `verification.status`. A change to who qualifies or what is granted is a different relationship. If a source shows such a change, record the new relationship with OP-03 and flag the old rule with OP-05. If there is no source (someone merely asks for it), change nothing and escalate.
 
 ## 3. Source and evidence requirements

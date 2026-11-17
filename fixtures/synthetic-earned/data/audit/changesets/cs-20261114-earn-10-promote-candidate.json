@@ -6,6 +6,12 @@
   },
   "author": "fixture author (synthetic)",
   "data": {
+    "conditions": [
+      {
+        "class": "usage",
+        "text": "Offered for qualifying years up to and including 2026"
+      }
+    ],
     "review_by": "2027-11-14"
   },
   "date": "2026-11-14",

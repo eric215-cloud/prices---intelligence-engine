@@ -23,7 +23,7 @@ import synthetic_cards  # noqa: E402
 from prices import changes, tables  # noqa: E402
 from prices.cards import CONFIRMED, PENDING, UNPROVEN, matrix  # noqa: E402
 from prices.cli import main  # noqa: E402
-from prices.engine import ESTABLISHED, NOT_AVAILABLE, evaluate  # noqa: E402
+from prices.engine import ESTABLISHED, NOT_AVAILABLE, UNRESOLVED, evaluate  # noqa: E402
 from prices.lint import lint  # noqa: E402
 from prices.store import Store, read_audit  # noqa: E402
 
@@ -263,6 +263,12 @@ class TestMaintenance(Base):
         edit(self.root, "card_benefits", "voyager.travel-credit", summary="250 annual travel credit per cardmember year.",
              restrictions="Travel purchases only | Rail fares excluded | Resets on the account anniversary",
              evidence="ev-syn-voyager-guide;ev-voyager-2027")
+        # CHANGED 2026-11-17 (safety correction): rewriting the terms of a rule in force is refused unless the row declares a
+        # correction of an entry error. Terms that really changed on a date go in a successor row (tests/test_t_safety.py).
+        refused = imp(self.root, dry_run=True)
+        self.assertFalse(refused["ok"])
+        self.assertIn("HISTORY_REWRITE", refused["errors"][0])
+        edit(self.root, "card_benefits", "voyager.travel-credit", _action="correct")
         plan = imp(self.root, dry_run=True)
         self.assertEqual([cs["op"] for cs in plan["changesets"]], ["revise_rule"])
         self.assertEqual(self.store().rules["voyager.travel-credit"]["summary"], "200 annual travel credit per cardmember year.")   # dry run wrote nothing
@@ -277,6 +283,13 @@ class TestMaintenance(Base):
         snap = json.loads(slurp(os.path.join(self.root, "data/audit/previous", out["applied"][0] + ".json")))
         old = snap["records"]["data/kb/rules/voyager.travel-credit.json"]["before"]
         self.assertEqual(old["summary"], "200 annual travel credit per cardmember year.")       # previous value preserved
+        # CHANGED 2026-11-17: the reworded restrictions have no class from a reviewer yet, so the benefit is not established
+        self.assertEqual([i[1] for i in lint(self.store())], ["CONDITIONS_NOT_CLASSIFIED"])
+        self.assertEqual(self.have("synthetic-alex", "benefit.voyager.travel-credit"), UNRESOLVED)
+        out2 = changes.apply(self.root, {"id": "cs-classify-1", "op": "classify_conditions", "author": WHO, "date": D, "reason": "reviewed the reworded terms",
+                                         "target": "voyager.travel-credit", "attestation": REVIEW,
+                                         "data": {"items": [{"text": t, "class": "usage"} for t in r["restrictions"]]}})
+        self.assertTrue(out2["ok"], out2["errors"])
         self.assertEqual(lint(self.store()), [])
         self.assertEqual(self.have("synthetic-alex", "benefit.voyager.travel-credit"), ESTABLISHED)
         self.assertEqual(self.have("synthetic-blake", "benefit.voyager.travel-credit"), NOT_AVAILABLE)
@@ -339,7 +352,8 @@ class TestMaintenance(Base):
     def test_revert_restores_the_previous_record_exactly(self):
         before = self.store().rules["voyager.travel-credit"]
         add(self.root, "sources", **source("ev-voyager-2027", VOYAGER))
-        edit(self.root, "card_benefits", "voyager.travel-credit", summary="Wrong summary entered by mistake.", evidence="ev-syn-voyager-guide;ev-voyager-2027")
+        edit(self.root, "card_benefits", "voyager.travel-credit", summary="Wrong summary entered by mistake.", evidence="ev-syn-voyager-guide;ev-voyager-2027",
+             _action="correct")
         applied = imp(self.root)["applied"][0]
         cs = {"id": "cs-revert-1", "op": "revert_changeset", "author": WHO, "date": D, "reason": "Entered in error",
               "data": {"changeset": applied}, "attestation": {"by": WHO, "on": D, "statement": "undo"}}
@@ -354,10 +368,10 @@ class TestMaintenance(Base):
 
     def test_revert_is_refused_once_the_record_has_moved_on(self):
         add(self.root, "sources", **source("ev-v1", VOYAGER))
-        edit(self.root, "card_benefits", "voyager.travel-credit", summary="First change.", evidence="ev-syn-voyager-guide;ev-v1")
+        edit(self.root, "card_benefits", "voyager.travel-credit", summary="First change.", evidence="ev-syn-voyager-guide;ev-v1", _action="correct")
         first = imp(self.root)["applied"][0]
         add(self.root, "sources", **source("ev-v2", VOYAGER))
-        edit(self.root, "card_benefits", "voyager.travel-credit", summary="Second change.", evidence="ev-syn-voyager-guide;ev-v1;ev-v2")
+        edit(self.root, "card_benefits", "voyager.travel-credit", summary="Second change.", evidence="ev-syn-voyager-guide;ev-v1;ev-v2", _action="correct")
         self.assertTrue(imp(self.root)["ok"])
         out = changes.apply(self.root, {"id": "cs-revert-3", "op": "revert_changeset", "author": WHO, "date": D, "reason": "r",
                                         "data": {"changeset": first}, "attestation": REVIEW})

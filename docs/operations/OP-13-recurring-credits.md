@@ -36,7 +36,7 @@ A card publishing 500 a year says nothing about what anyone has left. With no pe
 | `rollover_max` | with `allowed`: the most that carries over; `none` if stated as unlimited | the source does not say |
 | `note` | anything else a reader must know, in words | nothing to add |
 | `_evidence` | for a rule already in force: the id of the source for this change (a `sources.csv` row) | the row is a candidate |
-| `_action` | `remove` to take the structured terms off a rule (change nothing else) | otherwise |
+| `_action` | `correct` when you change the terms of a rule already in force because they were **entered wrongly** (CHANGED 2026-11-17: without it the change is refused, `HISTORY_REWRITE`); `remove` to take the structured terms off a rule (change nothing else). If the issuer **changed** the terms from a date, do not edit this row: end the old card_benefits row and add a new one (OP-10) | otherwise |
 
 - **Empty means "the source does not say".** Never write 0, never write `none`, never write a likely value to fill a cell.
 - The start and end of the offer itself are `valid_from` / `valid_to` on the card_benefits row, not here.

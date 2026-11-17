@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-tbl-8427c92d-14-add-candidate",
+  "records": {
+    "data/candidates/c-voyager.wellness-credit.json": {
+      "after": "de87dfdb2748292e",
+      "before": null
+    }
+  }
+}

@@ -6,6 +6,12 @@
   },
   "author": "Synthetic Reviewer",
   "data": {
+    "conditions": [
+      {
+        "class": "usage",
+        "text": "Rentals up to 31 days"
+      }
+    ],
     "review_by": "2027-05-14"
   },
   "date": "2026-11-14",

@@ -59,11 +59,23 @@ sh("tables", "export")
 sh("tables", "status")
 sh("cards", "--profile", "synthetic-alex", "--as-of", "2026-12-01")
 
-print("\n=== 1. Change one benefit and its evidence; give another an end date; record a newly evidenced benefit")
-cells("sources", **src("ev-voyager-2027", VOYAGER, "2026-12-01", "2027 guide: travel credit is 250 and excludes rail; phone protection ends June 30, 2027."))
+print("\n=== 1. The 2027 guide changes a benefit's terms. Writing the new terms over the old ones is refused")
+cells("sources", **src("ev-voyager-2027", VOYAGER, "2026-12-01", "2027 guide: from January 1, 2027 the travel credit is 250 and excludes rail; phone protection ends June 30, 2027."))
 cells("card_benefits", "voyager.travel-credit", summary="250 annual travel credit per cardmember year.",
       restrictions="Travel purchases only | Rail fares excluded | Resets on the account anniversary",
       evidence="ev-syn-voyager-guide;ev-voyager-2027")
+sh("tables", "import", "--author", "junior maintainer", "--date", "2026-12-01", expect=2)
+print("\n(refused: that edit would also change what the engine says about 2026. Nothing was applied.)")
+sh("tables", "export")                                    # discard the edit
+
+print("\n=== 1b. The right way: end the old terms on their last day and add the new terms from the next day")
+cells("sources", **src("ev-voyager-2027", VOYAGER, "2026-12-01", "2027 guide: from January 1, 2027 the travel credit is 250 and excludes rail; phone protection ends June 30, 2027."))
+cells("card_benefits", "voyager.travel-credit", valid_to="2026-12-31", evidence="ev-syn-voyager-guide;ev-voyager-2027")
+sh("tables", "import", "--author", "junior maintainer", "--date", "2026-12-01")
+print("\n(first import: the old terms now end on 2026-12-31. Second import: the new terms, and the other edits.)")
+cells("card_benefits", id="voyager.travel-credit-2027", card=VOYAGER, benefit="benefit.voyager.travel-credit", applicability="confirmed",
+      summary="250 annual travel credit per cardmember year.", restrictions="Travel purchases only | Rail fares excluded | Resets on the account anniversary",
+      valid_from="2027-01-01", evidence="ev-voyager-2027")
 cells("card_benefits", "voyager.phone-protection", valid_to="2027-06-30", evidence="ev-syn-voyager-guide;ev-voyager-2027")
 cells("sources", **src("ev-kestrel-2027", KESTREL, "2026-12-01", "2027 guide lists one lounge day pass a year for this card."))
 cells("card_benefits", id="kestrel.lounge-day-pass", card=KESTREL, benefit="benefit.orbit-summit.lounge-day-pass", applicability="confirmed",
@@ -72,6 +84,7 @@ sh("tables", "plan", "--author", "junior maintainer", "--date", "2026-12-01")
 sh("tables", "import", "--author", "junior maintainer", "--date", "2026-12-01")
 sh("lint")
 sh("tables", "import", "--author", "junior maintainer", "--date", "2026-12-01")
+print("\n(The new rows are candidates: they establish nothing until a reviewer promotes them and classes their restrictions, OP-14.)")
 
 print("\n=== 2. A mistake: trying to flip applicability in place is refused, and nothing changes")
 cells("card_benefits", "voyager.phone-protection", applicability="excluded")
@@ -79,11 +92,13 @@ sh("tables", "import", "--author", "junior maintainer", "--date", "2026-12-01", 
 sh("tables", "export")
 
 print("\n=== 3. Retire a benefit, keeping its history")
-cells("sources", **src("ev-voyager-notice", VOYAGER, "2026-12-15", "Notice: the travel credit is discontinued after December 14, 2026."))
-cells("card_benefits", "voyager.travel-credit", _action="retire", ended_on="2026-12-14", evidence="ev-syn-voyager-guide;ev-voyager-2027;ev-voyager-notice")
+cells("sources", **src("ev-voyager-notice", VOYAGER, "2026-12-15", "Notice: primary rental car cover is discontinued after December 14, 2026."))
+cells("card_benefits", "voyager.primary-rental-cover", _action="retire", ended_on="2026-12-14", evidence="ev-syn-voyager-guide;ev-voyager-notice")
 sh("tables", "import", "--author", "junior maintainer", "--date", "2026-12-15")
 sh("lint")
 sh("cards", "--profile", "synthetic-alex", "--as-of", "2026-12-15")
+print("\n--- and the day before it ended is still answered as it was:")
+sh("cards", "--profile", "synthetic-alex", "--as-of", "2026-12-14")
 sh("cards", "--profile", "synthetic-blake", "--as-of", "2026-12-15")
 sh("audit", "--last", "5")
 with open(os.path.join(work, "tables", "card_benefits.csv"), encoding="utf-8", newline="") as f:

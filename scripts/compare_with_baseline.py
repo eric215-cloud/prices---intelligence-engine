@@ -1,5 +1,11 @@
 """Show that people and data with no earned-benefit records get byte-identical output from an older commit and from this checkout.
 
+NOT EXPECTED TO PASS SINCE THE FOUNDATION SAFETY CORRECTION (2026-11-17). That correction changes answers on purpose:
+rules whose restrictions and open questions no reviewer has classified no longer establish anything. Use
+`python3 experiments/safety/before_after.py` instead: it compares the earlier commit with this checkout, shows that
+data/, profiles/ and tables/ are byte-identical, and lists every answer that changed and in which direction.
+This script is kept as the record of the earlier comparisons (it still runs against the commits named below).
+
     python3 scripts/compare_with_baseline.py [baseline-commit]        (default: bb95d8b, the commit before ENG-02B)
 
 The default baseline moves with each commission, so the comparison isolates what the latest work changed:

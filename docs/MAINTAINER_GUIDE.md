@@ -50,6 +50,7 @@ Use the task's date as the changeset `date`. If the task gives no date, use toda
 | You have one more source for an existing rule | OP-04 | `add_evidence` |
 | A rule looks wrong, contradicted, or its source vanished, and you cannot settle it | OP-05 | `flag_rule` |
 | A rule's benefit has ended for good | OP-06 | `retire_rule` |
+| (Reviewers) A rule's restrictions and open questions need a class, or lint says `CONDITIONS_NOT_CLASSIFIED` | OP-14 | `classify_conditions` |
 | A person's holding needs recording, updating or ending | OP-07 | `set_holding`, `end_holding` |
 | You finished a discovery research task | OP-08 | `record_discovery_run` |
 | A temporary promotion or a confirmed availability check | OP-09 | `add_observation`, `prune_observations` |

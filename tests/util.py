@@ -3,6 +3,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(1, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "fixtures"))
 
 from prices.store import Store  # noqa: E402
 
@@ -40,8 +41,21 @@ def rule(id, kind, output, when, status="verified", evidence=("ev1",), **kw):
          "evidence": list(evidence), "verification": {"status": status}}
     if status == "verified":
         r["verification"].update({"last_verified": "2026-01-01", "review_by": kw.pop("review_by", "2029-01-01")})
+    reviewed = kw.pop("reviewed", True)
     r.update(kw)
+    if reviewed and "condition_review" not in r and (r.get("restrictions") or r.get("open_questions")):
+        # Fixture rules stand for REVIEWED rules, as status="verified" stands for verified ones: every restriction is
+        # taken as a usage term and every open question as informational. Pass reviewed=False for a rule nobody has
+        # classified, or condition_review=... for a specific classification (prices/conditions.py).
+        r["condition_review"] = {"by": "Test Owner", "on": "2026-01-01",
+                                 "items": [{"text": t, "class": "usage"} for t in r.get("restrictions") or []]
+                                 + [{"text": t, "class": "informational"} for t in r.get("open_questions") or []]}
     return r
+
+
+def review(*items, by="Test Owner", on="2026-01-01"):
+    """A reviewer's classification for a fixture rule: review(("New applicants only", "unchecked"), ("Ends in June", "enforced", "dates"))."""
+    return {"by": by, "on": on, "items": [dict({"text": i[0], "class": i[1]}, **({"enforced_by": i[2]} if len(i) > 2 else {})) for i in items]}
 
 
 def holding(id, entity, state="confirmed", **kw):

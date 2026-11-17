@@ -490,8 +490,8 @@ def plan(store, root, tdir, author, date):
                     errs.append("BAD_VALUE: %s: to confirm, set a new review_by, add a fresh source to evidence, and change nothing else" % where)
                 else:
                     emit("confirm_rule", where, target=row["id"], data={"review_by": row["review_by"]}, **ev)
-            elif action:
-                errs.append("BAD_VALUE: %s: _action must be empty, retire or confirm (withdraw is for candidates)" % where)
+            elif action and action != "correct":
+                errs.append("BAD_VALUE: %s: _action must be empty, correct, retire or confirm (withdraw is for candidates)" % where)
             elif row["ended_on"]:
                 errs.append("BAD_VALUE: %s: ended_on is only used together with _action = retire" % where)
             else:
@@ -509,18 +509,25 @@ def plan(store, root, tdir, author, date):
                 if row["review_by"] != b["review_by"]:
                     sets["review_by"] = row["review_by"]
                 if sets:
-                    emit("revise_rule", where, target=row["id"], data={"set": sets}, **ev)
+                    # `correct` in _action: the operator declares that the row was entered wrongly, so the terms are rewritten for
+                    # every date. Without it the pipeline accepts only changes that leave answers about earlier dates alone.
+                    fix = {"correction": "declared a correction of an entry error in tables/%s.csv, row %s" % (t, row["id"])} if action == "correct" else {}
+                    emit("revise_rule", where, target=row["id"], data=dict({"set": sets}, **fix), **ev)
+                elif action == "correct":
+                    errs.append("BAD_VALUE: %s: correct is for a row whose summary, restrictions or dates you have changed" % where)
                 elif added:
                     emit("add_evidence", where, target=row["id"], **ev)
 
     # ---- credits: set, correct or remove the structured terms of an existing rule or candidate (its id never changes)
-    def credit_op(row, where, state, block=None):
+    def credit_op(row, where, state, block=None, fix=None):
         evs = [e for e in (source(s, where) for s in _ids(row["_evidence"])) if e is not None]
         if state != "candidate" and not _ids(row["_evidence"]):
             errs.append("EVIDENCE_REQUIRED: %s: this rule is in force. Put the id of the source for these terms in _evidence "
                         "(a new sources row, or an existing one retrieved again)" % where)
-        emit("set_credit_terms", where, target=row["id"], data={"remove": True} if block is None else {"credit": block},
-             **({"evidence": evs} if evs else {}))
+        data = {"remove": True} if block is None else {"credit": block}
+        if fix and state != "candidate":
+            data["correction"] = "declared %s in tables/credits.csv, row %s" % (fix, row["id"])
+        emit("set_credit_terms", where, target=row["id"], data=data, **({"evidence": evs} if evs else {}))
 
     for row in new["credits"]:
         if row["id"] in fold:
@@ -542,13 +549,15 @@ def plan(store, root, tdir, author, date):
             if not same:
                 errs.append("BAD_VALUE: %s: to remove the credit terms, put remove in _action and change nothing else" % where)
             else:
-                credit_op(row, where, state)
-        elif action:
-            errs.append("BAD_VALUE: %s: _action must be empty or remove" % where)
+                credit_op(row, where, state, fix="the removal of credit terms that were entered wrongly")
+        elif action and action != "correct":
+            errs.append("BAD_VALUE: %s: _action must be empty, correct or remove" % where)
         elif same:
-            errs.append("BAD_VALUE: %s: _evidence is filled in but no credit term changed" % where)
+            errs.append("BAD_VALUE: %s: %s but no credit term changed" % (where, "_action says correct" if action else "_evidence is filled in"))
         else:
-            credit_op(row, where, state, _credit_block(row, where, errs))
+            # terms of a rule in force are replaced only as a declared correction; if the terms changed on a date, end the
+            # card_benefits row and add a successor row instead (the pipeline says so when `correct` is missing)
+            credit_op(row, where, state, _credit_block(row, where, errs), fix="a correction of an entry error" if action == "correct" else None)
 
     errs += ["UNUSED_SOURCE: sources row %s is new but no row cites it. Cite it or remove it." % s
              for s in sorted(set(new_sources) - used)]

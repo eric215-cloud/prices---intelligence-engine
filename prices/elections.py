@@ -37,7 +37,7 @@ holding of the card records `anniversary_on`, a card anniversary date as the iss
 """
 import datetime
 
-from .engine import LEVELS, P, U, in_effect, to_date
+from .engine import LEVELS, P, U, in_effect, standing, to_date
 
 ONE_DAY = datetime.timedelta(days=1)
 TERM_KEYS = ("opened_before", "default_before_anniversary", "starts_at_anniversary", "elect_before_anniversary",
@@ -450,7 +450,7 @@ def inject(result, store, prof, as_of):
     """Base facts and flags for every election group, for one person on one date."""
     gs = groups(store)
     gov_rules = set(governed(store))
-    active = {rid for rid in gov_rules if rid in store.rules and store.rules[rid]["verification"]["status"] != "retired"}
+    active = {rid for rid in gov_rules if rid in store.rules and standing(store.rules[rid]) != "retired"}
     group_of = {o["id"]: g for g, opts in gs.items() for o in opts}
     followed = {group_of[o["election"]["follows"]] for opts in gs.values() for o in opts if o["election"].get("follows") in group_of}
     result.elections = decide_all(store, prof, as_of)

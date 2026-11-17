@@ -1,0 +1,9 @@
+{
+  "changeset": "cs-20261115-tbl-8427c92d-03-add-entity",
+  "records": {
+    "data/kb/entities/benefit.voyager.lifestyle-credit.json": {
+      "after": "aad0cc5e272b7e35",
+      "before": null
+    }
+  }
+}

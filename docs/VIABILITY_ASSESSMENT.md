@@ -2,6 +2,8 @@
 
 Commission: "FABLE COMMISSION — PRICES Foundation Viability Test" (Bradley, 2026-11-16). Executed 2026-11-16 by Claude Fable 5.2 on branch `exp/foundation-viability`, created from `dev/eng-02b-bilt-election-correction` at `d36ebbc`. Reproduce with `python3 experiments/viability/run.py` (46 checks, about 20 seconds). Generated evidence: `experiments/viability/results/`.
 
+> **Update 2026-11-17 (foundation safety correction, branch `dev/foundation-safety-correction`).** This assessment is kept as written. Three things in it are superseded: the `unchecked` list (section 4, D-53) is replaced by a reviewer's class for every restriction and open question, with a missing class blocking; check 3.4, which expected United Silver 2027 to be established on PQP alone, was a false positive and now asserts UNRESOLVED; and gaps G1, G4 and G18 are corrected. The experiment now has 52 checks. See `docs/CONDITION_REVIEW.md` and `experiments/safety/results/BEFORE_AFTER.md`.
+
 ## 1. Verdict
 
 **Viable with specific architectural corrections.**

@@ -28,7 +28,8 @@ facts (`inject`) and the `earned` report, so the two cannot disagree.
 import calendar
 import datetime
 
-from .engine import C, E, LEVELS, NONE, P, U, in_effect, to_date
+from .conditions import BLOCKING, blockers
+from .engine import C, E, LEVELS, NONE, P, U, in_effect, standing, to_date
 
 UNKNOWN = "unknown"
 # achievement
@@ -236,7 +237,7 @@ def survey(store, profile, as_of):
         quals = {(q["measure"], q["cycle"]): q for q in prof.qualifications.values() if q["account"] == h["id"]}
         insts = [e for e in earned_recs if e["account"] == h["id"]]
         labels = {c for (_m, c) in quals} | {e["cycle"] for e in insts}
-        if held and any(r["verification"]["status"] != "retired" and _covers(r, *cycle_bounds(r["earn"]["period"], str(as_of.year))) for r in rules):
+        if held and any(standing(r) != "retired" and _covers(r, *cycle_bounds(r["earn"]["period"], str(as_of.year))) for r in rules):
             labels.add(str(as_of.year))
         cycles = []
         for label in sorted(labels):
@@ -261,7 +262,7 @@ def survey(store, profile, as_of):
 
 def _benefit(store, prof, h, held, acct_note, rule, label, q, insts, as_of, flag, facts):
     ents, earn = store.entities, rule["earn"]
-    out_ent, status = rule["output"], rule["verification"]["status"]
+    out_ent, status = rule["output"], standing(rule)
     start, end = cycle_bounds(earn["period"], label)
     exp = expected_end(earn["term"], label)
     covers = status != "retired" and _covers(rule, start, end)
@@ -353,6 +354,11 @@ def _benefit(store, prof, h, held, acct_note, rule, label, q, insts, as_of, flag
         elig, detail = ACTIVATION_REQUIRED, "eligible; the separate activation step is not recorded as done"
     else:
         elig, detail = EARNED_NOT_CONFIRMED, "eligible; not yet confirmed as present on the account"
+    blocked = blockers(rule)
+    if blocked and elig in (ACTIVATION_REQUIRED, EARNED_NOT_CONFIRMED):
+        # the threshold is met on the figures recorded, but a condition on who earns this is unchecked, open or unclassified
+        elig, detail = UNRESOLVED, ("threshold reached, but eligibility is not established: "
+                                    + "; ".join("%s: %s" % (BLOCKING[cls], text) for cls, text in blocked))
     eligible = elig in (ACTIVATION_REQUIRED, EARNED_NOT_CONFIRMED)
 
     # What to call it. A record that has not taken effect yet does not make anything held.

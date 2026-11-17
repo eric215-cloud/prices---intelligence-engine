@@ -3,7 +3,7 @@
 Each issue is (severity, code, path, message). Codes are stable so maintainers and
 tests can match on them.
 """
-from .engine import NON_DERIVING, leaves
+from .engine import NON_DERIVING, leaves, standing
 from .schema import Schema, is_date
 from .store import PREFIX, VOCAB_PATH, LEDGER_PATH
 
@@ -105,8 +105,6 @@ def shape_issues(rule, kind_of):
             out.append(("UNEXPECTED_FIELD", "superseded_by belongs only on excludes rules"))
     if rule["kind"] != "earns" and "earn" in rule:
         out.append(("UNEXPECTED_FIELD", "an 'earn' block belongs only on earns rules"))
-    if "unchecked" in rule and not all(isinstance(x, str) and x.strip() for x in rule["unchecked"]):
-        out.append(("BAD_DATA", "unchecked lists conditions as text; an entry is empty"))
     if "earning" in rule:
         from .calc import earning_shape
         for msg in earning_shape(rule, kind_of):
@@ -215,6 +213,8 @@ def lint(store):
         return any(contradictory(c) for c in (cond.get("all") or cond.get("any") or []))
 
     sigs = {}
+    governed_rules = {rid for e in ents.values() if e.get("kind") == "election" and isinstance(e.get("election"), dict)
+                      for rid in e["election"].get("governs", [])}
     for r in rules.values():
         p = store.path("rules", r["id"])
         if r["output"] not in ents:
@@ -226,6 +226,29 @@ def lint(store):
             from .calc import unknown_categories
             for cat in unknown_categories(r, store.vocab):
                 err("UNKNOWN_CATEGORY", p, "earning category %r is not in vocab.json spend_categories; add it there first" % cat)
+        # reviewed conditions (conditions.py): the record must be well formed; a text without a class is reported, and blocks
+        from .conditions import RESTRICTION_CLASSES, enforcers, texts, unclassified
+        review = r.get("condition_review")
+        if isinstance(review, dict):
+            reviewers = store.vocab.get("promotion_reviewers") or []
+            if reviewers and review.get("by") not in reviewers:
+                err("REVIEWER_NOT_AUTHORIZED", p, "condition_review.by %r is not a promotion reviewer" % review.get("by"))
+            current = texts(r)
+            for item in review.get("items", []):
+                if not isinstance(item, dict):
+                    continue
+                kind = "restriction" if item.get("class") in RESTRICTION_CLASSES else "open_question"
+                if (kind, item.get("text")) not in current:
+                    warn("STALE_CLASSIFICATION", p, "condition_review classifies a text that is no longer on the rule as a %s: %r. The rule "
+                         "was edited after it was reviewed, so the review is set aside until a reviewer classifies it again (OP-14)"
+                         % (kind.replace("_", " "), item.get("text")))
+                elif item.get("class") == "enforced" and item.get("enforced_by") not in enforcers(r, r["id"] in governed_rules):
+                    err("BAD_CLASSIFICATION", p, "%r is marked enforced by %r, which this rule does not have (it offers: %s)"
+                        % (item.get("text"), item.get("enforced_by"), ", ".join(sorted(enforcers(r, r["id"] in governed_rules))) or "nothing"))
+        if r["verification"]["status"] != "retired" and unclassified(r):
+            warn("CONDITIONS_NOT_CLASSIFIED", p, "%d restriction(s) or open question(s) have no class from a reviewer, so nothing is "
+                 "established through this rule until they do (classify_conditions, OP-14): %s"
+                 % (len(unclassified(r)), " | ".join(x[:60] for x in unclassified(r))))
         if contradictory(r["when"]):
             err("CONTRADICTORY_CONDITION", p, "an 'all' both requires and excludes the same entity; rule can never apply")
         if r["kind"] == "acquire" and "retention" not in r:
@@ -258,7 +281,7 @@ def lint(store):
                 err("BAD_DATES", p, "review_by must be after last_verified")
         if r.get("valid_from") and r.get("valid_to") and r["valid_to"] < r["valid_from"]:
             err("BAD_DATES", p, "valid_to is before valid_from")
-        if v["status"] != "retired":
+        if standing(r) != "retired":            # a rule retired as ENDED still answers for its own dates, so it still counts
             s = signature(r)
             for other in sigs.get(s, []):
                 if windows_overlap(other, r):

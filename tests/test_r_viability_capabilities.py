@@ -1,7 +1,9 @@
 """The first capabilities built for the foundation viability experiment, on invented data only.
 
     unchecked   a condition on WHO has a benefit that the rule's `when` does not check. Prose is not enforcement:
-                nothing is ever established through such a rule.
+                nothing is ever established through such a rule. (CHANGED 2026-11-17, safety correction: this was a
+                list field on the rule. It is now a class a reviewer records for the restriction, prices/conditions.py;
+                the expectations below are the same, and tests/test_t_safety.py goes further.)
     earnings    points for a purchase from published per-dollar rates (prices/calc.py)
     convert     points after a transfer from a recorded ratio
 
@@ -10,7 +12,7 @@ Every card, rate, ratio and person below is invented.
 import copy
 import unittest
 
-from util import H, TEST_VOCAB, ent, ev, holding, make_store, rule
+from util import H, TEST_VOCAB, ent, ev, holding, make_store, review, rule
 from prices.calc import convert_quote, earn_quote, lineage, narrower, parse_ratio
 from prices.engine import CONDITIONAL, ESTABLISHED, NOT_AVAILABLE, UNRESOLVED, evaluate
 from prices.lint import lint
@@ -38,11 +40,12 @@ def codes(issues, level="ERROR"):
 
 
 class TestUncheckedConditions(unittest.TestCase):
-    RULE = dict(restrictions=["Book through the portal"], unchecked=["New applicants only"])
+    RULE = dict(restrictions=["Book through the portal", "New applicants only"],
+                condition_review=review(("Book through the portal", "usage"), ("New applicants only", "unchecked")))
 
     def test_prose_condition_blocks_establishment(self):
-        s = world([rule("r.offer", "grants", "b.offer", H("card.a"), **self.RULE), rule("r.plain", "grants", "b.plain", H("card.a"))],
-                  [holding("h1", "card.a")])
+        s = world([rule("r.offer", "grants", "b.offer", H("card.a"), **self.RULE),
+                   rule("r.plain", "grants", "b.plain", H("card.a"), restrictions=["Book through the portal"])], [holding("h1", "card.a")])
         r = evaluate(s, "t", DAY)
         self.assertEqual(r.have("b.offer"), UNRESOLVED)
         self.assertEqual(r.have("b.plain"), ESTABLISHED)                    # usage terms alone never block
@@ -61,21 +64,21 @@ class TestUncheckedConditions(unittest.TestCase):
         self.assertEqual(evaluate(s, "t", DAY).have("b.offer"), ESTABLISHED)
 
     def test_an_action_does_not_satisfy_it(self):
-        acq = rule("r.gold", "acquire", "st.gold", {"all": [H("card.a"), H("act.enrol")]}, unchecked=["Primary cardholder only"],
-                   retention={"mode": "unknown"})
+        acq = rule("r.gold", "acquire", "st.gold", {"all": [H("card.a"), H("act.enrol")]}, restrictions=["Primary cardholder only"],
+                   condition_review=review(("Primary cardholder only", "unchecked")), retention={"mode": "unknown"})
         s = world([acq], [holding("h1", "card.a")])
-        self.assertEqual(evaluate(s, "t", DAY).have("st.gold"), UNRESOLVED)   # without `unchecked` this would be CONDITIONAL
-        acq2 = dict(acq)
-        del acq2["unchecked"]
+        self.assertEqual(evaluate(s, "t", DAY).have("st.gold"), UNRESOLVED)   # classed as a usage term this would be CONDITIONAL
+        acq2 = dict(acq, condition_review=review(("Primary cardholder only", "usage")))
         self.assertEqual(evaluate(world([acq2], [holding("h1", "card.a")]), "t", DAY).have("st.gold"), CONDITIONAL)
 
     def test_not_holding_the_card_is_still_not_available(self):
         s = world([rule("r.offer", "grants", "b.offer", H("card.a"), **self.RULE)], [])
         self.assertEqual(evaluate(s, "t", DAY).have("b.offer"), NOT_AVAILABLE)
 
-    def test_empty_text_is_refused(self):
-        s = world([rule("r.offer", "grants", "b.offer", H("card.a"), unchecked=[" "])], [])
-        self.assertIn("BAD_DATA", codes(lint(s)))
+    def test_a_class_that_claims_a_check_the_rule_does_not_have_is_an_error(self):
+        s = world([rule("r.offer", "grants", "b.offer", H("card.a"), restrictions=["New applicants only"],
+                        condition_review=review(("New applicants only", "enforced", "when:act.enrol")))], [])
+        self.assertIn("BAD_CLASSIFICATION", codes(lint(s)))
 
 
 class TestEarnings(unittest.TestCase):
@@ -126,7 +129,8 @@ class TestEarnings(unittest.TestCase):
         unverified = dict(self.BASE, verification={"status": "unverified"})
         a = self.one(world([unverified], [holding("h1", "card.a")]), "dining")
         self.assertEqual(a["result"], "NOT_CALCULATED")
-        gated = dict(self.BASE, unchecked=["Enrolment required"])
+        gated = dict(self.BASE, restrictions=["Excludes fees", "Enrolment required"],
+                     condition_review=review(("Excludes fees", "usage"), ("Enrolment required", "unchecked")))
         a = self.one(world([gated], [holding("h1", "card.a")]), "dining")
         self.assertEqual(a["result"], "NOT_CALCULATED")
         self.assertIn("Enrolment required", a["reason"])
@@ -193,7 +197,7 @@ class TestConvert(unittest.TestCase):
 
     def test_unverified_gated_ended_and_malformed(self):
         hold = [holding("h1", "pts.a")]
-        for kw, word in ((dict(status="unverified"), "unverified"), (dict(unchecked=["US accounts only"]), "US accounts only"),
+        for kw, word in ((dict(status="unverified"), "unverified"), (dict(condition_review=review(("Names must match", "unchecked"), ("Increment not verified", "informational"))), "Names must match"),
                          (dict(valid_to="2026-01-31"), "not in effect")):
             a = convert_quote(world(self.rules(**kw), hold), "t", DAY, "pts.a", 1000, to="miles.x")["answers"][0]
             self.assertEqual(a["result"], "NOT_CALCULATED", kw)
@@ -206,7 +210,7 @@ class TestConvert(unittest.TestCase):
 
 
 class TestPipeline(unittest.TestCase):
-    def test_revising_unchecked_or_earning_needs_evidence_like_any_revision(self):
+    def test_adding_a_restriction_needs_evidence_and_blocks_until_it_is_classified(self):
         import os
         import shutil
         import tempfile
@@ -217,7 +221,7 @@ class TestPipeline(unittest.TestCase):
             s = world([rule("r.offer", "grants", "b.offer", H("card.a"))], [holding("h1", "card.a")])
             write_store(s, tmp)
             cs = {"id": "cs-20260601-r-01-revise-rule", "op": "revise_rule", "target": "r.offer", "author": "test", "date": DAY,
-                  "reason": "invented", "data": {"set": {"unchecked": ["New applicants only"]}}}
+                  "reason": "invented", "data": {"set": {"restrictions": ["New applicants only"]}}}
             self.assertFalse(changes.apply(tmp, cs)["ok"])
             out = changes.apply(tmp, dict(cs, evidence=[ev("ev2", retrieved_on=DAY)]))
             self.assertTrue(out["ok"], out.get("errors"))

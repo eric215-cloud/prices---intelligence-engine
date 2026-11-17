@@ -1,9 +1,0 @@
-{
-  "changeset": "cs-20261115-tbl-0c0455e5-13-add-candidate",
-  "records": {
-    "data/candidates/c-voyager.traveler-fee-credit.json": {
-      "after": "c3797332732e277e",
-      "before": null
-    }
-  }
-}

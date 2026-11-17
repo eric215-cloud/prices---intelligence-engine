@@ -6,6 +6,12 @@
   },
   "author": "fixture author (synthetic)",
   "data": {
+    "conditions": [
+      {
+        "class": "usage",
+        "text": "The two halves are separate; an unused amount does not carry over"
+      }
+    ],
     "review_by": "2027-11-15"
   },
   "date": "2026-11-15",

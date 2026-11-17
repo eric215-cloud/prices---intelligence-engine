@@ -47,8 +47,16 @@ def in_effect(rec, as_of):
     return (f is None or f <= as_of) and (t is None or as_of <= t)
 
 
-def unchecked_tokens(rule):
-    return frozenset(("unknown", "not checked by the engine (%s): %s" % (rule.get("id"), text)) for text in rule.get("unchecked", []))
+def standing(rule):
+    """The verification status a rule is evaluated with.
+
+    A rule retired because the relationship ENDED keeps answering for dates up to its valid_to, with the status it
+    had (verification.retired_from): retiring it must not erase what was true before. A rule retired as never true
+    (no retired_from) answers for no date."""
+    v = rule["verification"]
+    if v["status"] == "retired" and v.get("retired_from") and rule.get("valid_to"):
+        return v["retired_from"]
+    return v["status"]
 
 
 def leaves(cond, neg=False):
@@ -223,6 +231,7 @@ class Result:
 
     def report(self):
         """The four epistemic categories, kept apart."""
+        from .conditions import blockers
         rep = {"profile": self.profile, "as_of": self.as_of.isoformat(),
                "synthetic": bool(self.store.profile(self.profile).meta.get("synthetic")),
                "sourced_rules": [], "personal_qualifications": [], "derived_entitlements": [],
@@ -230,7 +239,8 @@ class Result:
         for r in sorted(self.store.rules.values(), key=lambda r: r["id"]):
             rep["sourced_rules"].append({"id": r["id"], "kind": r["kind"], "output": r["output"],
                                          "verification": r["verification"]["status"],
-                                         "in_effect": in_effect(r, self.as_of), "summary": r["summary"]})
+                                         "in_effect": in_effect(r, self.as_of), "summary": r["summary"],
+                                         "blocked_by": len(blockers(r))})
         for h in sorted(self.store.profile(self.profile).holdings.values(), key=lambda h: h["id"]):
             rep["personal_qualifications"].append({"holding": h["id"], "entity": h["entity"], "state": h["state"],
                                                    "valid_to": h.get("valid_to"), "effective": self.have(h["entity"])})
@@ -271,26 +281,29 @@ def evaluate(store, profile, as_of, include_candidates=False):
     rules = []
     # cardholder elections: a governed rule also needs the person's election of its option (elections.py)
     from .elections import gate, governed
+    from .conditions import tokens as condition_tokens
     gov = governed(store)
 
     # 1. sourced rules -> internal rules, with the levels at which each may be used
     for rule in sorted(store.rules.values(), key=lambda x: x["id"]):
-        vs = rule["verification"]["status"]
+        vs = standing(rule)
         if vs == "retired" or not in_effect(rule, as_of):
             continue
         if vs == "verified":
             levels, toks = LEVELS, NONE
             rb = to_date(rule["verification"].get("review_by"))
-            if rb is not None and rb < as_of:
+            if rb is not None and rb < as_of and rule["verification"]["status"] != "retired":
                 r.flag("STALE_RULE", "review", rule["id"], "verified rule is past its review_by date %s; re-verify (OP-01)" % rb)
         else:
             levels, toks = (P, U), frozenset([("unknown", "rule %s is unverified" % rule["id"])])
         if rule["kind"] in NON_DERIVING or rule["kind"] in PERSONAL_KINDS:
             continue   # baseline/excludes: applicability matrix only (cards.py). earns: personal records only (earned.py)
-        if rule.get("unchecked"):
-            # the source states conditions on who has this that `when` does not check. Prose is not enforcement:
-            # nothing is established through this rule; it is at best a possibility, with the texts as the reason
-            levels, toks = (P, U), toks | unchecked_tokens(rule)
+        blocked = condition_tokens(rule)
+        if blocked:
+            # a restriction or open question on this rule is an unchecked condition, could change who is eligible, or has
+            # no class from a reviewer (conditions.py). Text is not enforcement and silence is not approval: nothing is
+            # established through this rule; it is at best a possibility, with each text as the reason
+            levels, toks = (P, U), toks | blocked
         rules.append({"id": rule["id"], "kind": rule["kind"], "output": rule["output"], "when": gate(rule["id"], rule["when"], gov),
                       "levels": levels, "tokens": toks, "src": rule})
     if include_candidates:
@@ -301,7 +314,7 @@ def evaluate(store, profile, as_of, include_candidates=False):
             if pr["kind"] in NON_DERIVING or pr["kind"] in PERSONAL_KINDS:
                 continue
             rules.append({"id": "candidate:" + c["id"], "kind": pr["kind"], "output": pr["output"], "when": gate(pr.get("id"), pr["when"], gov),
-                          "levels": (U,), "tokens": frozenset([("unknown", "candidate %s is not promoted" % c["id"])]) | unchecked_tokens(pr),
+                          "levels": (U,), "tokens": frozenset([("unknown", "candidate %s is not promoted" % c["id"])]),
                           "src": pr})
 
     # 2. personal qualifications -> base facts (and retention rules for acquired holdings)

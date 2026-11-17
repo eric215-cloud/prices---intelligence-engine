@@ -1,4 +1,19 @@
 {
+  "condition_review": {
+    "by": "Synthetic Reviewer",
+    "changeset": "cs-20261114-fix-03-promote-candidate",
+    "items": [
+      {
+        "class": "usage",
+        "text": "Secondary to other insurance"
+      },
+      {
+        "class": "usage",
+        "text": "Rentals up to 15 days"
+      }
+    ],
+    "on": "2026-11-14"
+  },
   "evidence": [
     "ev-syn-orbit-summit-benefits"
   ],

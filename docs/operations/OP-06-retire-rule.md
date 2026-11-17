@@ -8,7 +8,9 @@
 - The rule id; the source stating the end; the end date.
 
 ## 2. Permitted actions
-- Set the rule to `retired` with `valid_to` = the last day it applied.
+- Set the rule to `retired` with `ended_on` = the last day it applied. (CHANGED 2026-11-17.) The rule stops answering after that day and **keeps answering for the days before it**, with the standing it had. Before this change a retired rule vanished from every date.
+- `ended_on` must not be before the rule's `valid_from` or after its `valid_to`.
+- If the rule was never true at all (an entry error), use `"data": {"void": true, "correction": "<what was wrong>"}` instead of `ended_on`. That withdraws it from every date and is logged as a correction of history. Escalate if unsure which applies.
 - Holdings that people acquired through it are **not** touched: they stand or fall on their own dates and retention terms.
 
 ## 3. Source and evidence requirements
@@ -39,7 +41,8 @@ At least one evidence record (any type) or an attestation. Prefer the official n
 ```
 
 ## 5. Validation (done by the program)
-- Rule exists and is not already retired; evidence or attestation present.
+- Rule exists and is not already retired; evidence or attestation present; `ended_on` is a date within the rule's own dates (`BAD_DATES`, `BAD_DATA`).
+- `void` without a declared `correction` is refused (`HISTORY_REWRITE`).
 
 ## 6. Failure and escalation
 - If it is only an expected end date on a still-running offer, use OP-02 (`valid_to`) instead.

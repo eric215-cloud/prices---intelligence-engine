@@ -35,10 +35,11 @@ Ids are lowercase letters, digits, `.`, `_`, `-`. A record's `id` equals its fil
 | `retention` | `acquire` only, mandatory | `{mode: fixed_term | while_qualified | unknown, retain_when?, note?}` |
 | `transfer` | `transfer` only, mandatory | `{from, ratio?, note?}` |
 | `valid_from`, `valid_to` | no | When the rule is in effect |
-| `restrictions`, `open_questions` | no | Lists of sentences |
+| `restrictions`, `open_questions` | no | Lists of sentences. The engine does not evaluate them; see `condition_review` |
+| `condition_review` | no, but without it a rule that has restrictions or open questions establishes nothing | `{by, on, changeset, items: [{text, class, enforced_by?, note?}]}`: a promotion reviewer's class for every restriction (`enforced`, `unchecked`, `usage`) and open question (`affects_eligibility`, `informational`). Written only by `promote_candidate` and `classify_conditions`. `docs/CONDITION_REVIEW.md` |
 | `value_note` | no | Plain-language worth and caveats |
 | `evidence` | yes | List of evidence ids (may be empty only if unverified) |
-| `verification` | yes | `{status: verified | unverified | retired, last_verified, review_by}` |
+| `verification` | yes | `{status: verified | unverified | retired, last_verified, review_by}`. A rule retired because it ended also has `retired_from` (the status it had): it keeps answering for dates up to its `valid_to` |
 
 ### Credit block (rules of kind `grants` that say a card carries a benefit)
 

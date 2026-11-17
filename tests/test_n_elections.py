@@ -19,6 +19,7 @@ import tempfile
 import unittest
 
 from util import H, TEST_VOCAB, ent, flag_codes, holding, make_store, rule
+from condition_classes import scratch_real
 from prices import changes
 from prices.elections import anniversary_window, before_anniversary
 from prices.engine import CONDITIONAL, ESTABLISHED, NOT_AVAILABLE, UNRESOLVED, evaluate
@@ -441,7 +442,9 @@ class TestLiveBiltDefinitions(unittest.TestCase):
             reviewer = Store.load(tmp).vocab["promotion_reviewers"][0]
             for i, k in enumerate(self.FIVE):
                 out = changes.apply(tmp, {"id": "cs-20261115-scratch-%d" % i, "op": "promote_candidate", "target": "c-cb.bilt-palladium." + k,
-                                          "author": "test", "date": "2026-11-15", "reason": "scratch copy only", "data": {"review_by": "2027-11-15"},
+                                          "author": "test", "date": "2026-11-15", "reason": "scratch copy only",
+                                          "data": {"review_by": "2027-11-15", "conditions": scratch_real(
+                                              Store.load(tmp).candidates["c-cb.bilt-palladium." + k], governed=True)},
                                           "attestation": {"by": reviewer, "on": "2026-11-15", "statement": "scratch copy only"}})
                 self.assertTrue(out["ok"], out["errors"])
             os.makedirs(os.path.join(tmp, "profiles", "synthetic-bilt", "holdings"))

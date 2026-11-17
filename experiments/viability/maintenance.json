@@ -6,6 +6,10 @@
     "src-bt-united-2027": {"url": "https://www.businesstraveller.com/news/united-mileageplus-2027-status-pqp-premier-1k-changes/", "title": "United MileagePlus 2027 status: PQP and Premier 1K changes", "publisher": "Business Traveller", "source_type": "reputable_secondary", "retrieved_on": "2026-11-16",
       "summary": "2027 requirements by PQP only: Silver 6,000, Gold 12,000, Platinum 18,000, 1K 32,000; Silver, Gold and Platinum match the 2026 PQP-only figures."}
   },
+  "condition_classes": {
+    "about": "ADDED 2026-11-17 (safety correction). The sources read do not say whether the minimum of United-operated flights continues in 2027. If it does, PQP alone does not qualify: the answer could change who has the status, so the question blocks until it is settled.",
+    "Whether a minimum number of United-operated flights still applies in 2027 was not established from the sources read": "affects_eligibility"
+  },
   "records": [
     {"key": "UA-2027-silver", "mechanism": "successor terms from a date", "evidence": ["src-fm-united-2027", "src-bt-united-2027"],
      "rule": {"id": "united.silver-by-qualification-2027", "kind": "grants", "output": "united.silver", "valid_from": "2027-01-01", "valid_to": "2027-12-31",

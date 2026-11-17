@@ -55,6 +55,8 @@ def cli(root, *argv):
     return code, out.getvalue()
 
 
+FIX = "declared a correction of an entry error in tables/credits.csv, row "
+
 class Base(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -101,8 +103,12 @@ class Base(unittest.TestCase):
         self.assertEqual((len(read_audit(self.root)), read_audit(self.root)[-1]["result"]), (len(log) + 1, "rejected"))
         return out
 
-    def terms(self, target, block=None, evidence=None, **kw):
+    def terms(self, target, block=None, evidence=None, correction="the terms were entered wrongly (test)", **kw):
+        # Replacing or removing terms that are in force is accepted only as a declared correction (safety correction, 2026-11-17).
+        # These tests are about corrections, so the helper declares one; test_t covers the refusal when it is missing.
         c = self.cs("set_credit_terms", target=target, data={"remove": True} if block is None else {"credit": block}, **kw)
+        if correction:
+            c["data"]["correction"] = correction
         if evidence:
             c["evidence"] = evidence
         return c
@@ -320,6 +326,8 @@ class TestTermsOperation(Base):
         self.no(self.terms("voyager.curated-hotel-credit", None, [source("ev-test-2")]), "UNKNOWN_REFERENCE")   # a personal record depends on it
 
     def test_retired_rule_is_history(self):
+        was = self.picture(ALEX, "2027-06-30")[STREAM][:5]
+        self.assertEqual(was[0], ESTABLISHED)
         self.ok(self.cs("retire_rule", target="voyager.streaming-credit", data={"ended_on": "2027-06-30"}, evidence=[source("ev-test-end")]))
         self.no(self.terms("voyager.streaming-credit", dict(amount=25, unit="USD", cycle="calendar_quarter"), [source("ev-test-2")]), "RETIRED")
         gone = self.row(ALEX, STREAM, "2027-07-05")                                    # still listed, as ended: an expiration is reported, not hidden
@@ -327,8 +335,9 @@ class TestTermsOperation(Base):
                          ("ENDED", "the rule is retired (ended 2027-06-30)", "NO_OFFER", NOT_AVAILABLE))
         self.assertNotIn("allowance", gone)
         self.assertEqual(evaluate(self.store(), ALEX, "2027-07-05").have(STREAM), NOT_AVAILABLE)
-        # existing engine behaviour, unchanged: once retired, a rule is treated as ended on every date, earlier ones included
-        self.assertEqual(self.picture(ALEX, "2027-06-30")[STREAM][:5], (NOT_AVAILABLE, None, None, None, None))
+        # CHANGED 2026-11-17 (safety correction): a rule retired because the offer ENDED keeps answering for dates up to its end.
+        # Before, retirement removed it from every date, so this line expected (NOT_AVAILABLE, None, None, None, None).
+        self.assertEqual(self.picture(ALEX, "2027-06-30")[STREAM][:5], was)
 
     def test_a_candidate_gets_terms_in_place_and_stays_a_candidate(self):
         cand = {"id": "c-voyager.spa-credit", "status": "proposed", "created_on": D, "search_path": ["test"], "open_questions": [],
@@ -377,7 +386,7 @@ class TestTables(Base):
                       "verified,300,USD,anniversary_year,,,,,,,,,,\n", text)             # empty cells: the source does not say
 
     def test_correcting_a_cell_needs_a_source_and_becomes_one_changeset(self):
-        edit_table(self.root, "credits", change={"voyager.curated-hotel-credit": {"max_per_transaction": "200"}})
+        edit_table(self.root, "credits", change={"voyager.curated-hotel-credit": {"max_per_transaction": "200", "_action": "correct"}})
         out = self.imported()
         self.assertFalse(out["ok"])
         self.assertTrue(out["errors"][0].startswith("EVIDENCE_REQUIRED: credits row voyager.curated-hotel-credit"), out["errors"])
@@ -387,7 +396,8 @@ class TestTables(Base):
         out = self.imported()
         self.assertTrue(out["ok"], out["errors"])
         self.assertEqual([(c["op"], c["target"], c["data"]) for c in out["changesets"]],
-                         [("set_credit_terms", "voyager.curated-hotel-credit", {"credit": dict(HOTEL_TERMS, max_per_transaction=200)})])
+                         [("set_credit_terms", "voyager.curated-hotel-credit", {"credit": dict(HOTEL_TERMS, max_per_transaction=200),
+                                                                                "correction": "%svoyager.curated-hotel-credit" % FIX})])
         self.assertEqual(tables.status(self.root), {"exists": True, "stale": [], "edited": []})
         with open(os.path.join(self.root, "tables", "credits.csv"), encoding="utf-8") as f:
             self.assertIn("verified,500,USD,calendar_year,,,200,2,,none,,,,\n", f.read())   # refreshed; _evidence is empty again
@@ -425,7 +435,8 @@ class TestTables(Base):
         edit_table(self.root, "sources", add=[dict(source("ev-test-reread-2"), applies_to=CARD)])
         edit_table(self.root, "credits", change={"voyager.phone-protection": {"_action": "remove", "_evidence": "ev-test-reread-2"}})
         out = self.imported()
-        self.assertEqual([(c["op"], c["data"]) for c in out["changesets"]], [("set_credit_terms", {"remove": True})])
+        self.assertEqual([(c["op"], c["data"]) for c in out["changesets"]], [("set_credit_terms", {"remove": True, "correction": (
+            "declared the removal of credit terms that were entered wrongly in tables/credits.csv, row voyager.phone-protection")})])
         self.assertNotIn("credit", self.store().rules["voyager.phone-protection"])
 
     def test_invalid_table_edits_change_nothing(self):
@@ -437,7 +448,7 @@ class TestTables(Base):
             self.assertFalse(out["ok"], (code, kw))
             self.assertTrue(any(code in e for e in out["errors"]), (code, out["errors"]))
             self.assertEqual(Store.load(work).digest(), before)
-        hotel, ev = "voyager.curated-hotel-credit", {"_evidence": "ev-syn-voyager-credit-terms"}
+        hotel, ev = "voyager.curated-hotel-credit", {"_evidence": "ev-syn-voyager-credit-terms", "_action": "correct"}
         refused("BAD_VALUE", change={hotel: dict(ev, amount="lots")})
         refused("MISSING_VALUE", change={hotel: dict(ev, amount="")})
         refused("SCHEMA", change={hotel: dict(ev, cycle="weekly")})
@@ -447,6 +458,7 @@ class TestTables(Base):
         refused("BAD_CREDIT_SHAPE", change={hotel: dict(ev, years="4")})
         refused("BAD_VALUE", change={hotel: ev})                                       # a source named, nothing changed
         refused("BAD_VALUE", change={hotel: dict(ev, _action="delete")})
+        refused("HISTORY_REWRITE", change={hotel: {"_evidence": "ev-syn-voyager-credit-terms", "amount": "450"}})   # a silent change of terms in force
         refused("BAD_VALUE", change={hotel: dict(ev, _action="remove", amount="1")})
         refused("READ_ONLY_COLUMN", change={hotel: {"=state": "candidate"}})
         refused("READ_ONLY_COLUMN", change={hotel: {"=card": "card.halcyon-kestrel"}})
@@ -484,7 +496,7 @@ class TestTables(Base):
                 self.assertFalse(needle in text, "%s appears in tables/%s" % (needle, name))
         self.assertFalse([c for c in tables.COLUMNS["credits"] if "used" in c or "remaining" in c or "balance" in c])
         edit_table(self.root, "sources", add=[dict(source("ev-test-reread"), applies_to=CARD)])
-        edit_table(self.root, "credits", change={"voyager.dining-credit": {"amount": "175", "_evidence": "ev-test-reread"}})
+        edit_table(self.root, "credits", change={"voyager.dining-credit": {"amount": "175", "_evidence": "ev-test-reread", "_action": "correct"}})
         before = {p: json.dumps(v, sort_keys=True) for p, v in self.store().files.items() if p.startswith("profiles/")}
         self.assertTrue(self.imported()["ok"])
         self.assertEqual({p: json.dumps(v, sort_keys=True) for p, v in self.store().files.items() if p.startswith("profiles/")}, before)

@@ -1,4 +1,15 @@
 {
+  "condition_review": {
+    "by": "Synthetic Reviewer",
+    "changeset": "cs-20261114-fix-02-promote-candidate",
+    "items": [
+      {
+        "class": "usage",
+        "text": "Two claims per year"
+      }
+    ],
+    "on": "2026-11-14"
+  },
   "evidence": [
     "ev-syn-orbit-summit-benefits"
   ],

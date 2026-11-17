@@ -42,7 +42,7 @@ ok &= run(["diff", "-r", "-q", rebuilt, os.path.join(dst, "fixtures", "synthetic
 ok &= run([sys.executable, "-m", "prices", "--root", "fixtures/synthetic-earned", "earned", "--profile", "synthetic-alex", "--as-of", "2027-03-10"], dst)
 ok &= run([sys.executable, "scripts/demo_earned.py"], dst)
 ok &= run([sys.executable, "scripts/mutation_check_earned.py"], dst)
-ok &= run([sys.executable, "scripts/compare_with_baseline.py"], dst, dict(ENV, GIT_CONFIG_NOSYSTEM="1"))
+# (scripts/compare_with_baseline.py is no longer run: the safety correction changes answers on purpose. See below.)
 # recurring credits (ENG-01): rebuild the fixture and compare it with the committed copy, then report, demo and guards
 rebuilt = os.path.join(os.path.dirname(dst), "fixture-credits")
 ok &= run([sys.executable, "fixtures/synthetic_credits.py", rebuilt], dst)
@@ -54,6 +54,10 @@ ok &= run([sys.executable, "scripts/mutation_check_credits.py"], dst)
 ok &= run([sys.executable, "scripts/verify_argon_intake.py"], dst, dict(ENV, GIT_CONFIG_NOSYSTEM="1"))
 ok &= run([sys.executable, "scripts/demo_elections.py"], dst)
 ok &= run([sys.executable, "scripts/mutation_check_elections.py"], dst)
+# foundation safety correction: real content in a throwaway copy, the earlier commit side by side, and the guards
+ok &= run([sys.executable, "experiments/viability/run.py"], dst)
+ok &= run([sys.executable, "experiments/safety/before_after.py"], dst, dict(ENV, GIT_CONFIG_NOSYSTEM="1"))
+ok &= run([sys.executable, "scripts/mutation_check_safety.py"], dst)
 ok &= run(["git", "status", "--porcelain"], dst, dict(os.environ))   # the run must not have modified the checkout
 left = subprocess.run(["git", "status", "--porcelain"], cwd=dst, capture_output=True, text=True).stdout.strip()
 if left:

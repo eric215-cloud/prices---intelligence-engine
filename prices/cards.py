@@ -14,6 +14,8 @@ one of those benefits applies to a given card is decided only by card-level rule
     neither                                                              => UNPROVEN (not an entitlement)
 """
 from .engine import NOT_AVAILABLE, evaluate, in_effect, to_date
+from .conditions import blockers
+from .engine import standing as rule_standing
 from .lint import ROLES, single_holds
 
 CONFIRMED, EXCLUDED, SUPERSEDED, UNPROVEN, PENDING = "CONFIRMED", "EXCLUDED", "SUPERSEDED", "UNPROVEN", "PENDING_REVIEW"
@@ -64,7 +66,8 @@ def matrix(store, as_of=None, profile=None):
     ents = store.entities
     kind_of = lambda i: ents.get(i, {}).get("kind")   # noqa: E731
     day = to_date(as_of) if as_of else None
-    live = [r for r in store.rules.values() if r["verification"]["status"] != "retired" and (day is None or in_effect(r, day))]
+    live = [r for r in store.rules.values() if (rule_standing(r) if day is not None else r["verification"]["status"]) != "retired"
+            and (day is None or in_effect(r, day))]
     baselines, card_rules, pending = {}, {}, {}
     for r in sorted(live, key=lambda r: r["id"]):
         if r["kind"] == "baseline":
@@ -111,6 +114,11 @@ def matrix(store, as_of=None, profile=None):
             row = {"card": card["id"], "card_name": card["name"], "network_tier": tier or "",
                    "benefit": benefit, "benefit_name": ents.get(benefit, {}).get("name", benefit),
                    "basis": basis, "standing": standing, "meaning": MEANING[standing], "detail": detail}
+            confirming = next((r for r in card_rules.get((card["id"], benefit), []) if r["id"] == detail), None)
+            if standing == CONFIRMED and confirming is not None and blockers(confirming):
+                # the card carries the benefit, but who among its holders has it is not settled (conditions.py)
+                row["detail"] = "%s; %d condition(s) on who has it are unchecked, open or unclassified: not established for a holder" % (
+                    detail, len(blockers(confirming)))
             if brule is not None and brule["verification"]["status"] != "verified":
                 row["detail"] = (detail + "; " if detail else "") + "baseline rule %s is itself unverified" % brule["id"]
             if res is not None:

@@ -6,6 +6,12 @@
   },
   "author": "fixture author (synthetic)",
   "data": {
+    "conditions": [
+      {
+        "class": "usage",
+        "text": "The four years run from the date the credit was last applied"
+      }
+    ],
     "review_by": "2027-11-15"
   },
   "date": "2026-11-15",

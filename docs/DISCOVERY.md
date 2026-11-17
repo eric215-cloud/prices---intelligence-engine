@@ -38,7 +38,7 @@ Discovery finds relationships that are not yet in the knowledge base. The progra
 
 ## What reviewers do
 
-For each `proposed` candidate: read the evidence; if it meets the evidence policy and the open questions are acceptable, apply `promote_candidate` with an attestation; otherwise `reject_candidate` with a reason, or leave it proposed. After promotions, run forward discovery again: the frontier will have moved.
+For each `proposed` candidate: read the evidence; if it meets the evidence policy and the open questions are acceptable, apply `promote_candidate` with an attestation; otherwise `reject_candidate` with a reason, or leave it proposed. After promotions, run forward discovery again: the frontier will have moved. Since 2026-11-17 a candidate that has any restriction or open question is promoted only with a class for each one in `data.conditions` (OP-14); without it the promotion is refused (`CONDITIONS_NOT_CLASSIFIED`).
 
 ```json
 {"id": "cs-YYYYMMDD-NNN-promote-candidate", "op": "promote_candidate", "author": "...", "date": "YYYY-MM-DD",

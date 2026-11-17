@@ -1,4 +1,15 @@
 {
+  "condition_review": {
+    "by": "Synthetic Reviewer",
+    "changeset": "cs-20261114-earn-10-promote-candidate",
+    "items": [
+      {
+        "class": "usage",
+        "text": "Offered for qualifying years up to and including 2026"
+      }
+    ],
+    "on": "2026-11-14"
+  },
   "earn": {
     "activation": "automatic",
     "measure": "voyager.qualifying-spend",

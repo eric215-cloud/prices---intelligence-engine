@@ -1,6 +1,8 @@
 # PRICES — continuation document
 
-Update this file at the end of every work session. Last updated 2026-11-16 by Claude Fable 5.2 after the foundation viability test (EXPERIMENTAL branch `exp/foundation-viability`, from `dev/eng-02b-bilt-election-correction` at d36ebbc; `main` and every `dev/` branch unchanged).
+Update this file at the end of every work session. Last updated 2026-11-17 by Claude Fable 5.2 after the foundation safety correction (branch `dev/foundation-safety-correction`, from `exp/foundation-viability` at `c3b96a9`; not merged anywhere). Read `docs/CONDITION_REVIEW.md` first.
+
+**State after the safety correction, in three lines.** (1) Every restriction and open question on a rule needs a class from a promotion reviewer; without one the rule establishes nothing (OP-14). (2) The nine rules verified earlier are NOT classified, on purpose: the project's derived answers read UNRESOLVED until a reviewer applies or edits `experiments/safety/live_rules_proposal.json`. (3) Recorded terms cannot be changed in place without a declared correction; retirement keeps history.
 
 ## Coordinator continuity
 
@@ -25,15 +27,18 @@ Added 2026-11-14 (second commission): earned benefits. A public `earns` rule, a 
 Needs Python 3.9+ only. From the project root:
 
 ```
-python3 -m unittest discover -s tests      # expect: Ran 382 tests ... OK
-python3 -m prices lint                     # expect: lint: 0 error(s), 1 warning(s)  (Eric's Aeroplan 25K has no expiry date yet)
+python3 -m unittest discover -s tests      # expect: Ran 412 tests ... OK
+python3 -m prices lint                     # expect: lint: 0 error(s), 10 warning(s)  (nine rules wait for a reviewer's classification, OP-14; Eric's Aeroplan 25K has no expiry date yet)
+python3 experiments/viability/run.py       # expect: 52 checks, 0 failed  (real content, in a throwaway copy)
+python3 experiments/safety/before_after.py # expect: Result: every line is as expected.  (needs git; runs commit c3b96a9 beside this checkout)
+python3 scripts/mutation_check_safety.py   # expect: 25 mutations, 0 not caught
 python3 -m prices status --profile synthetic-demo --as-of 2026-11-12
 python3 -m prices tables status            # expect: "no" twice
 python3 -m prices --root fixtures/synthetic-cards cards --profile synthetic-alex --as-of 2026-11-14
 python3 -m prices --root fixtures/synthetic-earned earned --profile synthetic-alex --as-of 2027-03-10
 python3 scripts/demo_earned.py             # expect: DEMO COMPLETE  (earned benefits, before and after, on a throwaway copy)
 python3 scripts/mutation_check_earned.py   # expect: 17 of 17 mutations caught
-python3 scripts/compare_with_baseline.py   # expect: BASELINE COMPARISON: PASS  (needs git; compares with bb95d8b, the commit before ENG-02B)
+# scripts/compare_with_baseline.py is NOT expected to pass since the safety correction (answers changed on purpose); use before_after.py above
 python3 scripts/verify_argon_intake.py     # expect: ARGON INTAKE: PASS  (needs git)
 python3 scripts/demo_elections.py          # expect: DEMO COMPLETE  (Bilt elections on a throwaway copy)
 python3 scripts/mutation_check_elections.py  # expect: 13 of 13 mutations caught
@@ -50,6 +55,10 @@ If the tests or lint fail on a fresh copy, stop and fix that before anything els
 Acceptance tests A, B, C, E, F, H, I pass. D passed for one discovery chain. G passed for one run of Claude Haiku 5.5. J (card applicability) and K (tables) pass on invented data. L and M (earned benefits) pass on invented data. N (cardholder elections) passes on invented people and the real Bilt definitions. O and P (recurring credits) pass on invented data. The maintenance procedures OP-10 (tables), OP-11 (earned benefits), OP-12 (card elections) and OP-13 (recurring credits) have not been run by a lower-capability model. See the tables in `STATUS.md`.
 
 ## What remains unresolved
+- **The nine verified rules are not classified** (27 texts). Reviewer task, OP-14. Engineering must not do it. Until then `status`, `goal` and `explain` show UNRESOLVED for what they lead to, with the reason.
+- Conditions that block real benefits cannot be checked yet because the facts are not recorded: account age, primary or authorised cardholder, country of a loyalty account, new applicant, how a status was obtained. Each needs a design decision before it can go into a rule's `when`.
+- A successor entered through the tables takes two imports (OP-10).
+- If `prices/conditions.py`, `engine.py` or `changes.py` is edited, run `python3 scripts/mutation_check_safety.py`.
 - Two owner-confirmed holdings are now recorded for Eric: Marriott Titanium and Aeroplan 25K (activated through Marriott on November 11). Other cards, statuses, memberships and balances are not yet imported.
 - No person has reviewed the 10 rules.
 - `dev/fable-integration` has not been reviewed or merged to `main`.

@@ -35,7 +35,14 @@ class TestViabilityExperiment(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             _p0, p1, bad = run.main()
         self.assertEqual([c["check"] for c in bad], [])
-        self.assertGreaterEqual(len(run.checks), 46)
+        self.assertGreaterEqual(len(run.checks), 52)
+        # CHANGED 2026-11-17 (safety correction): the checks that recorded false positives now assert the corrected
+        # answers on the same real content. Pin them by name so they cannot be dropped or reworded into passing.
+        names = " | ".join(c["check"] for c in run.checks)
+        for must in ("0.2 NO SILENT APPROVAL", "1.3 GUARD: the new-applicant welcome offer is now UNRESOLVED",
+                     "3.4 ... and 6,100 PQP is NOT reported as Silver: it is UNRESOLVED", "3.4c ... and the 2026 answer, whose flight minimum the rule checks, is still ESTABLISHED",
+                     "3.6 HISTORY PROTECTED", "3.11 RETIREMENT KEEPS HISTORY", "1.2 EVALUATED chain, unaffected", "2.7 CALCULATED with unchanged code"):
+            self.assertIn(must, names)
         self.assertEqual(digest("data", "profiles", "tables"), before)
         m = p1["p2"]["measurements"]
         self.assertEqual((m["records"], m["records_accepted_first_time"], m["operations_refused"]), (28, 26, 3))

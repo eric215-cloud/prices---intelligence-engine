@@ -1,0 +1,57 @@
+{
+  "about": "PROPOSAL, NOT APPLIED. Engineering's reading of the 27 restrictions and open questions on the nine verified rules in the project store, offered to a promotion reviewer. Until a reviewer records a class for each text (OP-14), the engine relies on none of these rules: what they lead to is reported UNRESOLVED. Nothing in this file changes the project. It is applied only in throwaway copies, by tests and by the experiment, to show what each choice does. A reviewer should read each line against the source and change any class they disagree with before applying it.",
+  "how_to_apply": "python3 experiments/safety/proposal.py --write-changesets <dir> --reviewer \"<your name as in vocab.promotion_reviewers>\" --on YYYY-MM-DD --statement \"<what you checked>\"   then   python3 -m prices apply <dir>/<file>   for each file",
+  "most_worth_a_second_look": [
+    "aeroplan-25k-via-marriott-top-tier: 'Trial or temporary Marriott status does not qualify' is classed unchecked, so the original Marriott-to-Aeroplan match is reported UNRESOLVED (it was CONDITIONAL) until a holding can say how the Marriott tier was obtained, or a reviewer decides otherwise.",
+    "jal-crystal-via-marriott-top-tier: classed so that JAL Crystal is NOT established by the account link alone (the rule's own restriction says it depends on accumulated FLY ON Points).",
+    "jal-business-award-via-jal-miles: the 60-day account condition is classed unchecked, so the JAL award pathway is not established for anyone until account age can be checked or a reviewer decides it is a usage term.",
+    "The two Amex transfer rules: 'No official American Express page was read' is classed informational because sufficiency of evidence is decided by the evidence policy (which these rules met), not by condition review. A reviewer who thinks otherwise should class it affects_eligibility; every Amex pathway then becomes UNRESOLVED."
+  ],
+  "rules": {
+    "aeroplan-25k-via-marriott-top-tier": [
+      {"text": "Trial or temporary Marriott status does not qualify", "class": "unchecked", "note": "Who qualifies. A holding records the Marriott tier, not how it was obtained."},
+      {"text": "Registration is reviewed; status is not guaranteed", "class": "usage", "note": "The rule is an acquire rule: it already reports the status as reachable by an action, never as held."},
+      {"text": "Either program may end or change the offering without notice", "class": "usage", "note": "A standing caveat about the offer, handled by review dates."},
+      {"text": "If Titanium/Ambassador lapses during the Aeroplan status year, is the matched 25K kept until its own expiry?", "class": "informational", "note": "About keeping the status later; the engine already reports that case as UNRESOLVED (retention terms unknown)."},
+      {"text": "Does matched 25K carry every benefit of earned 25K (for example Select Benefits)?", "class": "informational", "note": "About what the status carries, not who gets it."}
+    ],
+    "aeroplan-points-from-amex-mr": [
+      {"text": "No official American Express page was read", "class": "informational", "note": "Strength of evidence, which the evidence policy decides; the rule met it with independent secondary sources."}
+    ],
+    "ana-business-award-via-aeroplan": [
+      {"text": "Depends on partner award space", "class": "usage", "note": "Availability on a given day, not who may book."},
+      {"text": "Current point prices not recorded; a 2026 price increase is reported", "class": "usage", "note": "A research note about price."},
+      {"text": "Current price for the relevant distance band has not been read from the official chart", "class": "informational", "note": "A price."}
+    ],
+    "ana-miles-from-amex-mr": [
+      {"text": "No official American Express page was read", "class": "informational", "note": "Strength of evidence, which the evidence policy decides; the rule met it with independent secondary sources."}
+    ],
+    "hyatt-challenge-via-aeroplan-elite": [
+      {"text": "Register by December 31, 2026", "class": "enforced", "enforced_by": "dates", "note": "The rule ends on 2026-12-31."},
+      {"text": "One challenge per calendar year for Aeroplan elites", "class": "unchecked", "note": "Who may register: someone who already used a challenge this year may not. Nothing records that."},
+      {"text": "Hyatt may withdraw the offer without notice", "class": "usage", "note": "A standing caveat about the offer."},
+      {"text": "Is Aeroplan status obtained through the Marriott match accepted? Official terms list tiers only; one secondary source believes it is.", "class": "affects_eligibility", "note": "Decides whether a matched 25K qualifies at all."},
+      {"text": "Will the offer be renewed for 2027?", "class": "informational", "note": "About a later period; this rule ends in 2026."}
+    ],
+    "hyatt-globalist-via-aeroplan-challenge": [
+      {"text": "Validity period of status earned through the challenge", "class": "informational", "note": "How long it lasts, not who gets it."},
+      {"text": "Which nights count as qualifying (award nights, Guest of Honor, etc.)", "class": "informational", "note": "The rule requires the owner to record that the 20 qualifying nights were completed; which nights count is settled when that is recorded."}
+    ],
+    "jal-business-award-via-jal-miles": [
+      {"text": "JAL account must be open 60 days before the first redemption", "class": "unchecked", "note": "Who may redeem. The age of a JAL account is not recorded anywhere."},
+      {"text": "Awards cannot be changed after booking", "class": "usage", "note": "A term of the booking."},
+      {"text": "Restrictions apply to whom an award can be booked for", "class": "usage", "note": "Limits booking for other people; the member's own travel is unaffected."}
+    ],
+    "jal-crystal-via-marriott-top-tier": [
+      {"text": "Account link is one-to-one and cannot be changed afterwards", "class": "usage", "note": "A term of the link."},
+      {"text": "Points take up to about 6 weeks after linking", "class": "usage", "note": "Timing."},
+      {"text": "Crystal depends on accumulated FLY ON Points, not on the link alone", "class": "unchecked", "note": "The rule checks the Marriott tier only. The points that actually give Crystal are not checked."},
+      {"text": "Exact FLY ON Points threshold for Crystal and whether partner-credited points fully count (two secondary sources say 30,000 is enough)", "class": "affects_eligibility", "note": "Decides whether the link gives Crystal at all."},
+      {"text": "Validity period of Crystal reached through the partnership", "class": "informational", "note": "How long it lasts."},
+      {"text": "Whether a new JAL account can be created at the time of linking", "class": "informational", "note": "A step of the action, not who qualifies."}
+    ],
+    "oneworld-ruby-via-jal-crystal": [
+      {"text": "JAL Global Club members with Crystal are treated as oneworld Sapphire instead (not modelled)", "class": "unchecked", "note": "For a JAL Global Club member the output is wrong (Sapphire, not Ruby). Membership is not recorded."}
+    ]
+  }
+}

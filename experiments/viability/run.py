@@ -4,9 +4,10 @@
     python3 experiments/viability/run.py --write    # also rewrites experiments/viability/results/
 
 Phases
-    0  baseline   real candidates promoted in the copy exactly as they are: what does the engine tell a cardholder?
-    1  batch 1    the same content with the first capabilities (unchecked conditions, earning rates, credit terms):
-                  realistic questions, each labelled RECORDED / EVALUATED / CALCULATED / DECLINED
+    0  baseline   real candidates promoted in the copy with no class recorded for their conditions: refused.
+                  (Before the safety correction of 2026-11-17 they were accepted, and stated conditions were ignored.)
+    1  batch 1    the same content promoted with a recorded class for every restriction and open question, plus
+                  earning rates and credit terms: realistic questions, each labelled RECORDED / EVALUATED / CALCULATED / DECLINED
     2  batch 2    new real content from programmes the engine has never seen, entered with the code frozen
     3  maintenance  published terms change; do answers follow without losing history?
 
@@ -18,7 +19,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from lab import HERE, Lab, TODAY, load, status_of   # noqa: E402
+from lab import HERE, Lab, TODAY, items, load, scratch_real, status_of   # noqa: E402
 
 OUT = os.path.join(HERE, "results")
 checks, sections = [], []
@@ -73,46 +74,59 @@ RILEY = [{"id": "h-csr", "entity": "card.chase-sapphire-reserve", "state": "unco
 
 
 # ------------------------------------------------------------------------------------------------ phase 0
+WELCOME = "New applicants only; unavailable to current Sapphire cardholders or previous Sapphire bonus recipients within eligibility window"
+
+
 def phase0(spec):
-    lab = Lab()
-    ids, refused = select(lab, spec)
-    check("0.0 the evidence policy holds on real content: a candidate with one secondary source cannot be promoted, even in the copy",
-          sorted(refused) == ["c-ana-business-award-via-ana-miles"], ", ".join(sorted(refused)))
+    lab = Lab(classify_live=False)                  # the store as the project holds it: no rule has been classified yet
+    cands = lab.store().candidates
+    ids = sorted(c for c in cands if cands[c]["status"] == "proposed" and (c.startswith(tuple(spec["select_prefixes"])) or c in spec["select_ids"]))
+    states = {c: bool(cands[c]["proposed_rule"].get("restrictions") or cands[c]["proposed_rule"].get("open_questions") or cands[c]["open_questions"]) for c in ids}
+    bare = {c: lab.promote_bare(c, "phase0") for c in ids}
+    unclassified = sorted(c for c in ids if any("CONDITIONS_NOT_CLASSIFIED" in e for e in bare[c].get("errors", [])))
     lab.person("syn-casey", CASEY)
     rep = lab.js("status", "--profile", "syn-casey", "--as-of", TODAY)
     g = gate_counts()
-    wrong = sorted(x["entity"] for x in rep["derived_entitlements"] if x.get("via") in g["deriving_with_unchecked_gate"])
     check("0.1 the restriction classification covers every restriction (124 strings on the 73 real non-transfer candidates)",
           g["aligned"] and g["restrictions"] == 124 and g["candidates"] == 73, str(g["tally"]))
-    check("0.2 BASELINE DEFECT reproduced: an account opened in 2024 is shown the new-applicant welcome offer as ESTABLISHED",
-          status_of(rep, "benefit.csr.public-welcome-offer") == "ESTABLISHED")
-    check("0.3 BASELINE DEFECT reproduced: IHG Platinum 'benefit' ESTABLISHED while the status itself still needs enrolment",
-          status_of(rep, "benefit.csr.ihg-platinum-elite-status") == "ESTABLISHED" and status_of(rep, "ihg.platinum") == "CONDITIONAL")
-    section("Phase 0 - baseline: real candidates promoted in the copy as they are", [
-        "%d real candidates promoted in the copy (Chase Sapphire Reserve packet, Visa Infinite baselines, one loyalty candidate; a second was refused by the evidence policy); "
-        "44 of the 113 in the store carry open questions and promote only with an explicit acceptance." % len(ids),
+    check("0.2 NO SILENT APPROVAL: a real candidate that states any restriction or open question is refused when no class is recorded for "
+          "each; only candidates that state none are promoted that way",
+          all(bare[c]["ok"] != states[c] for c in ids if c != "c-ana-business-award-via-ana-miles") and unclassified
+          and all(states[c] for c in unclassified), "%d refused of %d" % (len(unclassified), len(ids)))
+    check("0.3 AFTER: the new-applicant welcome offer and the IHG Platinum 'benefit' are not reported for a 2024 account (before the "
+          "correction both were ESTABLISHED on text nothing checked)",
+          status_of(rep, "benefit.csr.public-welcome-offer") == "NOT_AVAILABLE" and status_of(rep, "benefit.csr.ihg-platinum-elite-status") == "NOT_AVAILABLE")
+    check("0.4 AFTER: the verified rules, not yet classified by a reviewer, establish nothing: Aeroplan points from Amex points and the "
+          "Japan award built on them are UNRESOLVED",
+          (status_of(rep, "aeroplan.points"), status_of(rep, "cap.japan-business.ana-via-aeroplan")) == ("UNRESOLVED", "UNRESOLVED"))
+    wrong = dict(scratch_real(cands["c-cb.csr.public-welcome-offer"])[0], **{"class": "usage"})
+    careless = [wrong if i["text"] == WELCOME else i for i in scratch_real(cands["c-cb.csr.public-welcome-offer"])]
+    ok = wrong["text"] == WELCOME and lab.promote("c-cb.csr.public-welcome-offer", "phase0", conditions=careless)["ok"]
+    rep2 = lab.js("status", "--profile", "syn-casey", "--as-of", TODAY)
+    check("0.5 LIMIT kept visible: the class is the reviewer's word. Promoted with 'new applicants only' recorded as a usage term, the "
+          "welcome offer IS established for the 2024 account; the record names who classed it so",
+          ok and status_of(rep2, "benefit.csr.public-welcome-offer") == "ESTABLISHED"
+          and lab.store().rules["cb.csr.public-welcome-offer"]["condition_review"]["by"] == lab.reviewer)
+    section("Phase 0 - baseline: real candidates promoted in the copy with no class recorded", [
+        "%d real candidates selected (Chase Sapphire Reserve packet, Visa Infinite baselines, two loyalty candidates). Promoted with no class "
+        "recorded for their conditions: %d refused (CONDITIONS_NOT_CLASSIFIED), %d accepted because they state no restriction and no open "
+        "question, 1 refused by the evidence policy." % (len(ids), len(unclassified), sum(1 for c in ids if bare[c]["ok"])),
+        "Before the safety correction every one of them was accepted, and for an invented cardholder whose account was opened in 2024 the "
+        "report listed the welcome offer, IHG Platinum, Priority Pass and five more as established (experiments/safety/before_after.py "
+        "re-runs that on the earlier commit).",
         "Restrictions on the 73 real non-transfer candidates: %d strings. Engineering's classification: %s."
         % (g["restrictions"], ", ".join("%s %d" % (k, v) for k, v in sorted(g["tally"].items()))),
         "(U usage term, G gate not checked by the rule, g gate that is checked, T time window, M research note)",
         "Candidates that state a gate their rule does not check: %d of 73; %d of them derive an entitlement."
         % (len(g["with_unchecked_gate"]), len(g["deriving_with_unchecked_gate"])),
-        "For an invented cardholder whose account was opened in 2024, the status report lists as DERIVED ENTITLEMENTS - established:",
-    ] + ["    %s" % e for e in wrong] + [
-        "Each of those has a stated condition (new applicants only, enrolment, activation, primary cardholder) that nothing checked.",
     ])
-    return {"promoted": len(ids), "gates": g, "established_despite_gate": wrong}
+    return {"selected": len(ids), "refused_unclassified": unclassified, "promoted_without_conditions": sorted(c for c in ids if bare[c]["ok"]), "gates": g}
 
 
 # ------------------------------------------------------------------------------------------------ phase 1
 def amend(lab, spec, batch):
     """The structured terms of a batch, through the pipeline, each with the rule's own evidence."""
     n = collections.Counter()
-    for rid, texts in spec.get("unchecked", {}).items():
-        rule = lab.store().rules[rid]
-        keep = [x for x in rule.get("restrictions", []) if x not in texts]
-        out = lab.apply("revise_rule", batch, rid, target=rid, data={"set": {"unchecked": texts, "restrictions": keep}}, evidence=lab.evidence_of(rid))
-        n["unchecked ok" if out["ok"] else "unchecked refused"] += 1
-        assert out["ok"], (rid, out["errors"])
     for rid, block in spec.get("earning", {}).items():
         out = lab.apply("revise_rule", batch, rid, target=rid, data={"set": {"earning": block}}, evidence=lab.evidence_of(rid))
         n["earning ok" if out["ok"] else "earning refused"] += 1
@@ -134,7 +148,10 @@ def answers(lab, rows, qid, kind, question, args, verdict):
 
 def phase1(spec):
     lab = Lab()
-    select(lab, spec)
+    done, not_promoted = select(lab, spec)
+    check("0.0 the evidence policy holds on real content: a candidate with one secondary source cannot be promoted, even in the copy "
+          "and even with every condition classified", sorted(not_promoted) == ["c-ana-business-award-via-ana-miles"], ", ".join(sorted(not_promoted)))
+    tally = collections.Counter(i["class"] for c in done for i in lab.store().rules[lab.store().candidates[c]["proposed_rule"]["id"]].get("condition_review", {}).get("items", []))
     lab.vocab({"spend_categories": spec["spend_categories"]})
     counts, refused = amend(lab, spec, "batch1")
     lab.person("syn-casey", CASEY)
@@ -154,9 +171,13 @@ def phase1(spec):
     st = {e: status_of(rep, e) for e in ("jal.crystal", "oneworld.ruby", "aeroplan.25k", "aeroplan.points", "cap.japan-business.ana-via-aeroplan",
                                          "benefit.csr.public-welcome-offer", "benefit.csr.ihg-platinum-elite-status", "ihg.platinum",
                                          "benefit.csr.annual-travel-credit-300", "benefit.csr.trip-delay-reimbursement", "hyatt.explorist")}
-    check("1.1 EVALUATED chain: Marriott Titanium -> JAL Crystal -> oneworld Ruby is CONDITIONAL (an action is needed), not established",
-          st["jal.crystal"] == "CONDITIONAL" and st["oneworld.ruby"] == "CONDITIONAL", str(st))
-    check("1.2 EVALUATED chain: Amex points -> Aeroplan points -> ANA business award to Japan is ESTABLISHED",
+    # CHANGED 2026-11-17 (safety correction): was CONDITIONAL. The Crystal rule's own text says Crystal "depends on accumulated FLY ON
+    # Points, not on the link alone"; the proposal classes that unchecked, so the chain is no longer offered as one action away.
+    check("1.1 EVALUATED chain: Marriott Titanium -> JAL Crystal -> oneworld Ruby is UNRESOLVED: Crystal depends on FLY ON Points the "
+          "rule does not check, so the link alone is not reported as enough",
+          st["jal.crystal"] == "UNRESOLVED" and st["oneworld.ruby"] == "UNRESOLVED", str(st))
+    check("1.2 EVALUATED chain, unaffected: Amex points -> Aeroplan points -> ANA business award to Japan stays ESTABLISHED (its "
+          "restrictions are usage terms and its open questions are about price and evidence, all classed so)",
           st["aeroplan.points"] == "ESTABLISHED" and st["cap.japan-business.ana-via-aeroplan"] == "ESTABLISHED")
     check("1.3 GUARD: the new-applicant welcome offer is now UNRESOLVED for an existing cardholder, never ESTABLISHED",
           st["benefit.csr.public-welcome-offer"] == "UNRESOLVED")
@@ -166,7 +187,7 @@ def phase1(spec):
           st["benefit.csr.annual-travel-credit-300"] == "ESTABLISHED" and st["benefit.csr.trip-delay-reimbursement"] == "ESTABLISHED")
     check("1.6 a spending threshold is never met by holding the card: Hyatt Explorist is NOT_AVAILABLE", st["hyatt.explorist"] == "NOT_AVAILABLE")
     answers(lab, rows, "Q1", "EVALUATED", "Casey holds Marriott Titanium. Which airline status does that lead to?",
-            ["explain", *P, "oneworld.ruby"], "CONDITIONAL: reachable, an action is needed first")
+            ["explain", *P, "oneworld.ruby"], "UNRESOLVED: the rule's own text says the link alone does not give Crystal")
     answers(lab, rows, "Q2", "EVALUATED", "Is the Sapphire Reserve welcome offer available to Casey (account opened 2024)?",
             ["explain", *P, "benefit.csr.public-welcome-offer"], "UNRESOLVED: 'new applicants only' is text the engine does not check")
     answers(lab, rows, "Q3", "RECORDED", "What are the terms of trip delay cover on Casey's card?",
@@ -228,7 +249,8 @@ def phase1(spec):
                  "output": lab.cli("credits", *P)[1]})
     answers(lab, rows, "Q9", "EVALUATED", "How far is Casey from the $75,000 unlock, and what does it give?",
             ["earned", *P], "progress 61,200 of 75,000 on record; nothing earned; five separate outcomes with their own terms")
-    return {"lab": lab, "amendments": dict(counts), "credit_refused": refused, "rows": rows, "credits_json": cr, "by": by}
+    return {"lab": lab, "amendments": dict(counts), "credit_refused": refused, "rows": rows, "credits_json": cr, "by": by,
+            "promoted": len(done), "classes": dict(tally)}
 
 
 # ------------------------------------------------------------------------------------------------ phase 2
@@ -254,8 +276,7 @@ def expand(rec):
             "restrictions": ["Requires a Capital One travel rewards or business rewards card",
                              "The name on the Capital One account must match the name on the loyalty programme account",
                              "A finished transfer cannot be reversed"]}
-    if rec.get("unchecked"):
-        rule["unchecked"] = rec["unchecked"]
+    rule["restrictions"] += rec.get("extra_restrictions", [])
     return rule
 
 
@@ -285,10 +306,12 @@ def intake(lab, sheet, batch):
             first = out["errors"]
             fb = rec["fallback"]
             rule = json.loads(json.dumps(fb["rule"])) if "rule" in fb else {k: v for k, v in rule.items() if k not in fb.get("drop", [])}
-        promoted = lab.promote(cand["id"], batch, rec["key"])["ok"] if out["ok"] else False
+        classes = dict(sheet.get("condition_classes", {}), **rec.get("classes", {}))
+        given = items(rule, cand["open_questions"], classes)
+        promoted = lab.promote(cand["id"], batch, rec["key"], conditions=given)["ok"] if out["ok"] else False
         outcome[rec["key"]] = {"attempts": tries, "accepted": out["ok"], "promoted": promoted, "first_error": first or (None if out["ok"] else out["errors"]),
                                "rule": rule["id"], "sheet_fields": _fields({k: v for k, v in rec.items() if k != "key"}),
-                               "changeset_fields": _fields(cand), "mechanism": rec["mechanism"]}
+                               "changeset_fields": _fields(cand), "mechanism": rec["mechanism"], "classes_recorded": len(given)}
     return outcome
 
 
@@ -332,7 +355,10 @@ def phase2(lab):
     check("2.7 CALCULATED with unchanged code: 30,000 Capital One miles -> 30,000 Aeroplan, 22,500 JAL (2:1.5), 18,000 JetBlue (5:3), "
           "15,000 Accor (2:1), 60,000 I Prefer (1:2)",
           got == {"aeroplan.points": 30000, "jal.miles": 22500, "jetblue.points": 18000, "accor.points": 15000, "iprefer.points": 60000}, str(got))
-    check("2.8 DECLINED: Choice Privileges is not calculated: 'U.S.-based accounts only' is not checked", cv["choice.points"]["result"] == "NOT_CALCULATED")
+    check("2.8 DECLINED: Choice Privileges is not calculated: 'U.S.-based accounts only' is a condition on the account that nothing checks; "
+          "the other nine transfers, whose card requirement is met by holding the miles, are unaffected",
+          cv["choice.points"]["result"] == "NOT_CALCULATED" and sum(1 for a in cv.values() if a["result"] == "CALCULATED") == 9,
+          str({k: v["result"] for k, v in cv.items()}))
     cr = {c["rule"]: c for acct in lab.js("credits", *D)["accounts"] for c in acct["credits"]}
     check("2.9 the $300 Capital One Travel credit has no period (the source states no cycle, and the credit block cannot hold that): it is absent "
           "from the credits report; the Global Entry credit is there with its period unresolved",
@@ -346,7 +372,7 @@ def phase2(lab):
     answers(lab, rows, "Q13", "DECLINED", "Has Eden, with nothing recorded?", ["explain", "--profile", "syn-eden", "--as-of", TODAY, "united.silver"],
             "UNRESOLVED: the figures are not recorded")
     answers(lab, rows, "Q14", "EVALUATED", "Is the Venture X early-spend bonus Devon's?", ["explain", *D, "benefit.venture-x.early-spend-bonus"],
-            "UNRESOLVED: the spend requirement and the 48-month rule are text, not checked")
+            "UNRESOLVED: the spend requirement and the 48-month rule are conditions on who gets it that nothing checks")
     assess = {k: v for k, v in sheet["assessment"].items() if k != "about"}
     check("2.10 the assessment covers every record", sorted(assess) == sorted(recs))
     ops = lab.log[before:]
@@ -357,6 +383,7 @@ def phase2(lab):
          "sheet_fields_per_record": round(sum(v["sheet_fields"] for v in recs.values()) / len(recs), 1),
          "changeset_fields_per_record": round(sum(v["changeset_fields"] for v in recs.values()) / len(recs), 1),
          "pipeline_operations_per_record": round(len(ops) / len(recs), 2),
+         "classes_recorded_per_record": round(sum(v["classes_recorded"] for v in recs.values()) / len(recs), 1),
          "by_level": dict(collections.Counter(v["level"] for v in assess.values())),
          "by_path": dict(collections.Counter(v["path"] for v in assess.values())),
          "fully_captured": sum(1 for v in assess.values() if v["full"]),
@@ -383,25 +410,43 @@ def phase3(lab):
     check("3.3 NEW TERMS APPLY FROM THEIR DATE: on 2027-07-01, 5,400 PQP is not Silver (the PQF route is gone)", mid["status"] == "NOT_AVAILABLE", mid["status"])
     lab.person("syn-devon", DEVON, DEVON_METRICS + [{"id": "united.2027.pqp", "value": 6100, "as_of": "2027-09-30"}])
     late = silver("2027-10-01")
-    check("3.4 ... and 6,100 PQP is Silver through the 2027 rule", late["status"] == "ESTABLISHED" and late["chain"]["via"] == "united.silver-by-qualification-2027")
+    # CHANGED 2026-11-17 (safety correction): this check expected ESTABLISHED. That was a false positive: the same sheet
+    # says the sources do not establish whether the minimum of United-operated flights continues in 2027.
+    why = json.dumps(late)
+    check("3.4 ... and 6,100 PQP is NOT reported as Silver: it is UNRESOLVED, and the reason given is the open question about the "
+          "minimum of United-operated flights (this check expected ESTABLISHED before the safety correction)",
+          late["status"] == "UNRESOLVED" and "minimum number of United-operated flights" in why and "could change who has this" in why, late["status"])
+    lab.person("syn-devon", DEVON, DEVON_METRICS + [{"id": "united.2027.pqp", "value": 5400, "as_of": "2027-06-30"}])
+    check("3.4b ... while a clear 'no' stays a 'no': 5,400 PQP on 2027-10-01 is NOT_AVAILABLE, not UNRESOLVED",
+          silver("2027-10-01")["status"] == "NOT_AVAILABLE")
+    lab.person("syn-devon", DEVON, DEVON_METRICS + [{"id": "united.2027.pqp", "value": 6100, "as_of": "2027-09-30"}])
+    check("3.4c ... and the 2026 answer, whose flight minimum the rule checks, is still ESTABLISHED", silver(TODAY)["status"] == "ESTABLISHED")
     rev = lab.cli("review", "--profile", "syn-devon", "--from", "2026-12-31", "--to", "2027-01-01")[1]
     check("3.5 the change of year is visible as a dated change with what depended on it", "united.silver" in rev and "benefit.united.starter-pqp" in rev)
 
-    # M2  TEST EDIT (not a real term): what an in-place revision does to answers about the past
+    # M2  TEST EDIT (not a real term): an in-place revision of a published term
     rid = "cb.csr.category-earning-structure"
     was = dining(TODAY)["points"]
     block = json.loads(json.dumps(lab.store().rules[rid]["earning"]))
     for r in block["rates"]:
         if r["category"] == "dining":
             r["per_usd"] = 2
-    ok = lab.apply("revise_rule", "maintenance", "M2", target=rid, data={"set": {"earning": block}}, evidence=lab.evidence_of(rid))["ok"]
+    out = lab.apply("revise_rule", "maintenance", "M2", target=rid, data={"set": {"earning": block}}, evidence=lab.evidence_of(rid))
+    # CHANGED 2026-11-17 (safety correction): this check reproduced the defect (1,200 became 800 for a past date).
+    check("3.6 HISTORY PROTECTED: revising a term in place is refused (HISTORY_REWRITE) and the answer for %s is unchanged; before the "
+          "safety correction it was accepted and 1,200 became 800 for a date before the change" % TODAY,
+          not out["ok"] and any("HISTORY_REWRITE" in e for e in out["errors"]) and dining(TODAY)["points"] == was == 1200, "%s %s" % (out["ok"], was))
+    fix = "TEST EDIT: suppose the dining rate had been entered wrongly and was always 2"
+    ok = lab.apply("revise_rule", "maintenance", "M2 correction", target=rid, data={"set": {"earning": block}, "correction": fix}, evidence=lab.evidence_of(rid))["ok"]
     cs_id = "cs-%s-via-%04d-revise-rule" % (TODAY.replace("-", ""), lab.n)
-    now = dining(TODAY)["points"]
-    check("3.6 DEFECT reproduced: revising a term in place rewrites the answer for a date BEFORE the change (1,200 becomes 800 for %s)" % TODAY,
-          ok and (was, now) == (1200, 800), "%s -> %s" % (was, now))
+    with open(os.path.join(lab.root, "data", "audit", "changesets", cs_id + ".json"), encoding="utf-8") as f:
+        declared = json.load(f)["data"].get("correction") == fix
     snap = os.path.exists(os.path.join(lab.root, "data", "audit", "previous", cs_id + ".json"))
-    ok = lab.apply("revert_changeset", "maintenance", "M2 revert", data={"changeset": cs_id}, attestation=lab.attest())["ok"]
-    check("3.7 the audit trail holds the record as it was, and the revision can be undone exactly", snap and ok and dining(TODAY)["points"] == 1200)
+    now = dining(TODAY)["points"]
+    ok2 = lab.apply("revert_changeset", "maintenance", "M2 revert", data={"changeset": cs_id}, attestation=lab.attest())["ok"]
+    check("3.7 a DECLARED correction is the only way to change a past answer: it is accepted (1,200 becomes 800), the declaration and the "
+          "record as it was are kept in the audit trail, and it can be undone exactly",
+          ok and declared and snap and now == 800 and ok2 and dining(TODAY)["points"] == 1200, "%s %s %s %s" % (ok, declared, snap, now))
 
     # M3  TEST EDIT: the same change made as a successor rule
     ok1 = lab.apply("revise_rule", "maintenance", "M3 end", target=rid, data={"set": {"valid_to": "2027-03-31"}}, evidence=lab.evidence_of(rid))["ok"]
@@ -410,7 +455,8 @@ def phase3(lab):
     new.update(id=rid + "-from-2027-04", valid_from="2027-04-01", earning=block, summary="TEST EDIT, not a real term: " + old["summary"])
     cand = {"id": "c-" + new["id"], "status": "proposed", "created_on": TODAY, "proposed_rule": new, "evidence": lab.evidence_of(rid),
             "search_path": ["viability experiment: test edit"], "open_questions": []}
-    ok2 = lab.apply("add_candidate", "maintenance", "M3 successor", data={"candidate": cand})["ok"] and lab.promote(cand["id"], "maintenance")["ok"]
+    same = [i for i in old["condition_review"]["items"] if i["text"] in new.get("restrictions", [])]       # the reviewer attests the same classes again
+    ok2 = lab.apply("add_candidate", "maintenance", "M3 successor", data={"candidate": cand})["ok"] and lab.promote(cand["id"], "maintenance", conditions=same)["ok"]
     a, b, c = dining(TODAY), dining("2027-03-31"), dining("2027-04-01")
     check("3.8 SUCCESSOR RULE: $400 of dining is 1,200 on %s and on 2027-03-31, and 800 from 2027-04-01; each answer names its own rule" % TODAY,
           ok1 and ok2 and (a["points"], b["points"], c["points"]) == (1200, 1200, 800) and c["basis"]["rule"] == new["id"] and a["basis"]["rule"] == rid,
@@ -446,6 +492,19 @@ def phase3(lab):
           "stays ESTABLISHED through Chase points -> Aeroplan",
           ok and ok2 and via0 == "aeroplan-points-from-amex-mr" and e1["status"] == "ESTABLISHED" and e1["chain"]["via"] == "chase.ur-to-aeroplan"
           and s1 == "ESTABLISHED", "%s -> %s" % (via0, e1["chain"].get("via")))
+    # M5  TEST EDIT: a relationship ends. Retirement must not erase the answers it gave while it was in force
+    lyft = lambda day: lab.js("earnings", "--profile", "syn-casey", "--as-of", day, "--category", "rideshare-lyft", "--amount", 60)["answers"][0]["points"]   # noqa: E731
+    rid5 = "cb.csr.lyft-5x-multiplier"
+    b = (lyft("2026-11-01"), lyft(TODAY))
+    ok = lab.apply("retire_rule", "maintenance", "M5", target=rid5, data={"ended_on": "2026-11-10"}, evidence=lab.evidence_of(rid5))["ok"]
+    v = lab.store().rules[rid5]["verification"]
+    check("3.11 RETIREMENT KEEPS HISTORY: a rule retired as ended on 2026-11-10 still answers for 2026-11-01 ($60 of Lyft = 300 points) and "
+          "no longer for %s (60, the catch-all rate); before the safety correction retiring it erased both" % TODAY,
+          ok and b == (300, 300) and (lyft("2026-11-01"), lyft(TODAY)) == (300, 60) and (v["status"], v.get("retired_from")) == ("retired", "verified"),
+          "%s %s %s" % (b, lyft("2026-11-01"), lyft(TODAY)))
+    out = lab.apply("retire_rule", "maintenance", "M5 void", target="cb.csr.peloton-credit-and-10x", data={"void": True}, evidence=lab.evidence_of("cb.csr.peloton-credit-and-10x"))
+    check("3.12 withdrawing a rule from EVERY date (it was never true) is refused unless it is declared as a correction",
+          not out["ok"] and any("HISTORY_REWRITE" in e for e in out["errors"]))
     check("3.10 the copy is sound after every maintenance step (lint: no errors)", lab.lint_errors() == [], "; ".join(lab.lint_errors()[:2]))
     return {"notes": notes, "united_2027": out}
 
@@ -486,8 +545,10 @@ def write(p0, p1):
           "| | |", "|---|---|",
           "| Real candidates promoted in the copy | %d |" % sum(1 for o in b1 if o["op"] == "promote_candidate" and o["ok"]),
           "| Refused by the evidence policy | %d |" % sum(1 for o in b1 if o["op"] == "promote_candidate" and not o["ok"]),
-          "| Amendments accepted (unchecked conditions / earning rates / credit terms) | %d / %d / %d |"
-          % (p1["amendments"].get("unchecked ok", 0), p1["amendments"].get("earning ok", 0), p1["amendments"].get("credit ok", 0)),
+          "| Conditions classified at promotion (in the copy): enforced / unchecked / usage / affects eligibility / informational | %s |"
+          % " / ".join(str(p1["classes"].get(k, 0)) for k in ("enforced", "unchecked", "usage", "affects_eligibility", "informational")),
+          "| Amendments accepted (earning rates / credit terms) | %d / %d |"
+          % (p1["amendments"].get("earning ok", 0), p1["amendments"].get("credit ok", 0)),
           "| Left as text because no structure fits | %d kinds (batch1.json, not_structured) |" % len(load("batch1.json")["not_structured"])]
     L += ["", "## Batch 2 - new programmes, code frozen", "",
           "| Measure | Value |", "|---|---|",
@@ -498,6 +559,7 @@ def write(p0, p1):
           "| Records that needed a change to `prices/` | 0 (the code is identical to the freeze commit) |",
           "| Values an operator writes per record: compact sheet / full changeset | %s / %s |" % (m["sheet_fields_per_record"], m["changeset_fields_per_record"]),
           "| Pipeline operations per record (entities, candidate, promotion) | %s |" % m["pipeline_operations_per_record"],
+          "| Condition classes a reviewer records per record (added by the safety correction) | %s |" % m["classes_recorded_per_record"],
           "| Best the frozen engine does: calculated / evaluated / recorded only | %s / %s / %s |"
           % (pct(m["by_level"].get("calculated", 0)), pct(m["by_level"].get("evaluated", 0)), pct(m["by_level"].get("recorded", 0))),
           "| Entered by data alone, first time / only by reshaping to fit | %s / %s |" % (pct(m["by_path"].get("data", 0)), pct(m["by_path"].get("data-workaround", 0))),

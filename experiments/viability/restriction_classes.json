@@ -1,5 +1,14 @@
 {
-  "about": "Engineering's reading of every restriction string on the 73 real non-transfer candidates (68 of which carry restrictions) (data/candidates, status proposed), in the order the candidate lists them. U = usage term (how the benefit is used, limits, claim rules). G = gate: a condition on WHO has the benefit or an action needed first, NOT checked by the rule's condition. g = gate that IS checked (by the rule's when, its earn block, or a cardholder election). T = time window. M = research or meta note. This is a classification for measurement, made by engineering on 2026-11-16; it is not a content review.",
+  "about": "Engineering's reading of every restriction string on the 73 real non-transfer candidates (68 of which carry restrictions) (data/candidates, status proposed), in the order the candidate lists them. U = usage term (how the benefit is used, limits, claim rules). G = gate: a condition on WHO has the benefit or an action needed first, NOT checked by the rule's condition. g = gate that IS checked (by the rule's when, its earn block, or a cardholder election). T = time window. M = research or meta note. Open questions are classed under `questions`, by how the text starts: informational (the answer would not change who is eligible, such as a transfer ratio) or affects_eligibility. This is a classification for measurement, made by engineering on 2026-11-16; it is not a content review.",
+  "texts": {
+    "about": "ADDED 2026-11-17. The 40 real transfer candidates are not in `classes` (each repeats the same three strings), so their restrictions are classed here by exact text.",
+    "Requires holding Chase Sapphire Reserve (or another transfer-enabled Ultimate Rewards card) in good standing": {"class": "enforced", "enforced_by": "when:card.chase-sapphire-reserve"},
+    "Recipient loyalty account name must match primary cardholder or eligible authorized user / household member per Ultimate Rewards terms": {"class": "usage"},
+    "Exact per-partner transfer ratio is not listed on the public Chase transfer education page and must be verified in the logged-in Ultimate Rewards portal before promotion": {"class": "usage"},
+    "Program-level Bilt Rewards transfer feature (available across eligible Bilt Rewards members, not exclusive to Bilt Palladium)": {"class": "usage"},
+    "Requires linking matching loyalty account in the Bilt app": {"class": "unchecked"},
+    "Exact transfer ratio, minimum increment, and posting speed are not printed on the public Bilt Rewards partner directory and must be verified in-app prior to promotion": {"class": "usage"}
+  },
   "classes": {
     "baseline.mc-wl.concierge-lifestyle": "U",
     "baseline.mc-wl.id-theft-protection": "G",
@@ -69,5 +78,43 @@
     "csr.earn-southwest-chase-travel-credit-75k": "UT",
     "csr.grants-air-canada-lounge-access": "UUU",
     "csr.grants-sapphire-lounge-access": "gUU"
-  }
+  },
+  "questions": [
+    {
+      "starts": "Verify exact",
+      "class": "informational"
+    },
+    {
+      "starts": "CRITICAL RATIO VERIFICATION",
+      "class": "informational"
+    },
+    {
+      "starts": "Resolve the 27th unnamed partner",
+      "class": "informational"
+    },
+    {
+      "starts": "What Premier Silver unlocks onward",
+      "class": "informational"
+    },
+    {
+      "starts": "Current ANA award rules",
+      "class": "informational"
+    },
+    {
+      "starts": "Only one secondary source",
+      "class": "affects_eligibility"
+    },
+    {
+      "starts": "No official United or Marriott page has been read",
+      "class": "affects_eligibility"
+    },
+    {
+      "starts": "Confirm whether Eric has completed",
+      "class": "affects_eligibility"
+    },
+    {
+      "starts": "Verify whether Eric qualified",
+      "class": "affects_eligibility"
+    }
+  ]
 }

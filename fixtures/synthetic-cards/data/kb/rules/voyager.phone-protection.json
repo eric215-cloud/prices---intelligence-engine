@@ -1,4 +1,15 @@
 {
+  "condition_review": {
+    "by": "Synthetic Reviewer",
+    "changeset": "cs-20261114-fix-05-promote-candidate",
+    "items": [
+      {
+        "class": "usage",
+        "text": "Monthly phone bill must be paid with the card"
+      }
+    ],
+    "on": "2026-11-14"
+  },
   "evidence": [
     "ev-syn-voyager-guide"
   ],

@@ -1,4 +1,15 @@
 {
+  "condition_review": {
+    "by": "Synthetic Reviewer",
+    "changeset": "cs-20261115-credit-03-promote-candidate",
+    "items": [
+      {
+        "class": "usage",
+        "text": "Unused monthly credit expires at the end of the month"
+      }
+    ],
+    "on": "2026-11-15"
+  },
   "credit": {
     "amount": 10,
     "cycle": "calendar_month",

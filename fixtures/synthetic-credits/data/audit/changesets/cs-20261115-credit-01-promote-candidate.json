@@ -6,6 +6,12 @@
   },
   "author": "fixture author (synthetic)",
   "data": {
+    "conditions": [
+      {
+        "class": "usage",
+        "text": "Prepaid bookings through the (invented) Northwind travel desk only"
+      }
+    ],
     "review_by": "2027-11-15"
   },
   "date": "2026-11-15",
