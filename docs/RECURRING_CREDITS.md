@@ -19,7 +19,7 @@ One representation each. The offer's effective and expiration dates are the rule
 | Field | Meaning | Absent means |
 |---|---|---|
 | `amount`, `unit` | Allowance for one period, and its currency | (required) |
-| `cycle` | `calendar_year`, `calendar_half`, `calendar_quarter`, `calendar_month`, `anniversary_year`, `multi_year` | (required) |
+| `cycle` | `calendar_year`, `calendar_half`, `calendar_quarter`, `calendar_month`, `anniversary_year`, `anniversary_statement_year`, `multi_year` | (required) |
 | `years` | `multi_year` only: length of the period, 2 or more | (required for `multi_year`) |
 | `anchor` | `multi_year` only: `account_opening` or `last_use` | the source does not say what the years are counted from: the period is unresolved |
 | `max_per_transaction` | Number, or `none` (the source says there is no limit) | the source does not say |
@@ -41,6 +41,7 @@ A credit described as "300 a year in two halves" is `amount: 150`, `cycle: calen
 | `calendar_quarter` | the calendar quarter | nothing |
 | `calendar_month` | the calendar month (leap years included) | nothing |
 | `anniversary_year` | from the anniversary of the account's opening date to the day before the next | `opened_on` on the person's card holding |
+| `anniversary_statement_year` (DEP-01) | first year: the opening date through the first statement closing date **after** the opening anniversary; then from the day after each such closing through the closing 12 monthly billing cycles later | `opened_on`, and `statement_closings` (dates shown on statements) and/or `statement_closing_day` on the card holding. A boundary month with no recorded closing, or whose month lacks the closing day, is UNRESOLVED; so is a closing on the anniversary itself. Recorded dates win over the closing day; a boundary computed from the closing day says so |
 | `multi_year`, `account_opening` | N-year blocks counted from the opening date | `opened_on` |
 | `multi_year`, `last_use` | from the last recorded use for N years; after that, open until the next use | an owner-confirmed, dated record of the last use |
 

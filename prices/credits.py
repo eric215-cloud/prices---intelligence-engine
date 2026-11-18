@@ -12,7 +12,22 @@ Three things, never mixed:
                 with its allowance and its uses - the same record type and operations as earned benefits
                 (earned.py does the arithmetic). No record means "not recorded", never "unused".
 
-A period that depends on a date nobody recorded (the account's opening date, the last use) is UNRESOLVED.
+A period that depends on a date nobody recorded (the account's opening date, the last use, a statement closing
+date) is UNRESOLVED.
+
+Two anniversary cycles, kept apart:
+
+    anniversary_year            exact calendar anniversaries of opened_on: opened 2025-03-15 gives
+                                2025-03-15..2026-03-14, 2026-03-15..2027-03-14, ...
+    anniversary_statement_year  billing-cycle anniversaries (DEP-01): the first year runs from opened_on through
+                                the first statement closing date AFTER the opening anniversary; each later year runs
+                                from the day after that closing date through the closing date 12 monthly billing
+                                cycles later. Closing dates are a profile fact on the card holding (owner-attested):
+                                statement_closings (dates actually shown on statements) and/or statement_closing_day
+                                (the day of the month statements close). A boundary whose closing date is not
+                                recorded and cannot be read from the closing day (the day does not exist in that
+                                month) is UNRESOLVED; nothing is guessed. A closing date that falls on the
+                                anniversary itself is UNRESOLVED too ("after" is ambiguous for that day).
 """
 import datetime
 
@@ -22,7 +37,7 @@ from .engine import ESTABLISHED, NOT_AVAILABLE, evaluate, in_effect, to_date
 from .lint import single_holds
 
 ONE_DAY = datetime.timedelta(days=1)
-CYCLES = ("calendar_year", "calendar_half", "calendar_quarter", "calendar_month", "anniversary_year", "multi_year")
+CYCLES = ("calendar_year", "calendar_half", "calendar_quarter", "calendar_month", "anniversary_year", "anniversary_statement_year", "multi_year")
 PER_YEAR = {"calendar_half": 2, "calendar_quarter": 4, "calendar_month": 12}
 KNOWN, UNRESOLVED, BEFORE_ACCOUNT = "KNOWN", "UNRESOLVED", "BEFORE_ACCOUNT"
 NOT_RECORDED = "NOT_RECORDED"
@@ -74,6 +89,9 @@ def cycle_text(c):
         return "each calendar month, separately"
     if cy == "anniversary_year":
         return "each card-anniversary year (counted from the account's opening date)"
+    if cy == "anniversary_statement_year":
+        return ("each account-anniversary billing year (from the opening date through the first statement closing date after the "
+                "opening anniversary, then each 12 monthly billing cycles)")
     anchor = {"account_opening": "the account's opening date", "last_use": "the date the credit was last used"}.get(c.get("anchor"))
     return "once every %s years, counted from %s" % (c.get("years", "?"), anchor or "a starting point the source does not state")
 
@@ -140,7 +158,7 @@ def label_ok(c, label):
     try:
         y = int(label[:4])
         tail = label[4:]
-        if c["cycle"] in ("calendar_year", "anniversary_year", "multi_year"):
+        if c["cycle"] in ("calendar_year", "anniversary_year", "anniversary_statement_year", "multi_year"):
             return tail == "" and len(label) == 4 and y > 0
         if c["cycle"] == "calendar_half":
             return tail in ("-H1", "-H2")
@@ -199,6 +217,10 @@ def period(c, d, holding=None, uses=()):
         return {"state": UNRESOLVED, "reason": "the source does not say what the %s-year period is counted from" % c.get("years", "?")}
     if cy == "multi_year" and c["anchor"] == "last_use":
         return _from_last_use(c, d, holding, uses)
+    if cy == "anniversary_statement_year":
+        if holding is None:
+            return {"state": UNRESOLVED, "reason": "depends on the opening date and statement closing dates of each cardholder's own account"}
+        return statement_year(holding, d)
     step = 1 if cy == "anniversary_year" else c["years"]
     if holding is None:
         return {"state": UNRESOLVED, "reason": "depends on the opening date of each cardholder's own account"}
@@ -207,6 +229,74 @@ def period(c, d, holding=None, uses=()):
         return {"state": UNRESOLVED, "reason": "the opening date of account %s is not recorded (opened_on), so its anniversary is not known"
                                                % holding["id"]}
     return _from_opening(opened, d, step)
+
+
+def _months_after(y, m, n):
+    k = y * 12 + (m - 1) + n
+    return k // 12, k % 12 + 1
+
+
+def closing_in(holding, y, m):
+    """(date or None, how): the statement closing date of account `holding` in month y-m.
+
+    A date recorded in statement_closings wins ("recorded"). Otherwise statement_closing_day gives it ("from the
+    closing day"), unless that day does not exist in the month. Otherwise None: not known, and never guessed."""
+    seen = sorted({day(x) for x in holding.get("statement_closings") or [] if day(x) and (day(x).year, day(x).month) == (y, m)})
+    if len(seen) > 1:
+        return None, "two closing dates are recorded for %d-%02d (%s)" % (y, m, ", ".join(map(str, seen)))
+    if seen:
+        return seen[0], "recorded"
+    n = holding.get("statement_closing_day")
+    if isinstance(n, int) and not isinstance(n, bool) and 1 <= n <= 31:
+        if n <= _month_end(y, m).day:
+            return datetime.date(y, m, n), "from the closing day"
+        return None, "the recorded closing day (%d) does not exist in %s %d, and no closing date is recorded for that month" % (n, MONTHS[m - 1], y)
+    return None, "no statement closing date is recorded for %s %d" % (MONTHS[m - 1], y)
+
+
+def statement_year(holding, d):
+    """The account-anniversary billing year containing d (cycle anniversary_statement_year)."""
+    opened = to_date(holding.get("opened_on"))
+    if opened is None:
+        return {"state": UNRESOLVED, "reason": "the opening date of account %s is not recorded (opened_on), so its anniversary is not known" % holding["id"]}
+    if d < opened:
+        return {"state": BEFORE_ACCOUNT, "reason": "this date is before the account was opened (%s)" % opened}
+    if not holding.get("statement_closings") and holding.get("statement_closing_day") is None:
+        return {"state": UNRESOLVED, "reason": "the statement closing date of account %s is not recorded (statement_closing_day or "
+                                               "statement_closings), so its billing-year boundaries are not known" % holding["id"]}
+    # the first boundary: the first closing date strictly after the opening anniversary (a Feb 29 opening has a two-day window)
+    lo, hi = _anniv(opened, 1)
+    y, m = lo.year, lo.month
+    hows = []
+    for _ in range(3):
+        c, how = closing_in(holding, y, m)
+        if c is None:
+            return {"state": UNRESOLVED, "reason": "the first billing year of account %s ends at the first statement closing after %s, but %s"
+                                                   % (holding["id"], lo, how)}
+        if c < lo:
+            y, m = _months_after(y, m, 1)
+            continue
+        if c <= hi:                                       # closes ON the anniversary: which boundary is meant is not settled
+            return {"state": UNRESOLVED, "reason": "account %s's statement closed on %s, the opening anniversary itself; whether that "
+                                                   "closing ends the first billing year ('after the anniversary') is not settled" % (holding["id"], c)}
+        break
+    else:
+        return {"state": UNRESOLVED, "reason": "no statement closing after the anniversary %s could be found" % lo}
+    start, end, k = opened, c, 0
+    hows.append(how)
+    while d > end:
+        y, m = _months_after(end.year, end.month, 12)
+        nxt, how = closing_in(holding, y, m)
+        if nxt is None:
+            return {"state": UNRESOLVED, "reason": "billing year %d of account %s ends at the statement closing 12 cycles after %s, but %s"
+                                                   % (opened.year + k + 1, holding["id"], end, how)}
+        start, end, k = end + ONE_DAY, nxt, k + 1
+        hows = [how]
+    out = {"state": KNOWN, "label": str(opened.year + k), "start": start, "end": end}
+    if "from the closing day" in hows:
+        out["note"] = ("the end date %s is computed from the recorded closing day (%d); no statement showing it is recorded"
+                       % (end, holding["statement_closing_day"]))
+    return out
 
 
 def _from_last_use(c, d, holding, uses):

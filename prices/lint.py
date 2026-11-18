@@ -577,6 +577,17 @@ def _lint_elections(store, err, warn):
         for h in prof.holdings.values():
             p = store.path("holdings", h["id"], name)
             kind = ents.get(h["entity"], {}).get("kind")
+            if "statement_closing_day" in h or "statement_closings" in h:
+                if ents.get(h["entity"], {}).get("kind") != "card":
+                    err("UNEXPECTED_FIELD", p, "statement closing dates belong only on holdings of a card")
+                n = h.get("statement_closing_day")
+                if n is not None and not (isinstance(n, int) and not isinstance(n, bool) and 1 <= n <= 31):
+                    err("BAD_DATA", p, "statement_closing_day must be a day of the month, 1 to 31")
+                months = [x[:7] for x in h.get("statement_closings") or [] if isinstance(x, str)]
+                if len(months) != len(set(months)):
+                    err("BAD_DATA", p, "statement_closings has two dates in the same month")
+                if h.get("opened_on") and any(isinstance(x, str) and x < h["opened_on"] for x in h.get("statement_closings") or []):
+                    err("BAD_DATES", p, "a statement closing date is before the account was opened")
             if h.get("opened_on"):
                 if kind != "card":
                     err("UNEXPECTED_FIELD", p, "opened_on belongs only on holdings of a card")

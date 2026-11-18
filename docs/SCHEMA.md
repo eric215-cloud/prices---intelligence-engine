@@ -47,7 +47,7 @@ A key that is absent means **the source does not say**. It is never read as zero
 | Field | Required | Notes |
 |---|---|---|
 | `amount`, `unit` | yes | Allowance for **one period** (a number above zero) and its currency |
-| `cycle` | yes | `calendar_year`, `calendar_half`, `calendar_quarter`, `calendar_month`, `anniversary_year`, `multi_year` |
+| `cycle` | yes | `calendar_year`, `calendar_half`, `calendar_quarter`, `calendar_month`, `anniversary_year`, `anniversary_statement_year`, `multi_year` |
 | `years` | `multi_year` only | Whole number, 2 or more |
 | `anchor` | `multi_year` only, optional | `account_opening` or `last_use`. Absent: the period is unresolved |
 | `max_per_transaction` | no | A number above zero, or `none` (the source says there is no limit) |
@@ -95,6 +95,8 @@ Exactly one of:
 | `state` | yes | `confirmed` (needs `confirmed_on`, `confirmed_by` = owner), `unconfirmed`, `ended`, `withdrawn` (entered by mistake: kept, never in effect; `withdrawn_on` set by `end_holding` with `withdrawn: true`) |
 | `valid_from`, `valid_to` | no | `valid_to` is the expiry. Give it for every status |
 | `opened_on` | no | Cards only: the account opening date. Card anniversaries (election terms) are computed from it, never from `valid_from` |
+| `statement_closing_day` | no | Cards only: the day of the month (1-31) the account's statements close, as the owner states it. Used by `anniversary_statement_year`; never assumed |
+| `statement_closings` | no | Cards only: statement closing dates as shown on statements (one per month at most). They win over `statement_closing_day` |
 | `acquired_via`, `acquired_on` | no | Rule id through which it was obtained; activates retention checks |
 | `quantity` | no | Balance, for currencies |
 

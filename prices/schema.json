@@ -101,7 +101,7 @@
       "properties": {
         "amount": {"type": "number"},
         "unit": {"$ref": "#/$defs/text"},
-        "cycle": {"enum": ["calendar_year", "calendar_half", "calendar_quarter", "calendar_month", "anniversary_year", "multi_year"]},
+        "cycle": {"enum": ["calendar_year", "calendar_half", "calendar_quarter", "calendar_month", "anniversary_year", "anniversary_statement_year", "multi_year"]},
         "years": {"type": "integer"},
         "anchor": {"enum": ["account_opening", "last_use"]},
         "max_per_transaction": {"x-hint": "a number, or the word none when the source says there is no per-transaction cap",
@@ -278,6 +278,8 @@
         "acquired_via": {"$ref": "#/$defs/id"},
         "acquired_on": {"$ref": "#/$defs/date"},
         "opened_on": {"$ref": "#/$defs/date"},
+        "statement_closing_day": {"type": "integer"},
+        "statement_closings": {"type": "array", "items": {"$ref": "#/$defs/date"}},
         "withdrawn_on": {"$ref": "#/$defs/date"},
         "confirmed_on": {"$ref": "#/$defs/date"},
         "confirmed_by": {"type": "string"},

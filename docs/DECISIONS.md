@@ -226,6 +226,11 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 ## D-47  Period ends are surfaced in review and timeline, on the period's last day
 **Decision.** `review` and `timeline` list each allowance period ending in the window for credits that apply (or may apply) to the person, with the published amount and what happens to an unused amount. The key is present only when there is something to list, so reports for people without credit terms are byte-identical to before.
 
+## D-48  Statement-cycle card years are a separate cycle, anchored on recorded closing dates (DEP-01, 2026-11-18)
+**Decision.** New cycle `anniversary_statement_year`: the first year runs from `opened_on` through the first statement closing date after the opening anniversary, then each 12 monthly billing cycles. Closing dates are a profile fact on the card holding (`statement_closings`, `statement_closing_day`). A boundary that is not recorded, and cannot be read from the closing day, is UNRESOLVED; a closing on the anniversary itself is UNRESOLVED. `anniversary_year` is unchanged.
+**Alternatives considered.** Change `anniversary_year` (silently moves every existing calendar-anniversary period). Approximate with `anniversary_year` (wrong by up to a billing cycle at each boundary). Assume a closing day (a guess presented as a date).
+**Why.** The Sapphire Reserve travel credit resets on billing-cycle anniversaries; its structured block was deferred until this existed. This step adds the anchor only: the block is not attached (Step 05, after review).
+
 ## Limits of the Argon intake and election work (2026-11-15), stated plainly
 
 - The 113 Argon candidates are integrated exactly as packaged and none is promoted. Engineering did not review their content.
@@ -237,6 +242,6 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 ## Limits of the recurring-credit work (2026-11-15), stated plainly
 
 - No real credit has structured terms: Argon's candidates were not edited. Which of them fit the block is Argon's call.
-- Statement-cycle card years, per-grant expiry (Bilt Cash), activation requirements, shared credits and non-calendar sub-periods are not modelled. Full table: `docs/RECURRING_CREDITS.md` section 6.
+- Per-grant expiry (Bilt Cash), activation requirements, shared credits and non-calendar sub-periods are not modelled. Full table: `docs/RECURRING_CREDITS.md` section 6.
 - The carried-over amount under a rollover rule is not computed.
 - No lower-capability model has run OP-13.

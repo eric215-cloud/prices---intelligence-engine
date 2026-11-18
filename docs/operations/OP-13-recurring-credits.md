@@ -28,7 +28,7 @@ A card publishing 500 a year says nothing about what anyone has left. With no pe
 |---|---|---|
 | `id` | the card_benefits row id | never |
 | `amount`, `unit` | the allowance for **one period** (150 for a "300 a year in two halves" credit), and its currency | never: no amount, no row |
-| `cycle` | `calendar_year`, `calendar_half` (Jan-Jun, Jul-Dec), `calendar_quarter`, `calendar_month`, `anniversary_year` (from the account's opening date), `multi_year` | never |
+| `cycle` | `calendar_year`, `calendar_half` (Jan-Jun, Jul-Dec), `calendar_quarter`, `calendar_month`, `anniversary_year` (from the account's opening date), `anniversary_statement_year` (from the opening date to the first statement closing after the anniversary, then every 12 billing cycles: use it only when the source says the year follows statement or billing cycles), `multi_year` | never |
 | `years`, `anchor` | only for `multi_year`: how many years; counted from `account_opening` or `last_use` | `anchor`: the source does not say what the years are counted from |
 | `max_per_transaction` | the most one transaction or booking can earn; `none` if the source says there is no such limit | the source does not mention one |
 | `min_stay_nights`, `min_transaction` | the minimum the source requires | the source does not mention one |
