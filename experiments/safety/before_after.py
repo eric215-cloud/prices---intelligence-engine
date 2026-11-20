@@ -93,12 +93,43 @@ say("Every person is invented. Every rule is real sourced content; candidates ar
 say()
 say("## 1. The project's own records are untouched; only how far the engine trusts them changed")
 say()
+def files_of(tree, rel):
+    out = {}
+    for d, subdirs, names in os.walk(os.path.join(tree, rel)):
+        subdirs[:] = [s for s in subdirs if s != "__pycache__"]
+        for n in names:
+            with open(os.path.join(d, n), "rb") as f:
+                out[os.path.relpath(os.path.join(d, n), tree)] = f.read()
+    return out
+
+
+def later_changes(old_tree, new_tree):
+    """Paths changed by audited changesets applied after BEFORE (in the log here, not in BEFORE's log)."""
+    def log(tree):
+        p = os.path.join(tree, "data", "audit", "log.jsonl")
+        return [json.loads(x) for x in open(p, encoding="utf-8")] if os.path.exists(p) else []
+    seen = {e.get("changeset") for e in log(old_tree)}
+    later = [e for e in log(new_tree) if e.get("changeset") not in seen and e.get("result") == "applied"]
+    return {c for e in later for c in e.get("changed", [])}, [e["changeset"] for e in later]
+
+
 if old:
+    allowed, later_ids = later_changes(old, ROOT)
     for rel in ("data", "profiles", "tables"):
         same = digest(old, rel) == digest(ROOT, rel)
-        if not same:
+        if same:
+            say("- `%s/`: identical to BEFORE, byte for byte" % rel)
+            continue
+        # a later, separately commissioned and audited changeset may change the store; nothing else may
+        a, b = files_of(old, rel), files_of(ROOT, rel)
+        diff = sorted(k for k in set(a) | set(b) if a.get(k) != b.get(k))
+        unexplained = [k for k in diff if k not in allowed and not k.startswith(os.path.join("data", "audit") + os.sep)]
+        if unexplained:
             bad.append("files " + rel)
-        say("- `%s/`: %s" % (rel, "identical to BEFORE, byte for byte" if same else "DIFFERENT from BEFORE"))
+            say("- `%s/`: DIFFERENT from BEFORE, not explained by an audited changeset: %s" % (rel, ", ".join(unexplained[:10])))
+        else:
+            say("- `%s/`: identical to BEFORE except %d file(s) changed by %d later audited changeset(s) (%s), and their audit records"
+                % (rel, len([k for k in diff if k in allowed]), len(later_ids), ", ".join(later_ids)))
 moved, total, wrong_way, personal_changed = [], 0, [], []
 for prof in sorted(os.listdir(os.path.join(ROOT, "profiles"))):
     for day in DATES:
