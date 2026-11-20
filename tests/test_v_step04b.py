@@ -311,7 +311,7 @@ class TestContainment(unittest.TestCase):
             text = f.read()
         self.assertIn("even if you opted out on your current card", text)
         self.assertIn("DISC-03-04", text)
-        with open(os.path.join(ROOT, "docs", "operating", "OP-12-elections.md"), encoding="utf-8") as f:
+        with open(os.path.join(ROOT, "docs", "operations", "OP-12-card-elections.md"), encoding="utf-8") as f:
             self.assertIn("product change", f.read().lower())
 
 

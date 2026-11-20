@@ -1,10 +1,11 @@
-"""Demonstration of cardholder elections (ENG-02, corrected by ENG-02B) on the real Bilt Palladium content, on a throwaway copy.
+"""Demonstration of cardholder elections (ENG-02, corrected by ENG-02B and Step 04B) on the real Bilt Palladium content, on a throwaway copy.
 
     python3 scripts/demo_elections.py
 
 Touches nothing in the project. In a temp copy of the live store it:
   - promotes Argon's five election-governed Bilt candidates (THERE ONLY: the committed store keeps them proposed),
     because the hazard the elections guard against is what happens after promotion;
+  - approves the six option definitions as a stand-in reviewer (THERE ONLY: the committed definitions await Eric or Bradley);
   - creates two invented cardholders (every name and date invented):
       "Bilt Holder (synthetic)"      account opened 2026-03-10, card anniversary shown by the issuer as April 5
       "New Bilt Holder (synthetic)"  account opened 2027-02-10
@@ -92,6 +93,17 @@ for k in FIVE:
            data={"review_by": "2027-11-15", "conditions": scratch_real(json.load(open(os.path.join(work, "data/candidates/c-cb.bilt-palladium.%s.json" % k))), governed=True)})
 person(P, OWNER, "Invented Bilt Palladium cardholder, account opened before 2027")
 person(P2, OWNER2, "Invented Bilt Palladium cardholder, account opened in 2027")
+
+print("\n--- Step 04B: the committed option definitions carry no independent approval, so nothing they decide is established yet.")
+print("    In THIS scratch copy only, the first listed reviewer approves the exact terms (a demonstration stand-in, not a review);")
+print("    in the project this is OP-12 section 8, done by Eric or Bradley, never by engineering.")
+sys.path.insert(0, ROOT)
+from prices.elections import terms_digest       # noqa: E402
+from prices.store import Store                  # noqa: E402
+for k in ("legacy-election", "refreshed-arrangement", "housing-flex-bilt-cash", "housing-tiered-points", "annual-credits-legacy", "annual-credits-600"):
+    change("2026-11-15", "approve_election", (reviewer, "Scratch-copy approval for the election demonstration only; not a review."),
+           show_file=(k == "legacy-election"), author="demo reviewer", target=E + k,
+           data={"terms": terms_digest(Store.load(work).entities[E + k])})
 
 print("\n\n=== 1. What the election definitions prevent")
 print("    (without them every one of the five would be ESTABLISHED for any cardholder: both housing options at once, and both")
