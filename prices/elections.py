@@ -409,10 +409,12 @@ def decide(prof, group, options, day, linked=None, all_groups=None, reviewers=No
     unapproved = sorted(o["id"] for o in options if not approved(o, reviewers))
     if unapproved:
         # the definitions themselves are not independently approved: nothing in this group is established
-        return _unsure(options, cards[0], day, [("ELECTION_DEFINITION_NOT_APPROVED", "review", group,
-                       "the published terms of %s carry no valid independent approval (approve_election, OP-12); nothing in %s is "
-                       "established until a reviewer approves them" % (", ".join(unapproved), group))],
-                       "election definitions not approved", history=picks, ctx=ctx)
+        # (and nothing is ruled out either: the terms that would rule an option out are the unapproved ones)
+        return {"established": None, "possible": [o["id"] for o in options], "via": None, "card": cards[0]["id"],
+                "flags": [("ELECTION_DEFINITION_NOT_APPROVED", "review", group,
+                           "the published terms of %s carry no valid independent approval (approve_election, OP-12); nothing in %s is "
+                           "established or ruled out until a reviewer approves them" % (", ".join(unapproved), group))],
+                "reason": "election definitions not approved"}
     if any("follows" in o["election"] for o in options):
         return _linked(group, options, cards[0], picks, live, day, linked or {}, ctx)
     return _own(group, options, cards[0], picks, live, day, ctx)

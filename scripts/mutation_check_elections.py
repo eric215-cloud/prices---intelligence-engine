@@ -51,6 +51,7 @@ MUTS = [
  ("A3: a conflict outranks invalid dates", "prices/elections.py", '    if bad:\n        # dates that contradict', '    if False:\n        # dates that contradict'),
  ("A3: doubted dates still conclude a loss", "prices/elections.py", "timing\", keep=h[\"entity\"], history=picks", "timing\", history=picks"),
  ("A8: unapproved definitions are used", "prices/elections.py", '    if unapproved:', '    if False:'),
+ ("A8: unapproved terms still rule options out", "prices/elections.py", '"possible": [o["id"] for o in options], "via": None, "card": cards[0]["id"],', '"possible": [o["id"] for o in options if allowed(o, cards[0], day, None, picks, **ctx)[0] is not False], "via": None, "card": cards[0]["id"],'),
  ("A8: the terms' author or attester may approve", "prices/changes.py", '_need(a["by"] not in (by.get("author"), by.get("attested_by")), "NOT_INDEPENDENT",', '_need(True, "NOT_INDEPENDENT",'),
  ("A8: an approval of different terms is accepted", "prices/changes.py", '_need(want == terms_digest(e), "TERMS_CHANGED",', '_need(True, "TERMS_CHANGED",'),
  ("A8: an approval written in with the terms", "prices/changes.py", '_need("approval" not in block, "BAD_DATA",', '_need(True, "BAD_DATA",'),

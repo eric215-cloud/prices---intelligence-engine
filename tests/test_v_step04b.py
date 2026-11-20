@@ -229,6 +229,9 @@ class TestA8ApprovalGate(Base):
             got = self.at("a2-positive", day)
             self.assertNotIn(EST, got[:2] + got[4:], day)
             self.assertIn("ELECTION_DEFINITION_NOT_APPROVED", self.flags("a2-positive", day), day)
+        # nor is anything ruled out: the terms that would rule an option out are the unapproved ones
+        for who in ("a2-positive", "a2-tiered", "a3-exit"):
+            self.assertEqual(self.at(who, "2027-05-01"), (UNR,) * 5, who)
 
     def test_lint_reports_every_unapproved_definition(self):
         warned = {i[2] for i in lint(self.s) if i[1] == "ELECTION_DEFINITION_NOT_APPROVED"}
@@ -303,8 +306,10 @@ class TestContainment(unittest.TestCase):
         # make the $600 group's option follow an option whose own group has linked options (a chain)
         s.entities[E + "annual-credits-600"]["election"]["follows"] = E + "refreshed-arrangement"
         s.entities[E + "refreshed-arrangement"]["election"]["follows"] = E + "housing-tiered-points"
-        errs = {i[1] for i in lint(s) if i[0] == "ERROR"}
-        self.assertIn("BAD_ELECTION_SHAPE", errs)
+        errs = [i[3] for i in lint(s) if i[0] == "ERROR" and i[1] == "BAD_ELECTION_SHAPE"]
+        self.assertTrue(any("links are one level deep" in m for m in errs), errs)
+        self.assertEqual([i for i in lint(build(tmp + "-clean", {}, approve=False)) if i[0] == "ERROR"], [])   # the committed shape passes
+        shutil.rmtree(tmp + "-clean")
 
     def test_a4_product_change_is_documented_not_modelled(self):
         with open(os.path.join(ROOT, "docs", "ELECTIONS.md"), encoding="utf-8") as f:
