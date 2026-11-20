@@ -1,0 +1,28 @@
+{
+  "attestation": {
+    "by": "Commissioning build",
+    "on": "2026-11-20",
+    "statement": "Builder attestation only. These terms are NOT independently reviewed: the engine establishes nothing in these groups until a reviewer approves them (approve_election)."
+  },
+  "author": "Claude (engineering, Step 04B)",
+  "data": {
+    "set": {
+      "election": {
+        "after_exit_from_anniversary": true,
+        "anniversary_from": "first_billing_cycle_after_opening",
+        "card": "card.bilt-palladium",
+        "follows": "election.bilt-palladium.refreshed-arrangement",
+        "governs": [
+          "cb.bilt-palladium.annual-bilt-cash-600-post2027"
+        ],
+        "group": "bilt-palladium.annual-credits",
+        "source_note": "Bilt Rewards Card Offer Terms, last updated October 27, 2026 (bilt.com/terms/bilt-card-offer-terms), read by engineering on 2026-11-15 for ENG-02B; Argon to confirm against the published text. Credited on the account opening date (accounts opened on or after January 1, 2027) and on each Card Anniversary Date; for earlier accounts without a Legacy Election, from their first Card Anniversary Date on or after January 1, 2027; for a cardholder who leaves a Legacy Election, from the next Card Anniversary Date after the move. Never together with the legacy benefits. Card Anniversary Date: one year after the first day of the first Billing Cycle that begins after the Account Open Date, then the same day each year. No published figure says how long after opening that billing cycle begins, so opened_on alone does not place the anniversary: record anniversary_on (as the Bilt app shows it) or first_billing_cycle_on on the card holding (Step 04B removed the former 62-day engineering allowance)."
+      }
+    }
+  },
+  "date": "2026-11-20",
+  "id": "cs-20261120-step04b-06-revise-entity-annual-credits-600",
+  "op": "revise_entity",
+  "reason": "Step 04B: A1 remove the unpublished 62-day bound (anniversary_from replaces anniversary_cycle_days).",
+  "target": "election.bilt-palladium.annual-credits-600"
+}

@@ -21,7 +21,7 @@ import shutil
 import tempfile
 import unittest
 
-from util import H, ent, flag_codes, holding, make_store, rule
+from util import H, approve_elections_on_disk, ent, flag_codes, holding, make_store, rule
 from condition_classes import scratch_real
 from prices import changes
 from prices.elections import anniversary_window, before_anniversary, card_window
@@ -74,23 +74,43 @@ PEOPLE = {
     "new": [acct("2027-02-10", None)],
     "new-legacy": [acct("2027-02-10", None), el("e1", "housing-flex-bilt-cash", "2027-02-15"), el("e2", "legacy-election", "2027-02-15")],
     # 5: tries to hold both sides
-    "double": [acct(), el("e1", "legacy-election", "2026-11-20"), el("e2", "annual-credits-600", "2027-04-05")],
-    "both-arrangements": [acct(), el("e1", "legacy-election", "2026-11-20"), el("e2", "refreshed-arrangement", "2027-04-05")],
+    # CHANGED 2026-11-20 (Step 04B, A2): every fixture below that makes a Legacy Election now also records the Flexible
+    # Bilt Cash option it requires (f1). Their purpose is not the prerequisite; "legacy-only" and "tiered-then-legacy" are.
+    "double": [acct(), el("f1", "housing-flex-bilt-cash", "2026-05-05"), el("e1", "legacy-election", "2026-11-20"), el("e2", "annual-credits-600", "2027-04-05")],
+    "both-arrangements": [acct(), el("f1", "housing-flex-bilt-cash", "2026-05-05"), el("e1", "legacy-election", "2026-11-20"), el("e2", "refreshed-arrangement", "2027-04-05")],
     # 6: leaves the legacy arrangement for good on 2027-09-05 (first day of a billing cycle)
-    "exit": [acct(), el("e1", "legacy-election", "2026-11-20", "2027-09-04"), el("e2", "refreshed-arrangement", "2027-09-05")],
-    "return": [acct(), el("e1", "legacy-election", "2026-11-20", "2027-09-04"), el("e2", "refreshed-arrangement", "2027-09-05", "2027-11-30"),
+    "exit": [acct(), el("f1", "housing-flex-bilt-cash", "2026-05-05"), el("e1", "legacy-election", "2026-11-20", "2027-09-04"), el("e2", "refreshed-arrangement", "2027-09-05")],
+    "return": [acct(), el("f1", "housing-flex-bilt-cash", "2026-05-05"), el("e1", "legacy-election", "2026-11-20", "2027-09-04"), el("e2", "refreshed-arrangement", "2027-09-05", "2027-11-30"),
                el("e3", "legacy-election", "2027-12-01")],
-    "return-early": [acct(), el("e1", "legacy-election", "2026-10-01", "2026-11-30"), el("e2", "legacy-election", "2026-12-15")],
+    # (return-early: its Flexible Bilt Cash record ends with the Legacy arrangement it left, so only a re-election could revive it)
+    "return-early": [acct(), el("f1", "housing-flex-bilt-cash", "2026-05-05", "2026-11-30"), el("e1", "legacy-election", "2026-10-01", "2026-11-30"), el("e2", "legacy-election", "2026-12-15")],
     # 7: facts missing
     "no-dates": [acct(None, None, valid_from="2026-05-01")],
     "window": [acct("2026-03-10", None)],
-    "unconfirmed": [acct(), el("e1", "legacy-election", "2026-11-20", state="unconfirmed")],
-    "undated": [acct(), el("e1", "legacy-election", confirmed_on="2027-06-01")],
+    "unconfirmed": [acct(), el("f1", "housing-flex-bilt-cash", "2026-05-05"), el("e1", "legacy-election", "2026-11-20", state="unconfirmed")],
+    "undated": [acct(), el("f1", "housing-flex-bilt-cash", "2026-05-05"), el("e1", "legacy-election", confirmed_on="2027-06-01")],
     # 8: boundaries
-    "late": [acct(), el("e1", "legacy-election", "2027-04-05")],
-    "last-day": [acct(), el("e1", "legacy-election", "2027-04-04")],
-    "locked": [acct(), el("e1", "legacy-election", "2026-11-20"), el("e2", "housing-tiered-points", "2026-12-05")],
-    "stale": [acct(), el("e1", "housing-tiered-points", "2026-03-10"), el("e2", "legacy-election", "2027-01-20")],
+    "late": [acct(), el("f1", "housing-flex-bilt-cash", "2026-05-05"), el("e1", "legacy-election", "2027-04-05")],
+    "last-day": [acct(), el("f1", "housing-flex-bilt-cash", "2026-05-05"), el("e1", "legacy-election", "2027-04-04")],
+    "locked": [acct(), el("f1", "housing-flex-bilt-cash", "2026-05-05", "2026-12-04"), el("e1", "legacy-election", "2026-11-20"),
+               el("e2", "housing-tiered-points", "2026-12-05")],
+    # CHANGED 2026-11-20 (Step 04B, A2): was Housing-only from opening, then a Legacy Election. Under the published terms
+    # that cardholder could not make one, so the fixture now switches to Flexible Bilt Cash first; the original data is
+    # kept as "tiered-then-legacy", a negative case
+    "stale": [acct(), el("e0", "housing-tiered-points", "2026-03-10", "2026-05-04"), el("f1", "housing-flex-bilt-cash", "2026-05-05", "2027-01-19"),
+              el("e2", "legacy-election", "2027-01-15"), el("e3", "housing-tiered-points", "2027-01-20")],
+    # ---- Step 04B fixtures
+    # A2: Housing-only was the active Rewards Option when the Legacy Election was made (contradicts its prerequisite)
+    "tiered-then-legacy": [acct(), el("e1", "housing-tiered-points", "2026-03-10"), el("e2", "legacy-election", "2027-01-20")],
+    # A2: the Flexible Bilt Cash record exists but starts after the Legacy Election
+    "flex-too-late": [acct(), el("e1", "legacy-election", "2026-11-20"), el("f1", "housing-flex-bilt-cash", "2026-12-05")],
+    # A2: the only Flexible Bilt Cash record is unconfirmed
+    "flex-unconfirmed": [acct(), el("f1", "housing-flex-bilt-cash", "2026-05-05", state="unconfirmed"), el("e1", "legacy-election", "2026-11-20")],
+    # A1 (Q note 1): the exit fixture without the issuer's anniversary. The 62-day bound used to say the $600 had begun
+    "exit-no-anniversary": [acct("2026-03-10", None), el("f1", "housing-flex-bilt-cash", "2026-05-05"), el("e1", "legacy-election", "2026-11-20", "2027-09-04"),
+                            el("e2", "refreshed-arrangement", "2027-09-05")],
+    # A1: the issuer's first billing cycle is recorded instead of the anniversary date
+    "first-cycle": [dict(acct("2026-03-10", None), first_billing_cycle_on="2026-04-05")],
 }
 
 
@@ -109,6 +129,7 @@ class Live(unittest.TestCase):
              "data": {"review_by": "2027-12-15", "conditions": scratch_real(Store.load(cls.tmp).candidates["c-cb.bilt-palladium." + k], governed=True)},
              "attestation": {"by": reviewer, "on": "2026-11-15", "statement": "scratch copy only"}} for i, k in enumerate(FIVE)])
         assert out["ok"], out["errors"]
+        approve_elections_on_disk(cls.tmp)                     # scratch only (Step 04B, A8): the committed definitions are not approved
         for name, hs in PEOPLE.items():
             owner = "Invented cardholder %s" % name
             os.makedirs(os.path.join(cls.tmp, "profiles", "syn-" + name, "holdings"))
@@ -134,6 +155,9 @@ class Live(unittest.TestCase):
 
     def flags(self, who, day):
         return flag_codes(evaluate(self.s, "syn-" + who, day))
+
+    def reason(self, who, day):
+        return " | ".join(f["detail"] for f in evaluate(self.s, "syn-" + who, day).flags)
 
     def arrangement(self, who, day):
         rep = evaluate(self.s, "syn-" + who, day).report()["elections"]
@@ -166,10 +190,15 @@ class Live(unittest.TestCase):
         self.assertEqual(self.arrangement("legacy", "2027-06-01"), (E + "legacy-election", []))
 
     def test_2_the_legacy_election_alone_carries_flexible_bilt_cash(self):
-        # no separate housing record: the published election itself keeps the Flexible option
+        # CHANGED 2026-11-20 (Step 04B, A2): was (NO, EST, EST, EST, NO) from the election on. The Legacy Election is open only
+        # to a cardholder whose active Rewards Option is Flexible Bilt Cash, and nothing records that here: it is UNRESOLVED,
+        # and the reason says so. With the Flexible Bilt Cash record ("legacy") the whole arrangement is established, as before
         self.assertEqual(self.at("legacy-only", "2026-11-19"), (UNR, UNR, EST, EST, NO))     # before the election: housing not recorded
-        self.assertEqual(self.at("legacy-only", "2026-11-20"), (NO, EST, EST, EST, NO))
-        self.assertEqual(self.at("legacy-only", "2027-05-01"), (NO, EST, EST, EST, NO))
+        self.assertEqual(self.at("legacy-only", "2026-11-20")[:2], (UNR, UNR))
+        self.assertEqual(self.at("legacy-only", "2026-11-20")[2:], (EST, EST, NO))           # before the transition: automatic anyway
+        self.assertEqual(self.at("legacy-only", "2027-05-01"), (UNR,) * 5)
+        self.assertIn("ELECTION_TERMS_UNVERIFIED", self.flags("legacy-only", "2027-05-01"))
+        self.assertIn("no confirmed record shows that", self.reason("legacy-only", "2027-05-01"))
 
     # ---- 3
     def test_3_without_a_legacy_election_the_account_moves_at_its_anniversary(self):
@@ -235,14 +264,33 @@ class Live(unittest.TestCase):
         self.assertIn("ANNIVERSARY_NOT_RECORDED", self.flags("no-dates", "2027-06-01"))
 
     def test_7_opening_date_alone_does_not_place_the_anniversary(self):
-        # opened 2026-03-10; the first billing cycle after opening began 1 to 62 days later: anniversary 2027-03-11 .. 2027-05-11
+        # CHANGED 2026-11-20 (Step 04B, A1): the window used to close 62 days after opened_on's anniversary (an unpublished
+        # bound), after which the anniversary counted as "certainly past". Now only the lower bound is known: opened
+        # 2026-03-10, the anniversary is later than 2027-03-10, and there is no date after which it is known to have come.
+        # Q note 1: the status stays UNRESOLVED either way, so the REASON is what this test pins
         self.assertEqual(self.at("window", "2027-03-10")[2:], (EST, EST, NO))
-        for day in ("2027-03-11", "2027-04-05", "2027-05-10"):
+        for day in ("2027-03-11", "2027-04-05", "2027-05-10", "2027-05-11", "2028-01-01", "2030-06-01"):
             self.assertEqual(self.at("window", day), (UNR,) * 5, day)
             self.assertIn("ANNIVERSARY_NOT_RECORDED", self.flags("window", day), day)
-        self.assertEqual(self.at("window", "2027-05-11"), (UNR,) * 5)                    # certainly past it; no arrangement recorded
-        self.assertNotIn("ANNIVERSARY_NOT_RECORDED", self.flags("window", "2027-05-11"))
-        self.assertIn("ELECTION_NOT_RECORDED", self.flags("window", "2027-05-11"))
+            self.assertIn("no published figure bounds that day", self.reason("window", day), day)
+
+    def test_7_a_guessed_anniversary_no_longer_grants_the_600(self):
+        # Q note 1: a fixture where the guessed boundary changed an entitlement. After the exit, the $600 waits for the
+        # next card anniversary. With the issuer's date (fixture "exit") it starts 2028-04-05. Without it, the 62-day bound
+        # used to put that anniversary between 2028-03-11 and 2028-05-11 and grant the $600 from 2028-05-11
+        # Before the lower bound the Legacy arrangement is placed exactly; from it on, nothing that depends on the anniversary
+        # is: the old code answered (EST, NO, NO, NO, NO) at the exit and $600 ESTABLISHED from 2028-05-11
+        self.assertEqual(self.at("exit-no-anniversary", "2027-03-10"), (NO, EST, EST, EST, NO))
+        for day in ("2027-09-05", "2028-03-10", "2028-03-11", "2028-05-11", "2028-06-01", "2029-12-01"):
+            self.assertEqual(self.at("exit-no-anniversary", day)[4], UNR, day)               # was ESTABLISHED from 2028-05-11
+            self.assertIn("ANNIVERSARY_NOT_RECORDED", self.flags("exit-no-anniversary", day), day)
+        self.assertEqual(self.at("exit", "2028-04-05")[4], EST)                              # the issuer's date settles it
+
+    def test_7_the_first_billing_cycle_places_the_anniversary_exactly(self):
+        self.assertEqual(self.at("first-cycle", "2027-04-04")[2:], (EST, EST, NO))
+        self.assertEqual(self.at("first-cycle", "2027-04-05"), (UNR,) * 5)                   # the anniversary: no arrangement recorded
+        self.assertIn("ELECTION_NOT_RECORDED", self.flags("first-cycle", "2027-04-05"))
+        self.assertNotIn("ANNIVERSARY_NOT_RECORDED", self.flags("first-cycle", "2027-04-05"))
 
     def test_7_an_unverified_election_establishes_nothing(self):
         self.assertEqual(self.at("unconfirmed", "2027-05-01"), (UNR,) * 5)
@@ -250,7 +298,9 @@ class Live(unittest.TestCase):
         self.assertEqual(self.at("unconfirmed", "2026-12-01")[2:], (EST, EST, NO))       # before the transition the benefits are automatic
         self.assertEqual(self.at("undated", "2027-05-01"), (UNR,) * 5)                   # confirmed only on 2027-06-01, start unknown
         self.assertIn("ELECTION_START_NOT_RECORDED", self.flags("undated", "2027-05-01"))
-        self.assertEqual(self.at("undated", "2027-07-01"), (NO, EST, EST, EST, NO))      # stands on the owner's word, and says so
+        # CHANGED 2026-11-20 (Step 04B): was (NO, EST, EST, EST, NO), standing on the owner's word with an info flag. Its start,
+        # and so its deadline and its Flexible Bilt Cash prerequisite, cannot be checked: missing history establishes nothing
+        self.assertEqual(self.at("undated", "2027-07-01"), (UNR,) * 5)
         self.assertIn("ELECTION_TERMS_UNVERIFIED", self.flags("undated", "2027-07-01"))
 
     # ---- 8
@@ -304,27 +354,28 @@ class Live(unittest.TestCase):
 class TestAnniversaryFromTheFirstBillingCycle(unittest.TestCase):
     D0 = d(2027, 1, 1)
 
+    # CHANGED 2026-11-20 (Step 04B, A1): these tests encoded the 62-day allowance (windows such as 2027-03-11..2027-05-11).
+    # They now pin the opposite: only a lower bound is known, the upper end is "not known" (date.max)
     def test_window_when_only_the_opening_date_is_known(self):
-        self.assertEqual(anniversary_window(d(2026, 3, 10), self.D0, 62), (d(2027, 3, 11), d(2027, 5, 11)))
+        self.assertEqual(anniversary_window(d(2026, 3, 10), self.D0, from_first_cycle=True), (d(2027, 3, 11), d.max))
         self.assertEqual(anniversary_window(d(2026, 3, 10), self.D0), (d(2027, 3, 10), d(2027, 3, 10)))       # unchanged without the term
-        # opened late December: the cycle may have begun before or after New Year, so the anniversary may be a year apart
-        self.assertEqual(anniversary_window(d(2025, 12, 20), self.D0, 62), (d(2027, 1, 1), d(2027, 12, 31)))
-        self.assertEqual(anniversary_window(d(2027, 2, 10), self.D0, 62), (d(2028, 2, 11), d(2028, 4, 13)))   # opened after: its first
+        self.assertEqual(anniversary_window(d(2025, 12, 20), self.D0, from_first_cycle=True), (d(2027, 1, 1), d.max))
+        self.assertEqual(anniversary_window(d(2027, 2, 10), self.D0, from_first_cycle=True), (d(2028, 2, 11), d.max))   # opened after: its first
 
     def test_the_issuers_date_removes_the_window(self):
-        self.assertEqual(anniversary_window(d(2026, 3, 10), self.D0, 62, d(2027, 4, 5)), (d(2027, 4, 5), d(2027, 4, 5)))
-        self.assertEqual(anniversary_window(d(2026, 3, 10), self.D0, 62, d(2030, 4, 5)), (d(2027, 4, 5), d(2027, 4, 5)))   # any year's date
-        self.assertEqual(anniversary_window(d(2025, 12, 20), self.D0, 62, d(2027, 1, 15)), (d(2027, 1, 15), d(2027, 1, 15)))
-        self.assertEqual(anniversary_window(d(2026, 12, 20), self.D0, 62, d(2028, 1, 15)), (d(2028, 1, 15), d(2028, 1, 15)))  # not 2027-01-15
-        self.assertEqual(card_window({"anniversary_on": "2027-04-05"}, self.D0, 62), (d(2027, 4, 5), d(2027, 4, 5)))
-        self.assertIsNone(card_window({"anniversary_on": "2028-04-05"}, self.D0, 62))      # was 2027-04-05 one too? not known
-        self.assertIsNone(card_window({}, self.D0, 62))
+        self.assertEqual(anniversary_window(d(2026, 3, 10), self.D0, d(2027, 4, 5), True), (d(2027, 4, 5), d(2027, 4, 5)))
+        self.assertEqual(anniversary_window(d(2026, 3, 10), self.D0, d(2030, 4, 5), True), (d(2027, 4, 5), d(2027, 4, 5)))   # any year's date
+        self.assertEqual(anniversary_window(d(2025, 12, 20), self.D0, d(2027, 1, 15), True), (d(2027, 1, 15), d(2027, 1, 15)))
+        self.assertEqual(anniversary_window(d(2026, 12, 20), self.D0, d(2028, 1, 15), True), (d(2028, 1, 15), d(2028, 1, 15)))  # not 2027-01-15
+        self.assertEqual(card_window({"anniversary_on": "2027-04-05"}, self.D0, True), (d(2027, 4, 5), d(2027, 4, 5)))
+        self.assertIsNone(card_window({"anniversary_on": "2028-04-05"}, self.D0, True))      # was 2027-04-05 one too? not known
+        self.assertIsNone(card_window({}, self.D0, True))
+        self.assertEqual(card_window({"opened_on": "2026-03-10", "first_billing_cycle_on": "2026-04-05"}, self.D0, True), (d(2027, 4, 5), d(2027, 4, 5)))
 
-    def test_inside_the_window_is_unknown(self):
+    def test_after_the_lower_bound_it_is_never_known_without_the_issuers_date(self):
         h = {"opened_on": "2026-03-10"}
-        got = [before_anniversary(h, self.D0, x, 62) for x in (d(2027, 3, 10), d(2027, 3, 11), d(2027, 5, 10), d(2027, 5, 11))]
-        self.assertEqual(got, [True, None, None, False])
-
+        got = [before_anniversary(h, self.D0, x, True) for x in (d(2027, 3, 10), d(2027, 3, 11), d(2027, 5, 11), d(2035, 1, 1))]
+        self.assertEqual(got, [True, None, None, None])                                       # was [True, None, None, False]
 
 CARD = "card.x"
 
@@ -414,8 +465,9 @@ class TestLinkedOptionsInGeneral(unittest.TestCase):
         self.assertIn("BAD_ELECTION_SHAPE", bad(**{"el.a": {"follows": None}}))              # choose_before_anniversary needs follows
         self.assertIn("BAD_ELECTION_SHAPE", bad(**{"el.b": {"choose_before_anniversary": "2028-01-01"}}))   # one choice period per group
         self.assertIn("ELECTION_GOVERNS_NOTHING", bad(**{"el.a": None, "el.big": None}))     # nothing follows el.new any more
-        self.assertIn("ANNIVERSARY_RULE_DIFFERS", bad(**{"el.a": {"anniversary_cycle_days": 62}}))
-        self.assertIn("BAD_ELECTION_SHAPE", bad(**{"el.a": {"anniversary_cycle_days": 0}}))
+        # CHANGED 2026-11-20 (Step 04B, A1): anniversary_cycle_days is gone; a card still has one anniversary rule
+        self.assertIn("ANNIVERSARY_RULE_DIFFERS", bad(**{"el.a": {"anniversary_from": "first_billing_cycle_after_opening"}}))
+        self.assertIn("ANNIVERSARY_CYCLE_DAYS_REMOVED", bad(**{"el.a": {"anniversary_cycle_days": 62}}))
 
     def test_holding_checks(self):
         s = world([card(), holding("p1", "el.big", valid_from="2027-06-01"), holding("p2", "el.a", valid_from="2025-06-01", anniversary_on="2027-06-20")])

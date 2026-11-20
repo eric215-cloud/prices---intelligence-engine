@@ -656,16 +656,31 @@ def _lint_elections(store, err, warn):
                     err("BAD_ELECTION_SHAPE", p, "%s needs follows: it says what applies once this option's own period is over" % k)
             if not t["governs"] and o["id"] not in followed:
                 warn("ELECTION_GOVERNS_NOTHING", p, "this option governs no rule and no option follows it, so it changes nothing yet")
-            n = t.get("anniversary_cycle_days")
-            if n is not None and n < 1:
-                err("BAD_ELECTION_SHAPE", p, "anniversary_cycle_days must be 1 or more")
+            if "anniversary_cycle_days" in t:
+                warn("ANNIVERSARY_CYCLE_DAYS_REMOVED", p, "anniversary_cycle_days was removed (Step 04B): it encoded an unpublished bound "
+                     "and is ignored. Use anniversary_from: first_billing_cycle_after_opening")
+            n = t.get("anniversary_from")
             if any(k.endswith("_anniversary") for k in t):
-                cycle.setdefault(t["card"], {}).setdefault(n or 0, o["id"])
+                cycle.setdefault(t["card"], {}).setdefault(n or "opening_date", o["id"])
+            need = t.get("requires_active")
+            if need is not None:
+                u = ents.get(need, {}).get("election") if ents.get(need, {}).get("kind") == "election" else None
+                if not isinstance(u, dict) or u["card"] != t["card"] or u["group"] == g:
+                    err("BAD_ELECTION_SHAPE", p, "requires_active %r: it must be an option of another group on the same card" % need)
+            from .elections import approved
+            if not approved(o, store.vocab.get("promotion_reviewers") or None):
+                a = t.get("approval")
+                if isinstance(a, dict) and a.get("by") and a.get("terms"):
+                    warn("ELECTION_DEFINITION_NOT_APPROVED", p, "the approval by %s was for other terms (or by someone not listed as a "
+                         "reviewer); the terms changed since. Nothing in group %s is established until it is approved again" % (a.get("by"), g))
+                else:
+                    warn("ELECTION_DEFINITION_NOT_APPROVED", p, "these published terms have no independent approval (approve_election, "
+                         "OP-12); nothing in group %s is established until a reviewer approves them" % g)
     for card, seen in sorted(cycle.items()):
         if len(seen) > 1:
             # a warning, not an error: definitions are revised one changeset at a time, so a card passes through this state
             warn("ANNIVERSARY_RULE_DIFFERS", store.path("entities", sorted(seen.values())[0]),
-                 "election options on %s disagree about anniversary_cycle_days (%s); a card has one anniversary rule"
+                 "election options on %s disagree about anniversary_from (%s); a card has one anniversary rule"
                  % (card, ", ".join("%s on %s" % (k, v) for k, v in sorted(seen.items()))))
     for r in rules.values():
         if ents.get(r.get("output"), {}).get("kind") == "election":
@@ -685,8 +700,20 @@ def _lint_elections(store, err, warn):
                     err("UNEXPECTED_FIELD", p, "opened_on belongs only on holdings of a card")
                 elif h.get("valid_from") and h["valid_from"] < h["opened_on"]:
                     err("BAD_DATES", p, "valid_from %s is before the account was opened (%s)" % (h["valid_from"], h["opened_on"]))
-            if h.get("anniversary_on") and kind != "card":
-                err("UNEXPECTED_FIELD", p, "anniversary_on belongs only on holdings of a card")
+            for f in ("anniversary_on", "first_billing_cycle_on", "billing_cycle_day"):
+                if h.get(f) is not None and kind != "card":
+                    err("UNEXPECTED_FIELD", p, "%s belongs only on holdings of a card" % f)
+            if h.get("first_billing_cycle_on") and h.get("opened_on") and h["first_billing_cycle_on"] <= h["opened_on"]:
+                err("BAD_DATES", p, "first_billing_cycle_on must be after opened_on (it is the first cycle that begins AFTER opening)")
+            bcd = h.get("billing_cycle_day")
+            if bcd is not None and not (isinstance(bcd, int) and not isinstance(bcd, bool) and 1 <= bcd <= 31):
+                err("BAD_DATA", p, "billing_cycle_day must be a day of the month, 1 to 31")
+            for f in ("requested_on", "exit_requested_on"):
+                if h.get(f) and kind != "election":
+                    err("UNEXPECTED_FIELD", p, "%s belongs only on election holdings" % f)
+            if h.get("requested_on") and h.get("valid_from") and h["valid_from"] <= h["requested_on"]:
+                warn("ELECTION_EFFECTIVE_DATE_INVALID", p, "valid_from (the issuer-effective date) is not after requested_on; a change takes "
+                     "effect on the first day of the next billing cycle. This record is not applied")
             if kind != "election":
                 continue
             if h["state"] == "withdrawn":

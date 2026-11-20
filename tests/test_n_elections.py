@@ -292,8 +292,10 @@ class TestTransition2027(unittest.TestCase):
         self.assertIn("ANNIVERSARY_NOT_RECORDED", flag_codes(r))
         kept = world(card(None, valid_from="2025-06-01"), [pick("e1", "el.600", "2027-03-01")])
         r = evaluate(kept, "t", "2027-03-01")
-        self.assertEqual(r.have("c600"), ESTABLISHED)                                 # the owner's record stands...
-        self.assertIn("ELECTION_TERMS_UNVERIFIED", flag_codes(r))                     # ...and the unchecked term is said out loud
+        # CHANGED 2026-11-20 (Step 04B): was ESTABLISHED on the owner's word with an info flag. A recorded election whose
+        # published terms cannot be checked (here: the anniversary is unknown) no longer establishes spendable value
+        self.assertEqual(r.have("c600"), UNRESOLVED)
+        self.assertIn("ELECTION_TERMS_UNVERIFIED", flag_codes(r))
 
     def test_february_29_account(self):
         s = world(card("2024-02-29"))
@@ -357,7 +359,8 @@ class TestPipeline(unittest.TestCase):
         self.tmp = tempfile.mkdtemp(prefix="prices-elections-")
         from util import write_store
         s = world(card())
-        s.files["data/kb/vocab.json"] = dict(TEST_VOCAB, promotion_reviewers=["Reviewer"])
+        # "Test Reviewer" stamps the invented definitions' approval (tests/util.approve, Step 04B)
+        s.files["data/kb/vocab.json"] = dict(TEST_VOCAB, promotion_reviewers=["Reviewer", "Test Reviewer"])
         write_store(s, self.tmp)
         self.n = 0
 
@@ -440,6 +443,8 @@ class TestLiveBiltDefinitions(unittest.TestCase):
             for d in ("data", "profiles", "tables"):
                 shutil.copytree(os.path.join(ROOT, d), os.path.join(tmp, d))
             reviewer = Store.load(tmp).vocab["promotion_reviewers"][0]
+            from util import approve_elections_on_disk
+            approve_elections_on_disk(tmp)                     # scratch only: the committed definitions await a real reviewer
             for i, k in enumerate(self.FIVE):
                 out = changes.apply(tmp, {"id": "cs-20261115-scratch-%d" % i, "op": "promote_candidate", "target": "c-cb.bilt-palladium." + k,
                                           "author": "test", "date": "2026-11-15", "reason": "scratch copy only",

@@ -1,0 +1,26 @@
+{
+  "changeset": "cs-20270622-credit-24-approve-election",
+  "records": {
+    "data/kb/entities/election.voyager.lifestyle-credit.json": {
+      "after": "d170b65199a3f944",
+      "before": {
+        "election": {
+          "card": "card.northwind-voyager",
+          "governs": [
+            "voyager.lifestyle-credit"
+          ],
+          "group": "voyager.annual-perk",
+          "source_note": "Invented: cardholders choose either the lifestyle credit or the wellness credit.",
+          "terms_by": {
+            "attested_by": null,
+            "author": "fixture author (synthetic)",
+            "changeset": "cs-20261115-credit-08-add-entity"
+          }
+        },
+        "id": "election.voyager.lifestyle-credit",
+        "kind": "election",
+        "name": "Northwind Voyager annual perk choice: lifestyle credit (synthetic)"
+      }
+    }
+  }
+}

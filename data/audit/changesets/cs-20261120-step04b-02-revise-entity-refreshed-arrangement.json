@@ -1,0 +1,26 @@
+{
+  "attestation": {
+    "by": "Commissioning build",
+    "on": "2026-11-20",
+    "statement": "Builder attestation only. These terms are NOT independently reviewed: the engine establishes nothing in these groups until a reviewer approves them (approve_election)."
+  },
+  "author": "Claude (engineering, Step 04B)",
+  "data": {
+    "set": {
+      "election": {
+        "anniversary_from": "first_billing_cycle_after_opening",
+        "card": "card.bilt-palladium",
+        "default_opened_on_or_after": "2027-01-01",
+        "governs": [],
+        "group": "bilt-palladium.arrangement",
+        "source_note": "Bilt Rewards Card Offer Terms, last updated October 27, 2026 (bilt.com/terms/bilt-card-offer-terms), read by engineering on 2026-11-15 for ENG-02B; Argon to confirm against the published text. Not an election. It applies from account opening to accounts opened on or after January 1, 2027, and to earlier accounts without a Legacy Election from their first Card Anniversary Date on or after January 1, 2027 (or, after a Legacy Election, from the first day of the Billing Cycle after the cardholder moves). The terms do not say whether an earlier account can move before that anniversary. Card Anniversary Date: one year after the first day of the first Billing Cycle that begins after the Account Open Date, then the same day each year. No published figure says how long after opening that billing cycle begins, so opened_on alone does not place the anniversary: record anniversary_on (as the Bilt app shows it) or first_billing_cycle_on on the card holding (Step 04B removed the former 62-day engineering allowance).",
+        "starts_at_anniversary": "2027-01-01"
+      }
+    }
+  },
+  "date": "2026-11-20",
+  "id": "cs-20261120-step04b-02-revise-entity-refreshed-arrangement",
+  "op": "revise_entity",
+  "reason": "Step 04B: A1 remove the unpublished 62-day bound (anniversary_from replaces anniversary_cycle_days).",
+  "target": "election.bilt-palladium.refreshed-arrangement"
+}

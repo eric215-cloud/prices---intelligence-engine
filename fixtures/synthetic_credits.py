@@ -39,12 +39,14 @@ sys.path.insert(0, HERE)
 import synthetic_cards                       # noqa: E402
 from prices import changes, tables           # noqa: E402
 from prices.store import Store, dumps        # noqa: E402
+from prices.elections import terms_digest     # noqa: E402
 from condition_classes import invented                  # noqa: E402
 
 CARD, ACCOUNT = "card.northwind-voyager", "h-card-northwind-voyager"
 AUTHOR, REVIEWER, DATE = "fixture author (synthetic)", "Synthetic Reviewer", "2026-11-15"
 OWNERS = {"synthetic-alex": "Alex (synthetic)", "synthetic-erin": "Erin (synthetic)", "synthetic-finn": "Finn (synthetic)"}
 SOURCE = "ev-syn-voyager-credit-terms"
+APPROVED = "2027-06-22"                  # Step 04B: the synthetic reviewer approves the election terms
 GROUP = "voyager.annual-perk"
 
 # id suffix, name, summary, restrictions, valid_to, credit cells
@@ -181,6 +183,12 @@ def build(dst):
     b.use("2027-03-06", "synthetic-alex", "e-dining-2027-h1", "u-2027-03-05", 150, "2027-03-05", basis="Dinner")
     b.use("2027-06-21", "synthetic-alex", "e-hotel-2027", "u-2027-06-20", 180, "2027-06-20", confirm=False,
           basis="Entered by a maintainer from an email; not yet confirmed by the owner")
+    # Step 04B (A8): election terms establish nothing until a reviewer other than their author approves them, as read.
+    # Applied last so that every earlier changeset keeps the id it had before Step 04B
+    for s in ("lifestyle-credit", "wellness-credit"):
+        b.apply(APPROVED, "approve_election", target="election.voyager." + s, author=REVIEWER,
+                attestation={"by": REVIEWER, "on": APPROVED, "statement": "Synthetic review: the election terms match the cited synthetic source."},
+                data={"terms": terms_digest(Store.load(b.root).entities["election.voyager." + s])})
     tables.export(dst)
     return dst
 

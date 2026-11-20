@@ -1,0 +1,26 @@
+{
+  "changeset": "cs-20261120-step04b-03-revise-entity-housing-flex-bilt-cash",
+  "records": {
+    "data/kb/entities/election.bilt-palladium.housing-flex-bilt-cash.json": {
+      "after": "326466f076dec86c",
+      "before": {
+        "election": {
+          "anniversary_cycle_days": 62,
+          "card": "card.bilt-palladium",
+          "choose_before_anniversary": "2027-01-01",
+          "follows": "election.bilt-palladium.legacy-election",
+          "governs": [
+            "cb.bilt-palladium.housing-flex-bilt-cash-legacy"
+          ],
+          "group": "bilt-palladium.housing-rewards",
+          "opened_before": "2027-01-01",
+          "source_note": "Bilt Rewards Card Offer Terms, last updated October 27, 2026 (bilt.com/terms/bilt-card-offer-terms), read by engineering on 2026-11-15 for ENG-02B; Argon to confirm against the published text. Rewards Option for accounts opened before 2027, until their first Card Anniversary Date on or after January 1, 2027: selectable in the app, a change takes effect on the first day of the next Billing Cycle. From that anniversary it continues only under a Legacy Election. Not offered to accounts opened on or after January 1, 2027. Card Anniversary Date: one year after the first day of the first Billing Cycle that begins after the Account Open Date, then the same day each year. anniversary_cycle_days 62 is an engineering allowance for where that day can fall, NOT a published figure; anniversary_on on the holding replaces it."
+        },
+        "id": "election.bilt-palladium.housing-flex-bilt-cash",
+        "kind": "election",
+        "name": "Bilt Palladium housing rewards: Flexible Bilt Cash",
+        "notes": "Public option definition. Before the transition anniversary a person's Rewards Option is recorded as a holding of this entity (OP-12); it is never inferred. Afterwards it applies only with the Legacy Election and is not recorded separately."
+      }
+    }
+  }
+}

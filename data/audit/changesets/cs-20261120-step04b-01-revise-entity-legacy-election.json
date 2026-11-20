@@ -1,0 +1,29 @@
+{
+  "attestation": {
+    "by": "Commissioning build",
+    "on": "2026-11-20",
+    "statement": "Builder attestation only. These terms are NOT independently reviewed: the engine establishes nothing in these groups until a reviewer approves them (approve_election)."
+  },
+  "author": "Claude (engineering, Step 04B)",
+  "data": {
+    "set": {
+      "election": {
+        "anniversary_from": "first_billing_cycle_after_opening",
+        "card": "card.bilt-palladium",
+        "elect_before_anniversary": "2027-01-01",
+        "exit_takes_effect": "next_billing_cycle",
+        "governs": [],
+        "group": "bilt-palladium.arrangement",
+        "opened_before": "2027-01-01",
+        "permanent_exit": true,
+        "requires_active": "election.bilt-palladium.housing-flex-bilt-cash",
+        "source_note": "Bilt Rewards Card Offer Terms, last updated October 27, 2026 (bilt.com/terms/bilt-card-offer-terms), read by engineering on 2026-11-15 for ENG-02B; Argon to confirm against the published text. Legacy Election: made in the Bilt app before the first Card Anniversary Date on or after January 1, 2027, by a cardholder whose active Rewards Option is Flexible Bilt Cash; it keeps Flexible Bilt Cash (no switch to Housing-only under the legacy structure), the $200 Bilt Cash benefit and the $400 hotel credit. A later move to the new structure takes effect on the first day of the next Billing Cycle and cannot be undone. The terms do not say whether the election can be cancelled before that anniversary. Card Anniversary Date: one year after the first day of the first Billing Cycle that begins after the Account Open Date, then the same day each year. No published figure says how long after opening that billing cycle begins, so opened_on alone does not place the anniversary: record anniversary_on (as the Bilt app shows it) or first_billing_cycle_on on the card holding (Step 04B removed the former 62-day engineering allowance)."
+      }
+    }
+  },
+  "date": "2026-11-20",
+  "id": "cs-20261120-step04b-01-revise-entity-legacy-election",
+  "op": "revise_entity",
+  "reason": "Step 04B: A1 remove the unpublished 62-day bound; A2 the Legacy Election is open only to a cardholder whose active Rewards Option is Flexible Bilt Cash; A3 leaving it takes effect on the first day of the next Billing Cycle.",
+  "target": "election.bilt-palladium.legacy-election"
+}

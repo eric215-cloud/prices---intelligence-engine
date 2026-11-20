@@ -1,6 +1,6 @@
 {
   "election": {
-    "anniversary_cycle_days": 62,
+    "anniversary_from": "first_billing_cycle_after_opening",
     "card": "card.bilt-palladium",
     "choose_before_anniversary": "2027-01-01",
     "follows": "election.bilt-palladium.refreshed-arrangement",
@@ -8,7 +8,13 @@
       "cb.bilt-palladium.housing-tiered-points"
     ],
     "group": "bilt-palladium.housing-rewards",
-    "source_note": "Bilt Rewards Card Offer Terms, last updated October 27, 2026 (bilt.com/terms/bilt-card-offer-terms), read by engineering on 2026-11-15 for ENG-02B; Argon to confirm against the published text. Rewards Option for accounts opened before 2027, until their first Card Anniversary Date on or after January 1, 2027: selectable in the app, a change takes effect on the first day of the next Billing Cycle (Housing-only is the option when none is selected). From that anniversary, and for later accounts from opening, it is the only housing structure unless a Legacy Election was made. Card Anniversary Date: one year after the first day of the first Billing Cycle that begins after the Account Open Date, then the same day each year. anniversary_cycle_days 62 is an engineering allowance for where that day can fall, NOT a published figure; anniversary_on on the holding replaces it."
+    "source_note": "Bilt Rewards Card Offer Terms, last updated October 27, 2026 (bilt.com/terms/bilt-card-offer-terms), read by engineering on 2026-11-15 for ENG-02B; Argon to confirm against the published text. Rewards Option for accounts opened before 2027, until their first Card Anniversary Date on or after January 1, 2027: selectable in the app, a change takes effect on the first day of the next Billing Cycle (Housing-only is the option when none is selected). From that anniversary, and for later accounts from opening, it is the only housing structure unless a Legacy Election was made. Card Anniversary Date: one year after the first day of the first Billing Cycle that begins after the Account Open Date, then the same day each year. No published figure says how long after opening that billing cycle begins, so opened_on alone does not place the anniversary: record anniversary_on (as the Bilt app shows it) or first_billing_cycle_on on the card holding (Step 04B removed the former 62-day engineering allowance).",
+    "takes_effect": "next_billing_cycle",
+    "terms_by": {
+      "attested_by": "Commissioning build",
+      "author": "Claude (engineering, Step 04B)",
+      "changeset": "cs-20261120-step04b-04-revise-entity-housing-tiered-points"
+    }
   },
   "id": "election.bilt-palladium.housing-tiered-points",
   "kind": "election",

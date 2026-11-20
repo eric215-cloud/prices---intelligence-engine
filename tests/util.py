@@ -73,11 +73,24 @@ def metric(id, value, state="confirmed"):
     return m
 
 
+def approve(option, by="Test Reviewer"):
+    """An invented election option, stamped as independently approved exactly as its terms stand (Step 04B, A8)."""
+    from prices.elections import terms_digest
+    option = dict(option, election=dict(option["election"]))
+    option["election"].pop("approval", None)
+    option["election"]["approval"] = {"by": by, "on": "2026-01-01", "changeset": "fixture", "terms": terms_digest(option)}
+    return option
+
+
 def make_store(entities=(), rules=(), holdings=(), metrics=(), evidence=None, candidates=(), observations=(),
-               profile="t", vocab=None, owner="Test Owner"):
+               profile="t", vocab=None, owner="Test Owner", approve_elections=True):
+    """approve_elections: invented election options stand for approved definitions unless a test says otherwise
+    (pass False, or give the option its own `approval`)."""
     f = {"data/kb/vocab.json": vocab or TEST_VOCAB,
          "profiles/%s/profile.json" % profile: {"id": profile, "label": "test", "synthetic": True, "owner": owner}}
     for e in entities:
+        if approve_elections and e.get("kind") == "election" and isinstance(e.get("election"), dict) and "approval" not in e["election"]:
+            e = approve(e)
         f[Store.path("entities", e["id"])] = e
     for r in rules:
         f[Store.path("rules", r["id"])] = r
@@ -92,6 +105,23 @@ def make_store(entities=(), rules=(), holdings=(), metrics=(), evidence=None, ca
     for o in observations:
         f[Store.path("observations", o["id"])] = o
     return Store(f)
+
+
+def approve_elections_on_disk(root, by="Bradley", day="2026-11-20"):
+    """SCRATCH COPIES ONLY: approve every election option on disk, as a reviewer independent of the terms' author.
+    Refuses to touch the project itself."""
+    import os
+    from prices import changes
+    from prices.elections import terms_digest
+    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    assert os.path.realpath(root) != os.path.realpath(here), "the project's election definitions are approved by a reviewer, not by tests"
+    s = Store.load(root)
+    css = [{"id": "cs-%s-scratch-approve-%02d" % (day.replace("-", ""), n), "op": "approve_election", "target": o["id"], "author": "scratch",
+            "date": day, "reason": "scratch copy only", "data": {"terms": terms_digest(o)},
+            "attestation": {"by": by, "on": day, "statement": "scratch copy only: not a review"}}
+           for n, o in enumerate(sorted((e for e in s.entities.values() if e["kind"] == "election"), key=lambda e: e["id"]), 1)]
+    out = changes.apply_many(root, css)
+    assert out["ok"], out["errors"]
 
 
 def write_store(store, root):

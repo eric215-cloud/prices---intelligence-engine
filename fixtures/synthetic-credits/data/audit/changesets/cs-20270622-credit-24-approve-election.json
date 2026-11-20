@@ -1,0 +1,16 @@
+{
+  "attestation": {
+    "by": "Synthetic Reviewer",
+    "on": "2027-06-22",
+    "statement": "Synthetic review: the election terms match the cited synthetic source."
+  },
+  "author": "Synthetic Reviewer",
+  "data": {
+    "terms": "aa6aeb59e99bb3f0"
+  },
+  "date": "2027-06-22",
+  "id": "cs-20270622-credit-24-approve-election",
+  "op": "approve_election",
+  "reason": "Synthetic recurring-credit fixture",
+  "target": "election.voyager.lifestyle-credit"
+}

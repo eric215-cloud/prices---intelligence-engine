@@ -45,7 +45,11 @@ Terms added by ENG-02B (section 8 says why):
 | `default_opened_on_or_after: D` | Applies without any record, **from the day the account opens**, to accounts opened on or after D |
 | `permanent_exit: true` | Once an election of this option has ended, it cannot be made again |
 | `after_exit_from_anniversary: true` | Needs `follows`. If the followed option took effect after the person left another option of its group, this option starts at the first anniversary on or after that change |
-| `anniversary_cycle_days: N` | The issuer counts the anniversary from the first day of the first billing cycle that begins after opening. See section 8.3 |
+| `anniversary_from: first_billing_cycle_after_opening` | The issuer counts the anniversary from the first day of the first billing cycle that begins after opening. See section 8.3. (Replaces `anniversary_cycle_days`, removed in Step 04B: lint warns `ANNIVERSARY_CYCLE_DAYS_REMOVED` and the engine ignores it) |
+| `takes_effect: next_billing_cycle` | A switch to this option takes effect on the first day of the next billing cycle after the request. See section 8.7 |
+| `exit_takes_effect: next_billing_cycle` | Leaving this option takes effect the same way |
+| `requires_active: <option>` | This option can be elected only while that option (of another group on the same card) is the person's confirmed choice. See section 8.8 |
+| `terms_by` / `approval` | Set by the pipeline only: who wrote the terms, and an independent reviewer's approval of exactly those terms (section 8.9) |
 
 Bilt Palladium, as corrected by ENG-02B from the published Bilt Rewards Card Offer Terms (updated 2026-10-27; Argon to confirm):
 
@@ -58,7 +62,7 @@ Bilt Palladium, as corrected by ENG-02B from the published Bilt Rewards Card Off
 | `bilt-palladium.annual-credits` | `election.bilt-palladium.annual-credits-legacy` | `cb.bilt-palladium.annual-bilt-cash-200-legacy`, `cb.bilt-palladium.hotel-credit-400-semiannual-legacy` | automatic before the first 2027+ anniversary (accounts opened before 2027-01-01); then follows the Legacy Election. Never a choice of its own |
 | | `election.bilt-palladium.annual-credits-600` | `cb.bilt-palladium.annual-bilt-cash-600-post2027` | follows the refreshed arrangement; after a Legacy Election is left, from the next anniversary. Never a choice of its own |
 
-All six carry `anniversary_cycle_days: 62`.
+All six carry `anniversary_from: first_billing_cycle_after_opening` (Step 04B; the former `anniversary_cycle_days: 62` was an invented allowance and is removed). The Legacy Election also carries `requires_active: election.bilt-palladium.housing-flex-bilt-cash` and `exit_takes_effect: next_billing_cycle`; both housing options carry `takes_effect: next_billing_cycle`. None of the six is approved yet (section 8.9).
 
 ## 4. The decision, for one person, one group, one date
 
@@ -130,11 +134,42 @@ One group, `bilt-palladium.arrangement`, holds the real choice: `legacy-election
 The terms define the Card Anniversary Date as one year after the first day of the first billing cycle that begins **after** the account was opened, then the same day each year. It is not the opening date's anniversary, and it cannot be computed from `opened_on`.
 
 - Record `anniversary_on` on the card holding: any card anniversary date as the Bilt app shows it. The engine then uses its month and day exactly.
-- Without it, the engine knows only that the cycle began 1 to 62 days after opening, so the anniversary is a **window**. Before the window: certainly before. From its last day: certainly after. Inside: unknown, flagged `ANNIVERSARY_NOT_RECORDED`. For an account opened late in a year the window can cover most of the next year.
-- 62 is an engineering allowance (two billing cycles), **not a published figure**. The terms say only that a billing cycle is about 30 days.
+- Or record `first_billing_cycle_on`: the first day of the first billing cycle after opening. The anniversary is that month and day, a year on.
+- With only `opened_on`, the engine knows a **lower bound**: the anniversary falls after the opening date's anniversary. There is **no upper bound**: no published figure says how long after opening the first cycle begins. Before the lower bound: certainly before. From it on, indefinitely: unknown, flagged `ANNIVERSARY_NOT_RECORDED`. (Changed in Step 04B. Until then a 62-day "engineering allowance" closed the window and declared the anniversary "certainly past" afterwards; that number was not published, and could grant the $600 from a guessed date.)
 - With neither date, results from 2027-01-01 on are unresolved.
 
-Options without `anniversary_cycle_days` (every invented fixture, and any future card whose anniversary is the opening date) behave exactly as before.
+Options without `anniversary_from` (every invented fixture, and any future card whose anniversary is the opening date) behave exactly as before.
+
+### 8.7 Request date and effective date (Step 04B)
+
+The terms say a Rewards Option switch takes effect on the first day of the next billing cycle. A request is not the switch.
+
+- `valid_from` on an election holding is always the **issuer-effective** date. `requested_on` is the day the cardholder asked. For an exit, `exit_requested_on`, and `valid_to` is the last day before the exit took effect.
+- With `billing_cycle_day` on the card holding, the engine checks the two: an effective date that is not after the request, or not the next cycle start, is `ELECTION_EFFECTIVE_DATE_INVALID`. Such a record makes every date near it unknowable, including the loss of what it carried. Without a request date, a `valid_from` that is not a cycle start (or the opening date) is also invalid.
+- With a request date and no effective date, the engine computes it from `billing_cycle_day`; with neither, the change is UNRESOLVED from the day after the request (`ELECTION_EFFECTIVE_DATE_NOT_RECORDED`).
+- **Limitation.** A record with only `valid_from` and no `billing_cycle_day` cannot be checked: a request date typed into `valid_from` is undetectable. OP-12 tells maintainers never to do that.
+
+### 8.8 The Legacy Election's prerequisite (Step 04B)
+
+The Legacy Election is open only to a cardholder whose active Rewards Option is Flexible Bilt Cash. The engine requires a confirmed (or ended) Flexible Bilt Cash record **in effect on the Legacy Election's start**:
+
+- shown → the prerequisite holds;
+- a Housing-only record in effect then → `ELECTION_NOT_PERMITTED`;
+- nothing, an unconfirmed record, or one that starts later or ended earlier → `ELECTION_TERMS_UNVERIFIED`, UNRESOLVED.
+
+Missing history never establishes Flexible Bilt Cash, the $200, the $400 or any other spendable value. More generally (Step 04B), any term that cannot be checked now leaves the option UNRESOLVED; before, it stood on the owner's word with an information flag.
+
+### 8.9 Independent approval of the definitions (Step 04B, A8)
+
+An option's terms are a factual claim about a published program. The pipeline records who wrote them (`terms_by`: author, attester, changeset). `approve_election` (OP-12 section 8) lets a promotion reviewer who is neither of those approve the terms' exact digest. Until every option of a group is approved, the whole group is UNRESOLVED (`ELECTION_DEFINITION_NOT_APPROVED`). A revision of the terms drops the approval; an approval cannot be written in with the terms.
+
+The six Bilt definitions were revised in Step 04B by engineering, with "Commissioning build" as the builder's own attestation. That attestation is not independent. **All live Bilt election outcomes are UNRESOLVED until Eric or Bradley approves them.**
+
+### 8.10 Product changes (A4: documented, not modelled)
+
+Bilt's own Bilt Card 2.0 Program Overview, 10/27/26 section (DISC-03-04, first-party, verified 2026-11-19), says: "Changing your card moves you to the refreshed benefits, even if you opted out on your current card." It also says upgrades reset the Card Anniversary Date and downgrades do not.
+
+So a product change ends a Legacy Election (the opt-out is lost), and after an upgrade the anniversary on file is wrong. PRICES does not model product changes: there is no op or holding fact for them, and nothing detects one. OP-12 sends any reported card change to escalation. Until an owner reports one, a recorded Legacy Election is taken as current; this is a known gap (A4, CONTAINED), not a supported behaviour.
 
 ### 8.4 Sources read (2026-11-15)
 
@@ -156,7 +191,7 @@ Argon's 2026-11-15 election audit was named as a research input but is not in th
 
 - Whether a Legacy Election can be cancelled before the transition anniversary, and when it takes effect.
 - Whether an older account can move to the refreshed arrangement before its transition anniversary. A `refreshed-arrangement` record dated earlier is flagged `ELECTION_NOT_PERMITTED`.
-- What a product change (upgrade, downgrade) does to a Legacy Election, the Rewards Option, or the anniversary. The terms say only that a product change keeps the existing card account. Not modelled.
+- What a product change does to the Rewards Option itself. (What it does to a Legacy Election and to the anniversary is now stated by Bilt's overview: section 8.10. Still not modelled.)
 - Whether the first-half-2027 hotel credit is issued on 2027-01-01 to an account that will move at a later 2027 anniversary. Bilt has said so publicly; the terms do not.
 - Whether the Legacy Election is per card account or per rewards account. PRICES records elections per person and reports two accounts of the card as unresolved.
 

@@ -236,11 +236,13 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 **Why.** The terms make it mandatory absent a Legacy Election, but PRICES cannot see that absence. A cardholder who made a Legacy Election and has not recorded it would otherwise be shown the $600 and lose Flexible Bilt Cash on paper. Silence is not evidence (D-36).
 
 ## D-50  Card anniversary as a window; `anniversary_on` on the card holding
+**Superseded 2026-11-20 by D-68:** the 62-day bound is removed; with `opened_on` alone only a lower bound is known.
 **Decision.** Where an option says `anniversary_cycle_days`, the anniversary is counted from the first billing cycle after opening. It is exact only when the holding records `anniversary_on`; otherwise it is a window and dates inside it are unknown. Bilt's value is 62.
 **Alternatives considered.** Keep the opening-date anniversary (wrong by up to a year for accounts opened late in a year); treat every date after `opened_on` + 1 year as unknown unless `anniversary_on` is recorded (honest but unusable).
 **Why.** 62 days is not a published figure; it is two billing cycles, chosen so the window cannot be too narrow. It is stored on the definitions, where Argon can change it, not in code. One ENG-02 assertion that placed an anniversary on the opening date's own day was moved accordingly (results file).
 
 ## D-51  The four revised definitions are attested by "Commissioning build"
+**Superseded in part 2026-11-20 by D-71:** a builder's attestation now permits revising terms but never makes them usable; an independent `approve_election` does.
 **Decision.** Revising an `election` block needs a promotion reviewer (D-39). The four revisions carry the attestation of "Commissioning build", stating that commission ENG-02B orders the correction and that no named reviewer has checked the definitions line by line.
 **Why.** Fable is not Eric or Bradley and must not sign as them. The alternative, leaving the live definitions wrong until someone else applies the changesets, would not meet the commission. Eric or Bradley can countersign or revert (`revert_changeset`).
 
@@ -316,6 +318,31 @@ Each entry: the decision, why, and what would make it worth revisiting. Add new 
 ## D-67  Condition changes on a rule that has already answered are corrections or successors, and stale reviews block
 **Decision.** Adding, removing or rewording a restriction on a rule with `valid_from` before today (or none) is `HISTORY_REWRITE` unless declared a correction; on a rule not yet started it is allowed. A review that classifies a text no longer on the rule is stale and blocks by itself, even when no text remains; `classify_conditions` accepts an empty list for that case.
 **Why.** The first restriction on an existing rule counted as a harmless "first record", and deleting the last reviewed restriction left the rule unrestricted and ESTABLISHED under a review of texts it no longer had.
+
+## D-68  A Bilt anniversary without the issuer's date has a lower bound and no upper bound
+**Decision.** `anniversary_cycle_days` is removed; options say `anniversary_from: first_billing_cycle_after_opening`. The anniversary is exact from `anniversary_on` or `first_billing_cycle_on`. With `opened_on` alone it is known only to be later than the opening date's anniversary; every date from then on is UNRESOLVED (`ANNIVERSARY_NOT_RECORDED`).
+**Alternatives considered.** Keep a bound but source it (no source states one); a smaller bound (still invented).
+**Why.** The 62 days were not published and could establish the $600 from a guessed anniversary (A1). D-50 rejected "unknown after the lower bound" as unusable; it is the only answer the terms support, and the fix for usability is recording one issuer date.
+
+## D-69  Effective dates are issuer dates; a request is recorded separately
+**Decision.** `valid_from` on an election is the issuer-effective date. `requested_on`, `exit_requested_on` and the card's `billing_cycle_day` let the engine check or compute the next-cycle effective date for options marked `takes_effect` / `exit_takes_effect: next_billing_cycle`. Contradicting dates are `ELECTION_EFFECTIVE_DATE_INVALID` and conclude nothing nearby, including a loss; an uncomputable one is `ELECTION_EFFECTIVE_DATE_NOT_RECORDED`.
+**Why.** A3: a request made inside a cycle was indistinguishable from the switch. Residual: a request date typed into `valid_from` on a card without `billing_cycle_day` is undetectable.
+
+## D-70  An option's prerequisite must be shown; an uncheckable term establishes nothing
+**Decision.** `requires_active` names an option of another group that must be the person's confirmed choice on the election's start (Legacy Election → Flexible Bilt Cash). Shown: holds. Contradicted: `ELECTION_NOT_PERMITTED`. Not shown: `ELECTION_TERMS_UNVERIFIED`, UNRESOLVED. Generally, `allowed() is None` now leaves the option UNRESOLVED; it used to establish it on the owner's word with an info flag.
+**Why.** A2, and the project rule that missing history never establishes spendable value. This changes earlier results for records whose terms could not be checked; they are named in the Step 04B report.
+
+## D-71  Election terms need an independent approval of their exact digest
+**Decision.** The pipeline stamps `terms_by` on every added or revised `election` block and refuses an `approval` key there. `approve_election` records a promotion reviewer's approval of `terms_digest(option)`, refused if the reviewer authored or attested the terms or the author submits it. A group with any unapproved option is UNRESOLVED (`ELECTION_DEFINITION_NOT_APPROVED`). Revising terms drops the approval.
+**Why.** A8: four live definitions were signed only by the build. Self-attestation was a convention; this makes it a mechanism. Consequence: every live Bilt election outcome is UNRESOLVED until Eric or Bradley approves the six definitions (OP-12 section 8). Engineering does not approve them.
+
+## Limits of the Step 04B repair (2026-11-20), stated plainly
+
+- The six Bilt definitions are unapproved; every live Bilt election result is UNRESOLVED until a reviewer acts.
+- Product changes (A4) are documented, not modelled; a reported card change is escalated.
+- Linked groups stay one level deep (A6); there is no Bilt Cash lot, expiry, balance, conversion or cap logic (A7).
+- Approval is not dated: once given it applies to every as-of date the terms cover.
+- An `ELECTION_EFFECTIVE_DATE_INVALID` record stays unresolved on every later date until it is corrected.
 
 ## Limits of the safety correction (2026-11-17), stated plainly
 

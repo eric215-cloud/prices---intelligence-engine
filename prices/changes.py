@@ -283,7 +283,38 @@ def op_add_entity(store, cs):
     _need(isinstance(e.get("id"), str), "BAD_DATA", "entity.id missing")
     _need(e["id"] not in store.entities, "ID_EXISTS", "entity %r already exists" % e["id"])
     _add_evidence(store, cs)   # sources the entity cites may be registered in the same changeset
+    if isinstance(e.get("election"), dict):
+        e = dict(e, election=_election_terms(e["election"], cs))
     store.files[store.path("entities", e["id"])] = e
+
+
+def _election_terms(block, cs):
+    """An election block as written by this changeset: its approval is never carried in (only approve_election writes
+    one), and who set the terms is recorded by the pipeline, never by the author (Step 04B, A8)."""
+    _need("approval" not in block, "BAD_DATA", "an election's approval is written only by approve_election (OP-12), never with its terms")
+    out = {k: v for k, v in block.items() if k != "terms_by"}
+    out["terms_by"] = {"author": cs.get("author"), "attested_by": (cs.get("attestation") or {}).get("by"), "changeset": cs["id"]}
+    return out
+
+
+def op_approve_election(store, cs):
+    """An independent reviewer approves an election option's published terms exactly as they stand (Step 04B, A8)."""
+    from .elections import terms_digest
+    _need("target" in cs, "MISSING_TARGET", "target (election option id) is required")
+    e = store.entities.get(cs["target"])
+    _need(e is not None and e.get("kind") == "election", "UNKNOWN_TARGET", "no election option %r" % cs.get("target"))
+    a = _attested(cs)
+    _reviewer(store, a)
+    by = (e["election"].get("terms_by") or {})
+    _need(by.get("changeset"), "TERMS_PROVENANCE_MISSING",
+          "who set these terms is not recorded; revise them through the pipeline (revise_entity) first, then approve")
+    _need(a["by"] not in (by.get("author"), by.get("attested_by")), "NOT_INDEPENDENT",
+          "%s set or attested these terms (%s); approval must come from a different reviewer" % (a["by"], by.get("changeset")))
+    _need(cs.get("author") not in (by.get("author"),), "NOT_INDEPENDENT", "the author of the terms cannot submit their approval")
+    want = (cs.get("data") or {}).get("terms")
+    _need(want == terms_digest(e), "TERMS_CHANGED",
+          "data.terms must be the digest of the terms being approved (%s); the reviewer approves exactly what they read" % terms_digest(e))
+    e["election"]["approval"] = {"by": a["by"], "on": a["on"], "changeset": cs["id"], "terms": want}
 
 
 def op_revise_entity(store, cs):
@@ -304,6 +335,7 @@ def op_revise_entity(store, cs):
             # changing which rules an option governs, or its dates, changes who can be granted what: a reviewer decides
             _need(e["kind"] == "election", "BAD_DATA", "only an election entity has an 'election' block")
             _reviewer(store, _attested(cs))
+            changes = dict(changes, election=_election_terms(v, cs))   # any earlier approval is dropped with the old terms
     _add_evidence(store, cs)
     for k, v in changes.items():
         if v is None:
